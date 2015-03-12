@@ -1,0 +1,14 @@
+[
+{
+  "modid": "talecraft",
+  "name": "TaleCraft",
+  "description": "The TaleCraft Mod.",
+  "mcversion": "1.8.1",
+  "url": "https://twitter.com/Longor1996",
+  "updateUrl": "",
+  "authorList": ["Longor1996"],
+  "logoFile": "tclogo.png",
+  "screenshots": [],
+  "dependencies": []
+}
+]

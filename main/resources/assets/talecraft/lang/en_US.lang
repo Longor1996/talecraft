@@ -1,0 +1,16 @@
+key.toggleBuildMode=Toggle Buildmode
+key.toggleWireframe=Toggle Wireframe
+
+itemGroup.talecraftTab=TaleCraft [Main]
+
+tile.talecraft:clockblock.name=Clock
+tile.talecraft:redstone_trigger.name=Redstone Trigger
+
+tile.talecraft:killblock.name=Killblock
+tile.talecraft:killblock.all.name=Killblock (ALL)
+tile.talecraft:killblock.npc.name=Killblock (NPCs)
+tile.talecraft:killblock.items.name=Killblock (Items)
+tile.talecraft:killblock.living.name=Killblock (Living)
+tile.talecraft:killblock.player.name=Killblock (Players)
+tile.talecraft:killblock.monster.name=Killblock (Monsters)
+tile.talecraft:killblock.xor_player.name=Killblock (Not Player)
