@@ -1,0 +1,175 @@
+WARNING:
+  This is a scratch file! That means that the content of this file is NOT to be taken as a specification for the mod.
+  EVERYTHING IN THIS FILE COULD CHANGE AT ANY TIME.
+
+
+
+
+
+block -> Script:
+  | A block that can execute commands when invoked.
+  * Properties:
+    - NAME: The name of the script-block. It's visible when looking at the block. This property is purely visual.
+    - invoke:ONTRIGGER: The command to execute when the script-block is activated.
+  * (trigger)
+    - invoke ONTRIGGER
+^^
+
+block -> Clip:
+  | This block is similar to the 'Barrier'-block from vanilla minecraft, except that it can filter specific objects.
+  * Types:
+    - All Blocking: No entity can pass trough.
+    - Boss Blocking: Boss'es can't pass trough.
+    - Player Blocking: Players can't pass trough.
+    - Monster Blocking: Monsters can't pass trough.
+    - Villager Blocking: Villagers can't pass trough
+    - Projectile Blocking: Projectiles can't pass trough.
+^^
+
+block -> Clock:
+  | The clockblock is able to execute commands at a given speed in a (infinite|limited) loop.
+  * Properties:
+    - ACTIVE: Is the clock active?
+    - REPEAT: How often should the clock tick until deactivating? Use 0 for infinite repeats.
+    - SPEED: How fast the clock runs, in ticks. 1 is fastest, 20 is once per second.
+    - invoke:ONSTART: The command to execute when the clock starts.
+    - invoke:ONTICK: The command to execute when the clock ticks.
+    - invoke:ONSTOP: The command to execute when the clock stops.
+  * (trigger)
+    - arg0=0: START
+    - arg0=1: PAUSE
+    - arg0=2: STOP
+^^
+
+block -> DataStore:
+  | This block stres any kind/amount of NBT-Data, permanently.
+  * Properties
+    - nbtCompound:DATA: The data stored within this block.
+    - invoke:ONCHANGE: The command to execute when the data is modified.
+  * (trigger)
+    - arg0=-1: Clear/Delete all stored data.
+^^
+
+block -> Storage:
+  | This block stores a region of blocks, and can put them back into the world when invoked.
+  * Properties
+    - blockstorage:STORAGE: The blocks stored within this block.
+    - invoke:ONPLANT: When the stored region gets put back into the world.
+  * (trigger)
+    - arg0=0: Plant the stored blocks.
+    - arg0=1: Store the selected region.
+    - arg0=2: Clear stored data.
+^^
+
+block -> BlockUpdateDetector:
+  * Properties
+    - ACTIVE: Is the detector active?
+    - invoke:ONUPDATE: The command to execute when a block next (t,b,n,e,s,w) to the BUD updates.
+  * (trigger)
+    - arg0=0: Toggle ACTIVE
+^^
+
+block -> Trigger:
+  - ACTIVE: Is the trigger active?
+  - intersectionShape:SHAPE: The shape of the trigger.
+  - invoke:ONTRIGGER: The command to execute when the trigger is triggered.
+  - entitySelector:FILTER: A filter that filters what will trigger the trigger.
+^^
+
+
+
+
+
+
+
+
+item -> Teleporter:
+  - Teleports you right above the block you are looking at, instantly, at at no cost.
+  - Range is limited to 256 blocks.
+
+item -> InstaKill:
+  - Destroys ANY entity hit by it.
+
+item -> BlockRegionSelector:
+  - Selects a box region of blocks.
+  - Left/Right-Click sets the MIN/MAX corners respectively.
+
+item -> BlockRegionMover:
+  - Moves the selected region of blocks in the direction one is looking.
+  - Note: This tool will not cause block-updates.
+
+item -> BlockRegionCopy:
+  - Copies the selected region into the 'clipboard'.
+  - Note: This tool will not cause block-updates.
+
+item -> BlockRegionCut:
+  - Removes the selected region from the world and moves it into the 'clipboard'.
+  - Note: This tool will not cause block-updates.
+
+item -> BlockRegionPaste:
+  - Places whatever is in the 'clipboard' into the world.
+  - Note: This tool will not cause block-updates.
+
+item -> BlockRegionHammer:
+  - LMB: Select the block to use.
+  - RMB: Fill the currently selected region with the LMB-selected block.
+  - Note: This tool will not cause block-updates.
+
+item -> BlockRegionErasor:
+  - Erases the currently selected region by filling it with air.
+  - Note: This tool will not cause block-updates.
+
+item -> VoxelBrush:
+  - Note: This tool will not cause block-updates.
+  - SHAPES
+    * Box
+    * Sphere
+    * Cylinder
+    * Polygon (?)
+  - FUNCTIONS
+    * replace -> DST with ARG
+    * replace -> DST with ARG if DST equals MASK
+    * smooth-average -> ?
+    * smooth-cubic -> ?
+    * grassify -> Replace every solid block that is euqal to ARG2 or is natural and has air above it with grass.
+    * winterify -> Let it snow!
+^^
+
+
+
+
+
+gui -> MapInterface:
+  - A gui that is opened by pressing 'H' on the keyboard without any special keys.
+  - The gui contains tabs that contains GUI's for different tools and utilities.
+  - TABS:
+    - Clipboard: Manage the contents of the clipboard.
+    - Scripts: The current worlds ScriptManager. It is possible to add world-scripts here.
+    - World: Utilities for the world instance you are in. (status info, weather control, gamerules)
+    - Resources: View and browse ALL resources currently loaded in the game. (textures[block, item, entity, *], sounds, music)
+^^
+
+command -> Trigger:
+  | This calls a special 'onTrigger'-method on a specified block.
+  * /tc_trigger <dst.{x y z}> <arg0> [arg1]
+    - dst.{x y z}: The position of the block to trigger.
+    - arg0: The first argument to send.
+    - arg1: The second argument to send. (optional)
+    - (return): triggered | notrigger
+
+command -> RegionTrigger:
+  | This calls a special 'onTrigger'-method on a region of blocks.
+  * /tc_regiontrigger <dst.{x y z dx dy dz}> <arg0> [arg1]
+    - dst.{x y z dx dy dz}: The region of blocks to trigger, given as a MINMAX-AABB.
+    - arg0: The first argument to send.
+    - arg1: The second argument to send. (optional)
+
+:class(i) -> Invoke
+  * Types:
+    - ScriptInvoke: Execute a script.
+    - CommandInvoke: Execute a server command.
+    - BlockTriggerInvoke: Trigger a certain block.
+    - RegionTriggerInvoke: Trigger all blocks in a region of blocks.
+^^
+
+
