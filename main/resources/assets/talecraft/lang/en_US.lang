@@ -4,6 +4,7 @@ key.toggleWireframe=Toggle Wireframe
 itemGroup.talecraftTab=TaleCraft [Main]
 
 item.wand.name=Wand
+item.filler.name=Filler
 
 tile.talecraft:clockblock.name=Clock
 tile.talecraft:redstone_trigger.name=Redstone Trigger

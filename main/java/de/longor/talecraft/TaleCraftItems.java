@@ -13,15 +13,21 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import com.google.common.base.Function;
 
+import de.longor.talecraft.items.FillerItem;
 import de.longor.talecraft.items.WandItem;
 
 public class TaleCraftItems {
 	public static WandItem wand;
+	public static FillerItem filler;
 	
 	static void init() {
 		wand = new WandItem();
 		wand.setUnlocalizedName("wand");
 		GameRegistry.registerItem(wand, "wand", "talecraft");
+		
+		filler = new FillerItem();
+		filler.setUnlocalizedName("filler");
+		GameRegistry.registerItem(filler, "filler", "talecraft");
 	}
 	
 }

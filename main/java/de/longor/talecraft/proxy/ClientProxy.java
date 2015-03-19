@@ -151,6 +151,7 @@ public class ClientProxy extends CommonProxy
 		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.redstoneTrigger), 0, new ModelResourceLocation("talecraft:redstone_trigger", "inventory"));
 		
 		mesher.register(TaleCraftItems.wand, 0, new ModelResourceLocation("talecraft:wand", "inventory"));
+		mesher.register(TaleCraftItems.filler, 0, new ModelResourceLocation("talecraft:filler", "inventory"));
 		
 		// register StringNBTCommand-Packet
 		TaleCraft.instance.simpleNetworkWrapper.registerMessage(new IMessageHandler() {

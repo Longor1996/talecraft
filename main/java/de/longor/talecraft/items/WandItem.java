@@ -76,8 +76,6 @@ public class WandItem extends Item {
     {
     	if(worldIn.isRemote)
     		return itemStackIn;
-    	
-    	System.out.println("ITEM WAND : Air Click");
         return itemStackIn;
     }
 
