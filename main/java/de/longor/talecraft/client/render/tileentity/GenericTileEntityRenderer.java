@@ -1,5 +1,9 @@
 package de.longor.talecraft.client.render.tileentity;
 
+import java.util.Random;
+
+import org.lwjgl.opengl.GL11;
+
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.ClockBlockTileEntity;
 import de.longor.talecraft.client.render.RenderHelper;
