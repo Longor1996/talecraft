@@ -106,32 +106,34 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class ClientProxy extends CommonProxy
 {
-	// final
 	public final Minecraft mc = Minecraft.getMinecraft();
-	public final KeyBinding buildModeBinding = new KeyBinding("key.toggleBuildMode", Keyboard.KEY_B, "key.categories.misc");
-	public final KeyBinding wireframeBinding = new KeyBinding("key.toggleWireframe", Keyboard.KEY_PERIOD, "key.categories.misc");
-    
-	public final ResourceLocation selectionBoxTextuResourceLocation = new ResourceLocation("talecraft:textures/wandselection.png");
 	
-	// mc internals
+	// mc internals (exposed)
 	public ModelManager mc_modelManager;
 	
-	// public
-	public int wireframeMode = 0;
-    public InfoBar infoBarInstance = new InfoBar();
-    public EXTFontRenderer fontRenderer;
-    public ConcurrentLinkedDeque<Runnable> clientTickQeue = new ConcurrentLinkedDeque<Runnable>();
-    public ConcurrentLinkedDeque<ITemporaryRenderable> clientRenderQeue = new ConcurrentLinkedDeque<ITemporaryRenderable>();
-	
+	// tc internals
+    private int visualizationMode = 0;
+    private EXTFontRenderer fontRenderer;
+    private InfoBar infoBarInstance = new InfoBar();
+    private ConcurrentLinkedDeque<Runnable> clientTickQeue = new ConcurrentLinkedDeque<Runnable>();
+    private ConcurrentLinkedDeque<ITemporaryRenderable> clientRenderQeue = new ConcurrentLinkedDeque<ITemporaryRenderable>();
+    
+    // tc internals (final / constants)
+ 	private final KeyBinding buildModeBinding = new KeyBinding("key.toggleBuildMode", Keyboard.KEY_B, "key.categories.misc");
+ 	private final KeyBinding visualizationBinding = new KeyBinding("key.toggleWireframe", Keyboard.KEY_PERIOD, "key.categories.misc");
+ 	private final ResourceLocation selectionBoxTextuResourceLocation = new ResourceLocation("talecraft:textures/wandselection.png");
+ 	
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
 		
 		MinecraftForge.EVENT_BUS.register(this);
 		
+		// register all keybindings
 		ClientRegistry.registerKeyBinding(buildModeBinding);
-		ClientRegistry.registerKeyBinding(wireframeBinding);
+		ClientRegistry.registerKeyBinding(visualizationBinding);
 		
+		// register all tileentity renderers
 		ClientRegistry.bindTileEntitySpecialRenderer(ClockBlockTileEntity.class, new GenericTileEntityRenderer<ClockBlockTileEntity>("talecraft:textures/blocks/util/timer.png"));
 		ClientRegistry.bindTileEntitySpecialRenderer(RedstoneTriggerTileEntity.class, new GenericTileEntityRenderer<RedstoneTriggerTileEntity>("talecraft:textures/blocks/util/redstoneTriggerOff.png"));
 		
@@ -141,6 +143,7 @@ public class ClientProxy extends CommonProxy
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
 		
+		// get hte ModelMesher and register ALL item-models
 		ItemModelMesher mesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
 		
 		for(int i = 0; i < 7; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.killBlock), i, new ModelResourceLocation("talecraft:killblock", "inventory"));
@@ -149,20 +152,22 @@ public class ClientProxy extends CommonProxy
 		
 		mesher.register(TaleCraftItems.wand, 0, new ModelResourceLocation("talecraft:wand", "inventory"));
 		
+		// register StringNBTCommand-Packet
 		TaleCraft.instance.simpleNetworkWrapper.registerMessage(new IMessageHandler() {
 			@Override public IMessage onMessage(IMessage message, MessageContext ctx) {
 				if(message instanceof StringNBTCommand) {
 					StringNBTCommand cmd = (StringNBTCommand) message;
 					System.out.println("RECEIVED COMMAND : " + cmd);
+					// We dont do anything yet with these.
 				}
 				return null;
 			}
 		}, StringNBTCommand.class, 0x01, Side.CLIENT);
 		
+		// register PlayerNBTDataMerge-Packet
 		TaleCraft.instance.simpleNetworkWrapper.registerMessage(new IMessageHandler() {
 			@Override public IMessage onMessage(final IMessage message, MessageContext ctx) {
 				if(message instanceof PlayerNBTDataMerge) {
-					System.out.println("Received valid PlayerNBTDataMerge-Packet!");
 					final Minecraft mc = ClientProxy.this.mc;
 					
 					clientTickQeue.add(new Runnable(){
@@ -170,18 +175,15 @@ public class ClientProxy extends CommonProxy
 						PlayerNBTDataMerge mpakDataMerge = (PlayerNBTDataMerge) message;
 						@Override public void run() {
 							if(micr.thePlayer != null) {
-								System.out.println("MERGING PLAYER DATA FROM SERVER INTO CLIENT");
 								micr.thePlayer.getEntityData().merge((mpakDataMerge.data));
 							}
 						}
 					});
-					
 				}
 				return null;
 			}
 		}, PlayerNBTDataMerge.class, 0x02, Side.CLIENT);
-		
-	}
+	} // init(..){}
 	
 	public void modelBake(ModelBakeEvent event) {
 	    this.mc_modelManager = event.modelManager;
@@ -190,39 +192,16 @@ public class ClientProxy extends CommonProxy
 	@Override
 	public void postInit(FMLPostInitializationEvent event) {
 		super.postInit(event);
-		fontRenderer = new EXTFontRenderer(mc.fontRendererObj);
 		
-		/*
-		FileWriter wrt = null;
-		try {
-			wrt = new FileWriter(new File("blockdump.csv"));
-			
-			Block block = null;
-			Iterator<Block> iter = Block.blockRegistry.iterator();
-			while(iter.hasNext()) {
-				block = iter.next();
-				wrt.write(block.getUnlocalizedName());
-				wrt.write(", ");
-				wrt.write(block.getLocalizedName());
-				wrt.write("\r\n");
-			}
-			wrt.write("\r\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				wrt.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		//*/
+		// Create the singleton instance of the EXTFontRenderer
+		fontRenderer = new EXTFontRenderer(mc.fontRendererObj);
 	}
 	
 	@SubscribeEvent
 	public void worldPass(RenderWorldLastEvent event) {
 		WireframeMode.DISABLE();
 		
+		// Iterate trough all ITemporaryRenderables and remove the ones that can be removed.
 		Iterator<ITemporaryRenderable> iterator = clientRenderQeue.iterator();
 		while(iterator.hasNext()) {
 			ITemporaryRenderable itr = iterator.next();
@@ -231,9 +210,9 @@ public class ClientProxy extends CommonProxy
 			}
 		}
 		
-		if(mc.thePlayer != null) {
+		// If the world and the player exist, call the worldPostRender-method.
+		if(mc.theWorld != null && mc.thePlayer != null) {
 			GlStateManager.pushMatrix();
-			
 			
 			double partialTicks = event.partialTicks;
 			Tessellator tessellator = Tessellator.getInstance();
@@ -244,9 +223,12 @@ public class ClientProxy extends CommonProxy
 			GlStateManager.popMatrix();
 		}
 		
+		// Enable textures again, since the GUI-prerender doesn't enable it again by itself.
 		GlStateManager.enableTexture2D();
 		
-		double fade = 0;
+		// XXX: EXPERIMENTAL FEATURE
+		// If active, render a fade-effect (this makes the screen go dark).
+		double fade = 0f;
 		int color = 0x000000;
 		if(fade > 0 && mc.ingameGUI != null) {
 			GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -255,8 +237,8 @@ public class ClientProxy extends CommonProxy
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
 			GL11.glLoadIdentity();
 			{
-				int alpha = MathHelper.clamp_int((int) (fade * 256), 0, 255);
-				int mixed = (alpha & 0xFF) << 24 | (color);
+				int alpha = MathHelper.clamp_int((int) (fade * 255), 0, 255);
+				int mixed = ((alpha & 0xFF) << 24) | (color);
 				mc.ingameGUI.drawRect(-1, -1, 4, 4, mixed);
 			}
 		}
@@ -288,10 +270,13 @@ public class ClientProxy extends CommonProxy
 				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 			}
 			
+			// If not null, render the cursor selections boundaries.
 			if(tcWand.hasKey("boundsA") && tcWand.hasKey("boundsB")) {
+				// get bounds
 				int[] a = tcWand.getIntArray("boundsA");
 				int[] b = tcWand.getIntArray("boundsB");
 				
+				// make sure its correctly sorted
 				int ix = Math.min(a[0], b[0]);
 				int iy = Math.min(a[1], b[1]);
 				int iz = Math.min(a[2], b[2]);
@@ -299,47 +284,57 @@ public class ClientProxy extends CommonProxy
 				int ay = Math.max(a[1], b[1]);
 				int az = Math.max(a[2], b[2]);
 				
+				// 'error' offset
 				final float E = 1f / 32f;
 				
+				// Prepare state
 				GlStateManager.disableBlend();
 				GlStateManager.disableLighting();
 				GlStateManager.disableNormalize();
 				GlStateManager.enableTexture2D();
 				RenderHelper.disableStandardItemLighting();
 				mc.getTextureManager().bindTexture(selectionBoxTextuResourceLocation);
+				
+				// Render primary (with-depth) box
 				BoxRenderer.renderSelectionBox(tessellator, worldrenderer, ix-E, iy-E, iz-E, ax+1+E, ay+1+E, az+1+E, 1);
 				
+				// Render secondary (no-depth) box
 				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 				GlStateManager.disableDepth();
 				BoxRenderer.renderSelectionBox(tessellator, worldrenderer, ix-E, iy-E, iz-E, ax+1+E, ay+1+E, az+1+E, 1);
 				GlStateManager.enableDepth();
 				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 				
+				// Reset state
 				GlStateManager.enableLighting();
 			}
 		}
 		
+		// Render all the temporary renderables
 		for(ITemporaryRenderable renderable : clientRenderQeue) {
 			renderable.render(mc, this, tessellator, worldrenderer, partialTicks);
 		}
 		
 	}
-
+	
 	@SubscribeEvent
 	public void worldPassPre(RenderWorldEvent.Pre event) {
-		
+		// Nothing hre yet!
 	}
 	
+	/**
+	 * This method is only called when the world is unloaded.
+	 **/
 	public void unloadWorld(World world) {
 		if(world instanceof WorldClient) {
 			// the client is either changing dimensions or leaving the server.
 			// reset all temporary world related settings
-			wireframeMode = 0;
+			visualizationMode = 0;
 		}
 	}
 	
 	public boolean isBuildMode() {
-		return mc.playerController.isInCreativeMode();
+		return mc.playerController != null && mc.playerController.isInCreativeMode();
 	}
 	
 	public void tick(TickEvent event) {
@@ -353,26 +348,33 @@ public class ClientProxy extends CommonProxy
 		if(event instanceof RenderTickEvent) {
 			RenderTickEvent revt = (RenderTickEvent) event;
 			
+			// Pre-Scene Render
 			if(revt.phase == Phase.START) {
+				// this takes care of the CUSTOM SKY RENDERING
 				if(mc.theWorld != null && mc.theWorld.provider != null) {
-					boolean wireframeModeActive = isBuildMode() ? (wireframeMode != 0) : false;
+					boolean wireframeModeActive = isBuildMode() ? (visualizationMode != 0) : false;
 					
 					if(wireframeModeActive) {
 						CustomSkyRenderer.instance.setDebugSky(true);
 						mc.theWorld.provider.setSkyRenderer(CustomSkyRenderer.instance);
 					} else {
+						CustomSkyRenderer.instance.setDebugSky(false);
 						mc.theWorld.provider.setSkyRenderer(null);
 					}
 				}
 				
-				if(mc.thePlayer != null)
-					WireframeMode.ENABLE(mc.thePlayer.capabilities.isCreativeMode ? wireframeMode : 0);
+				// this enables the WIREFRAME-MODE if we are ingame
+				if(mc.theWorld != null && mc.thePlayer != null) {
+					WireframeMode.ENABLE(mc.thePlayer.capabilities.isCreativeMode ? visualizationMode : 0);
+				}
 				
-				if(wireframeMode == 3) {
+				// this is part of the LIGHTING visualization mode
+				if(visualizationMode == 3) {
 					GlStateManager.disableTexture2D();
 				}
 			}
 			
+			// Post-World >> Pre-HUD Render
 			if(revt.phase == Phase.END) {
 				if(mc.ingameGUI != null && mc.theWorld != null && infoBarInstance.canDisplayInfoBar(mc, this) ) {
 					infoBarInstance.display(mc, mc.thePlayer, mc.theWorld, this);
@@ -381,17 +383,21 @@ public class ClientProxy extends CommonProxy
 		}// RenderTickEvent {}
 	}// tick {}
 	
+	/****/
 	public void keyEvent(KeyInputEvent event) {
-		if(wireframeBinding.isPressed() && wireframeBinding.isKeyDown()) {
-			// toggle
-			wireframeMode = (wireframeMode + 1) & 3;
-			System.out.println("Toggled wireframe: " + wireframeMode);
+		// this toggles between the various visualization modes
+		if(visualizationBinding.isPressed() && visualizationBinding.isKeyDown()) {
+			visualizationMode = (visualizationMode + 1) & 3;
 		}
 		
+		// this toggles between buildmode and adventuremode
 		if(buildModeBinding.isPressed() && buildModeBinding.isKeyDown() && mc.theWorld != null && mc.thePlayer != null && !mc.isGamePaused()) {
-			taleCraft.logger.info("Switching GameMode using the BUILDMODe-key.");
+			taleCraft.logger.info("Switching GameMode using the buildmode-key.");
 			mc.thePlayer.sendChatMessage("/gamemode " + (isBuildMode() ? "2" : "1"));
 			
+			// these bunch of lines delete all display lists,
+			// thus forcing the renderer to reupload the world to the GPU
+			// (this process only takes several milliseconds)
 			taleCraft.timedExecutor.executeLater(new Runnable() {
 				@Override public void run() {
 					mc.addScheduledTask(new Runnable(){
@@ -404,12 +410,24 @@ public class ClientProxy extends CommonProxy
 		}
 	}
 	
+	/***********************************/
+	/**                               **/
+	/**                               **/
+	/**                               **/
+	/***********************************/
+	
+	/****/
 	public void sheduleClientTickTask(Runnable runnable) {
 		this.clientTickQeue.push(runnable);
 	}
 	
+	/****/
 	public void sheduleClientRenderTask(ITemporaryRenderable renderable) {
 		this.clientRenderQeue.push(renderable);
+	}
+	
+	public int getVisualizationmode() {
+		return this.visualizationMode;
 	}
 	
 }

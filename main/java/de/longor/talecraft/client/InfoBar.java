@@ -36,8 +36,8 @@ public class InfoBar {
         	writeMovingObjectPositionInfo(mc, theWorld, mc.objectMouseOver);
         }
         
-        if(clientProxy.wireframeMode != 0) {
-        	writeWireframeModeInfo(clientProxy.wireframeMode);
+        if(clientProxy.getVisualizationmode() != 0) {
+        	writeVisualizationModeInfo(clientProxy.getVisualizationmode());
         }
         
         builder.append(' ');
@@ -101,7 +101,7 @@ public class InfoBar {
         builder.append(EnumChatFormatting.RESET);
 	}
 	
-	private void writeWireframeModeInfo(int wireframeMode) {
+	private void writeVisualizationModeInfo(int wireframeMode) {
         builder.append(' ');
         builder.append(EnumChatFormatting.BLUE);
         
