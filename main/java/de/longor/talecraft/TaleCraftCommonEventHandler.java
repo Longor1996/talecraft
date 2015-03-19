@@ -18,11 +18,11 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TaleCraftCMEventHandler
+public class TaleCraftCommonEventHandler
 {
 	private TaleCraft taleCraft;
 	
-	public TaleCraftCMEventHandler(TaleCraft taleCraft)
+	public TaleCraftCommonEventHandler(TaleCraft taleCraft)
 	{
 		this.taleCraft = taleCraft;
 	}

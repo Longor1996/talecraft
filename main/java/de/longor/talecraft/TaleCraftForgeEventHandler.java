@@ -18,11 +18,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
-public class TaleCraftEVTBEventHandler
+public class TaleCraftForgeEventHandler
 {
 	private TaleCraft taleCraft;
 	
-	public TaleCraftEVTBEventHandler(TaleCraft taleCraft)
+	public TaleCraftForgeEventHandler(TaleCraft taleCraft)
 	{
 		this.taleCraft = taleCraft;
 	}
