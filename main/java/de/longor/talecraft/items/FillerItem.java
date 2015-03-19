@@ -51,7 +51,7 @@ public class FillerItem extends Item {
     		return true;
     	}
     	
-    	final int maxvolume = 128; // 64*64*64;
+    	final int maxvolume = 64*64*64;
     	final int volume = (bounds[3]-bounds[0]+1) * (bounds[4]-bounds[1]+1) * (bounds[5]-bounds[2]+1);
     	
     	if(volume >= maxvolume) {

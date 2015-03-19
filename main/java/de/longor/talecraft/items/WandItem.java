@@ -35,7 +35,7 @@ public class WandItem extends Item {
     	if(worldIn.isRemote)
     		return true;
     	
-    	System.out.println("ITEM WAND : Block Click -> " + pos);
+    	// System.out.println("ITEM WAND : Block Click -> " + pos);
     	
     	NBTTagCompound compound = playerIn.getEntityData();
     	
@@ -65,7 +65,7 @@ public class WandItem extends Item {
     		tcWand.setBoolean("flip", !flip);
     	}
     	
-    	System.out.println("comp = " + tcWand);
+    	// System.out.println("comp = " + tcWand);
     	
     	TaleCraft.simpleNetworkWrapper.sendTo(new PlayerNBTDataMerge(compound), (EntityPlayerMP) playerIn);
     	
