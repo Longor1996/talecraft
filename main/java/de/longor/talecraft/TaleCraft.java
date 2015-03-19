@@ -10,12 +10,16 @@ import de.longor.talecraft.proxy.ServerHandler;
 import de.longor.util.TimedExecutor;
 import net.minecraft.block.Block;
 import net.minecraft.client.main.GameConfiguration;
+import net.minecraft.command.CommandHandler;
+import net.minecraft.command.ICommandManager;
+import net.minecraft.command.ServerCommandManager;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.NetworkSystem;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.RegistrySimple;
 import net.minecraft.world.World;
 import net.minecraftforge.client.gui.ForgeGuiFactory.ForgeConfigGui;
@@ -46,8 +50,8 @@ public class TaleCraft
     public static TaleCraft instance;
     public static ModContainer container;
     public static TCWorldsManager coremanager;
-    public static TaleCraftCMEventHandler fmlEventHandler;
-    public static TaleCraftEVTBEventHandler forgeEventHandler;
+    public static TaleCraftCommonEventHandler fmlEventHandler;
+    public static TaleCraftForgeEventHandler forgeEventHandler;
     public static SimpleNetworkWrapper simpleNetworkWrapper;
     public static TimedExecutor timedExecutor;
     public static Logger logger;
@@ -61,7 +65,8 @@ public class TaleCraft
     	logger = event.getModLog();
     	container = FMLCommonHandler.instance().findContainerFor(instance);
     	
-    	logger.info("--- TC-PREINIT");
+    	logger.info("TaleCraft initialization...");
+    	logger.info("TaleCraft Version: " + Reference.MOD_VERSION);
     	logger.info("TaleCraft ModContainer: " + container);
     	
     	MinecraftForge.EVENT_BUS.register(this);
@@ -70,6 +75,8 @@ public class TaleCraft
     	timedExecutor = new TimedExecutor();
     	simpleNetworkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("TaleCraftNet");
 		
+    	// this does NOT belong here!
+    	// Register the handler for server-side StringNBT-commands.
 		TaleCraft.instance.simpleNetworkWrapper.registerMessage(new IMessageHandler() {
 			@Override public IMessage onMessage(IMessage message, MessageContext ctx) {
 				if(message instanceof StringNBTCommand) {
@@ -80,27 +87,30 @@ public class TaleCraft
 			}
 		}, StringNBTCommand.class, 0x01, Side.SERVER);
     	
+		/// print debug information
     	logger.info("TaleCraft CoreManager @" + coremanager.hashCode());
     	logger.info("TaleCraft TimedExecutor @" + timedExecutor.hashCode());
     	logger.info("TaleCraft NET SimpleNetworkWrapper @" + simpleNetworkWrapper.hashCode());
     	
-    	fmlEventHandler = new TaleCraftCMEventHandler(this);
+    	// create and register the event handlers for COMMON
+    	fmlEventHandler = new TaleCraftCommonEventHandler(this);
     	FMLCommonHandler.instance().bus().register(fmlEventHandler);
-    	
-    	forgeEventHandler = new TaleCraftEVTBEventHandler(this);
-    	MinecraftForge.EVENT_BUS.register(forgeEventHandler);
-    	
     	logger.info("TaleCraft CME Handler @" + fmlEventHandler.hashCode());
+    	
+    	// create and register the event handlers for FORGE
+    	forgeEventHandler = new TaleCraftForgeEventHandler(this);
+    	MinecraftForge.EVENT_BUS.register(forgeEventHandler);
     	logger.info("TaleCraft EVTB Handler @" + forgeEventHandler.hashCode());
     	
+    	// Initialize all the Tabs/Blocks/Items/Commands etc.etc.
     	logger.info("Loading Tabs, Blocks, Items... (In that order)");
-    	
     	TaleCraftTabs.init();
     	TaleCraftBlocks.init();
     	TaleCraftItems.init();
+    	TaleCraftCommands.init();
     	
+    	// Initialize the Proxy(s)
     	logger.info("Initializing Proxy...");
-    	
     	proxy.taleCraft = this;
     	proxy.preInit(event);
     }
@@ -108,23 +118,22 @@ public class TaleCraft
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
-    	logger.info("--- TC-INIT");
     	proxy.init(event);
-    	
     }
     
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
-    	logger.info("--- TC-POSTINIT");
     	proxy.postInit(event);
     	logger.info("TaleCraft initialized, all systems ready.");
     }
 	
-	@EventHandler
+	@Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event){
-		//if (MinecraftServer.getServer().getCommandManager() instanceof ServerCommandManager) {
-		//	((CommandHandler) MinecraftServer.getServer().getCommandManager()).registerCommand(new CommandFloor());
-		//}
+		ICommandManager cmdmng = MinecraftServer.getServer().getCommandManager();
+		if (cmdmng instanceof ServerCommandManager && cmdmng instanceof CommandHandler) {
+			CommandHandler cmdhnd = (CommandHandler) cmdmng;
+			TaleCraftCommands.register(cmdhnd);
+		}
 	}
 }
