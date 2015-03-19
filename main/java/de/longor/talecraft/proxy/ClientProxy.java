@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Consumer;
 
 import javax.vecmath.Vector3f;
@@ -30,10 +31,12 @@ import de.longor.talecraft.client.gui.vcui.VCUIRenderer;
 import de.longor.talecraft.client.render.BoxRenderer;
 import de.longor.talecraft.client.render.CustomSkyRenderer;
 import de.longor.talecraft.client.render.EXTFontRenderer;
+import de.longor.talecraft.client.render.ITemporaryRenderable;
 import de.longor.talecraft.client.render.WireframeMode;
 import de.longor.talecraft.client.render.tileentity.ClockBlockTileEntityRenderer;
 import de.longor.talecraft.client.render.tileentity.GenericTileEntityRenderer;
 import de.longor.talecraft.network.PlayerNBTDataMerge;
+import de.longor.talecraft.network.StringNBTCommand;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -108,6 +111,8 @@ public class ClientProxy extends CommonProxy
 	public final KeyBinding buildModeBinding = new KeyBinding("key.toggleBuildMode", Keyboard.KEY_B, "key.categories.misc");
 	public final KeyBinding wireframeBinding = new KeyBinding("key.toggleWireframe", Keyboard.KEY_PERIOD, "key.categories.misc");
     
+	public final ResourceLocation selectionBoxTextuResourceLocation = new ResourceLocation("talecraft:textures/wandselection.png");
+	
 	// mc internals
 	public ModelManager mc_modelManager;
 	
@@ -115,6 +120,8 @@ public class ClientProxy extends CommonProxy
 	public int wireframeMode = 0;
     public InfoBar infoBarInstance = new InfoBar();
     public EXTFontRenderer fontRenderer;
+    public ConcurrentLinkedDeque<Runnable> clientTickQeue = new ConcurrentLinkedDeque<Runnable>();
+    public ConcurrentLinkedDeque<ITemporaryRenderable> clientRenderQeue = new ConcurrentLinkedDeque<ITemporaryRenderable>();
 	
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
@@ -143,17 +150,36 @@ public class ClientProxy extends CommonProxy
 		mesher.register(TaleCraftItems.wand, 0, new ModelResourceLocation("talecraft:wand", "inventory"));
 		
 		TaleCraft.instance.simpleNetworkWrapper.registerMessage(new IMessageHandler() {
-			@Override
-			public IMessage onMessage(IMessage message, MessageContext ctx) {
-				if(message instanceof PlayerNBTDataMerge) {
-					Minecraft mc = ClientProxy.this.mc;
-					if(mc.thePlayer != null) {
-						mc.thePlayer.getEntityData().merge(((PlayerNBTDataMerge) message).data);
-					}
+			@Override public IMessage onMessage(IMessage message, MessageContext ctx) {
+				if(message instanceof StringNBTCommand) {
+					StringNBTCommand cmd = (StringNBTCommand) message;
+					System.out.println("RECEIVED COMMAND : " + cmd);
 				}
 				return null;
 			}
-		}, PlayerNBTDataMerge.class, 0x01, Side.CLIENT);
+		}, StringNBTCommand.class, 0x01, Side.CLIENT);
+		
+		TaleCraft.instance.simpleNetworkWrapper.registerMessage(new IMessageHandler() {
+			@Override public IMessage onMessage(final IMessage message, MessageContext ctx) {
+				if(message instanceof PlayerNBTDataMerge) {
+					System.out.println("Received valid PlayerNBTDataMerge-Packet!");
+					final Minecraft mc = ClientProxy.this.mc;
+					
+					clientTickQeue.add(new Runnable(){
+						Minecraft micr = mc;
+						PlayerNBTDataMerge mpakDataMerge = (PlayerNBTDataMerge) message;
+						@Override public void run() {
+							if(micr.thePlayer != null) {
+								System.out.println("MERGING PLAYER DATA FROM SERVER INTO CLIENT");
+								micr.thePlayer.getEntityData().merge((mpakDataMerge.data));
+							}
+						}
+					});
+					
+				}
+				return null;
+			}
+		}, PlayerNBTDataMerge.class, 0x02, Side.CLIENT);
 		
 	}
 	
@@ -197,6 +223,14 @@ public class ClientProxy extends CommonProxy
 	public void worldPass(RenderWorldLastEvent event) {
 		WireframeMode.DISABLE();
 		
+		Iterator<ITemporaryRenderable> iterator = clientRenderQeue.iterator();
+		while(iterator.hasNext()) {
+			ITemporaryRenderable itr = iterator.next();
+			if(itr.canRemove()) {
+				iterator.remove();
+			}
+		}
+		
 		if(mc.thePlayer != null) {
 			GlStateManager.pushMatrix();
 			
@@ -205,55 +239,15 @@ public class ClientProxy extends CommonProxy
 			Tessellator tessellator = Tessellator.getInstance();
 			WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 			
-			double px = mc.thePlayer.prevPosX + (mc.thePlayer.posX - mc.thePlayer.prevPosX) * (double)partialTicks;
-            double py = mc.thePlayer.prevPosY + (mc.thePlayer.posY - mc.thePlayer.prevPosY) * (double)partialTicks;
-            double pz = mc.thePlayer.prevPosZ + (mc.thePlayer.posZ - mc.thePlayer.prevPosZ) * (double)partialTicks;
-			GL11.glTranslated(-px, -py, -pz);
+			worldPostRender(partialTicks, tessellator, worldrenderer);
 			
-			GlStateManager.disableCull();
-			GlStateManager.disableTexture2D();
-			GlStateManager.shadeModel(GL11.GL_SMOOTH);
-			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-			
-			NBTTagCompound playerData = mc.thePlayer.getEntityData();
-			if(playerData.hasKey("tcWand")) {
-				NBTTagCompound tcWand = playerData.getCompoundTag("tcWand");
-				
-				if(tcWand.hasKey("cursor")) {
-					final float E = 1f / 32f;
-					int[] cursor = tcWand.getIntArray("cursor");
-					BoxRenderer.renderBox(tessellator, worldrenderer, cursor[0]-E, cursor[1]-E, cursor[2]-E, cursor[0]+1+E, cursor[1]+1+E, cursor[2]+1+E,
-							1f,1f,0f,0.5f);
-				}
-				
-				if(tcWand.hasKey("boundsA") && tcWand.hasKey("boundsB")) {
-					int[] a = tcWand.getIntArray("boundsA");
-					int[] b = tcWand.getIntArray("boundsB");
-					
-					int ix = Math.min(a[0], b[0]);
-					int iy = Math.min(a[1], b[1]);
-					int iz = Math.min(a[2], b[2]);
-					int ax = Math.max(a[0], b[0]);
-					int ay = Math.max(a[1], b[1]);
-					int az = Math.max(a[2], b[2]);
-					
-					final float E = 0;
-					
-					BoxRenderer.renderSelectionBox(tessellator, worldrenderer, ix-E, iy-E, iz-E, ax+1+E, ay+1+E, az+1+E, 0.5f);
-				}
-			}
-			
-			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 			GlStateManager.popMatrix();
 		}
 		
 		GlStateManager.enableTexture2D();
 		
-		
-		
 		double fade = 0;
 		int color = 0x000000;
-		
 		if(fade > 0 && mc.ingameGUI != null) {
 			GL11.glMatrixMode(GL11.GL_PROJECTION);
 			GL11.glLoadIdentity();
@@ -268,6 +262,69 @@ public class ClientProxy extends CommonProxy
 		}
 	}
 	
+	private void worldPostRender(double partialTicks, Tessellator tessellator, WorldRenderer worldrenderer) {
+		// Translate into World-Space
+		double px = mc.thePlayer.prevPosX + (mc.thePlayer.posX - mc.thePlayer.prevPosX) * (double)partialTicks;
+        double py = mc.thePlayer.prevPosY + (mc.thePlayer.posY - mc.thePlayer.prevPosY) * (double)partialTicks;
+        double pz = mc.thePlayer.prevPosZ + (mc.thePlayer.posZ - mc.thePlayer.prevPosZ) * (double)partialTicks;
+		GL11.glTranslated(-px, -py, -pz);
+		
+		GlStateManager.disableCull();
+		GlStateManager.disableTexture2D();
+		GlStateManager.shadeModel(GL11.GL_FLAT);
+		
+		// Wand Selection Rendering
+		NBTTagCompound playerData = mc.thePlayer.getEntityData();
+		if(playerData.hasKey("tcWand")) {
+			NBTTagCompound tcWand = playerData.getCompoundTag("tcWand");
+			
+			if(tcWand.hasKey("cursor")) {
+				final float E = -1f / 64f;
+				int[] cursor = tcWand.getIntArray("cursor");
+				
+				GL11.glPolygonMode(GL11.GL_FRONT, GL11.GL_POINT);
+				GL11.glPolygonMode(GL11.GL_BACK, GL11.GL_FILL);
+				BoxRenderer.renderBox(tessellator, worldrenderer, cursor[0]-E, cursor[1]-E, cursor[2]-E, cursor[0]+1+E, cursor[1]+1+E, cursor[2]+1+E, 1f,1f,1f,1f);
+				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+			}
+			
+			if(tcWand.hasKey("boundsA") && tcWand.hasKey("boundsB")) {
+				int[] a = tcWand.getIntArray("boundsA");
+				int[] b = tcWand.getIntArray("boundsB");
+				
+				int ix = Math.min(a[0], b[0]);
+				int iy = Math.min(a[1], b[1]);
+				int iz = Math.min(a[2], b[2]);
+				int ax = Math.max(a[0], b[0]);
+				int ay = Math.max(a[1], b[1]);
+				int az = Math.max(a[2], b[2]);
+				
+				final float E = 1f / 32f;
+				
+				GlStateManager.disableBlend();
+				GlStateManager.disableLighting();
+				GlStateManager.disableNormalize();
+				GlStateManager.enableTexture2D();
+				RenderHelper.disableStandardItemLighting();
+				mc.getTextureManager().bindTexture(selectionBoxTextuResourceLocation);
+				BoxRenderer.renderSelectionBox(tessellator, worldrenderer, ix-E, iy-E, iz-E, ax+1+E, ay+1+E, az+1+E, 1);
+				
+				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+				GlStateManager.disableDepth();
+				BoxRenderer.renderSelectionBox(tessellator, worldrenderer, ix-E, iy-E, iz-E, ax+1+E, ay+1+E, az+1+E, 1);
+				GlStateManager.enableDepth();
+				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+				
+				GlStateManager.enableLighting();
+			}
+		}
+		
+		for(ITemporaryRenderable renderable : clientRenderQeue) {
+			renderable.render(mc, this, tessellator, worldrenderer, partialTicks);
+		}
+		
+	}
+
 	@SubscribeEvent
 	public void worldPassPre(RenderWorldEvent.Pre event) {
 		
@@ -289,7 +346,8 @@ public class ClientProxy extends CommonProxy
 		super.tick(event);
 		
 		if(event instanceof ClientTickEvent) {
-			
+			while(!clientTickQeue.isEmpty())
+				clientTickQeue.poll().run();
 		}
 		
 		if(event instanceof RenderTickEvent) {
@@ -344,6 +402,14 @@ public class ClientProxy extends CommonProxy
 				}
 			}, 250);
 		}
+	}
+	
+	public void sheduleClientTickTask(Runnable runnable) {
+		this.clientTickQeue.push(runnable);
+	}
+	
+	public void sheduleClientRenderTask(ITemporaryRenderable renderable) {
+		this.clientRenderQeue.push(renderable);
 	}
 	
 }

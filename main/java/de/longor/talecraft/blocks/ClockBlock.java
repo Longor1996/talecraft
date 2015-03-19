@@ -5,6 +5,7 @@ import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.TaleCraftTabs;
 import de.longor.talecraft.client.gui.TCGuiScreen;
 import de.longor.talecraft.client.gui.blocks.GuiClockBlock;
+import de.longor.talecraft.invoke.ITriggerableBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -23,7 +24,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ClockBlock extends BlockContainer {
+public class ClockBlock extends BlockContainer implements ITriggerableBlock {
 
 	public ClockBlock() {
 		super(TCAdminiumMaterial.instance);
@@ -62,6 +63,18 @@ public class ClockBlock extends BlockContainer {
     }
 	
 	@Override
+	public void trigger(World world, BlockPos position, int data) {
+		ClockBlockTileEntity tEntity = (ClockBlockTileEntity)world.getTileEntity(position);
+		if(tEntity != null) {
+			if(tEntity.isClockRunning()) {
+				tEntity.clockStop();
+			}else{
+				tEntity.clockStart();
+			}
+		}
+	}
+	
+	@Override
 	@SideOnly(Side.CLIENT)
     public MovingObjectPosition collisionRayTrace(World worldIn, BlockPos pos, Vec3 start, Vec3 end)
     {
@@ -81,6 +94,11 @@ public class ClockBlock extends BlockContainer {
     		return new AxisAlignedBB(pos.getX(),pos.getY(),pos.getZ(),pos.getX()+1,pos.getY()+1,pos.getZ()+1);
     	else
     		return null;
+    }
+	
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
+    {
+        return false;
     }
     
 	@Override
@@ -107,5 +125,6 @@ public class ClockBlock extends BlockContainer {
     }
     
     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune) {}
+    
 
 }

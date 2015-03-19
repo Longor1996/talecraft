@@ -115,5 +115,33 @@ public class WandItem extends Item {
     public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player) {
         return true;
     }
+    
+    public static final int[] getBoundsFromPLAYERorNULL(EntityPlayer player) {
+    	return getBoundsFromPLAYERDATAorNULL(player.getEntityData());
+    }
+    
+    public static final int[] getBoundsFromPLAYERDATAorNULL(NBTTagCompound playerData) {
+    	if(playerData.hasKey("tcWand"))
+    		return getBoundsFromTCWANDorNULL(playerData.getCompoundTag("tcWand"));
+    	return null;
+    }
+    
+    public static final int[] getBoundsFromTCWANDorNULL(NBTTagCompound tcWand) {
+		if(!tcWand.hasKey("boundsA") || !tcWand.hasKey("boundsB")) {
+			return null;
+		}
+    	
+    	int[] a = tcWand.getIntArray("boundsA");
+		int[] b = tcWand.getIntArray("boundsB");
+		
+		int ix = Math.min(a[0], b[0]);
+		int iy = Math.min(a[1], b[1]);
+		int iz = Math.min(a[2], b[2]);
+		int ax = Math.max(a[0], b[0]);
+		int ay = Math.max(a[1], b[1]);
+		int az = Math.max(a[2], b[2]);
+		
+		return new int[]{ix,iy,iz,ax,ay,az};
+    }
 	
 }

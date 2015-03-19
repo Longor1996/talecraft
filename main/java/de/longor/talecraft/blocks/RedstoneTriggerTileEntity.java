@@ -41,14 +41,11 @@ public class RedstoneTriggerTileEntity extends TileEntity implements ICommandSen
     private void readFromNBT_do(NBTTagCompound compound) {
     	NBTTagCompound cTagCompound = compound.getCompoundTag("triggerInvoke");
     	
-    	if(cTagCompound != null) {
-    		triggerInvoke.merge(cTagCompound);
-    	}
+    	triggerInvoke.merge(cTagCompound);
     }
     
 	@Override
-    public void writeToNBT(NBTTagCompound compound)
-    {
+    public void writeToNBT(NBTTagCompound compound) {
     	super.writeToNBT(compound);
     	writeToNBT_do(compound);
     }
@@ -76,9 +73,14 @@ public class RedstoneTriggerTileEntity extends TileEntity implements ICommandSen
 		
 		if(selfSource == null)
 			selfSource = new BlockInvokeSource(this);
-		
+    	
 		Invoke.invoke(triggerInvoke, selfSource);
 	}
+	
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
+    {
+        return false;
+    }
 	
 	@Override
 	public String getName() {

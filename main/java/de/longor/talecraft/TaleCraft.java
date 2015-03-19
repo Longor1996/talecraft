@@ -4,7 +4,9 @@ import org.apache.logging.log4j.Logger;
 
 import sun.net.NetworkClient;
 import de.longor.talecraft.managers.TCWorldsManager;
+import de.longor.talecraft.network.StringNBTCommand;
 import de.longor.talecraft.proxy.CommonProxy;
+import de.longor.talecraft.proxy.ServerHandler;
 import de.longor.util.TimedExecutor;
 import net.minecraft.block.Block;
 import net.minecraft.client.main.GameConfiguration;
@@ -28,6 +30,9 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -64,6 +69,16 @@ public class TaleCraft
     	coremanager = new TCWorldsManager(this);
     	timedExecutor = new TimedExecutor();
     	simpleNetworkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("TaleCraftNet");
+		
+		TaleCraft.instance.simpleNetworkWrapper.registerMessage(new IMessageHandler() {
+			@Override public IMessage onMessage(IMessage message, MessageContext ctx) {
+				if(message instanceof StringNBTCommand) {
+					StringNBTCommand cmd = (StringNBTCommand) message;
+					ServerHandler.handleSNBTCommand(ctx.getServerHandler(), cmd);
+				}
+				return null;
+			}
+		}, StringNBTCommand.class, 0x01, Side.SERVER);
     	
     	logger.info("TaleCraft CoreManager @" + coremanager.hashCode());
     	logger.info("TaleCraft TimedExecutor @" + timedExecutor.hashCode());

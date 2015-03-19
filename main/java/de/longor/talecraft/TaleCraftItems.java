@@ -21,7 +21,7 @@ public class TaleCraftItems {
 	static void init()
 	{
 		wand = new WandItem();
-		
+		wand.setUnlocalizedName("wand");
 		GameRegistry.registerItem(wand, "wand", "talecraft");
 	}
 	

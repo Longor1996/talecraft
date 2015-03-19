@@ -2,9 +2,11 @@ package de.longor.talecraft;
 
 import de.longor.talecraft.managers.TCWorldsManager;
 import de.longor.talecraft.managers.TCWorldManager;
+import de.longor.talecraft.proxy.ServerHandler;
 import net.minecraft.server.ServerEula;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -45,6 +47,12 @@ public class TaleCraftEVTBEventHandler
 	@SubscribeEvent
 	public void modelBake(ModelBakeEvent event) {
 		taleCraft.proxy.asClient().modelBake(event);
+	}
+	
+	@SubscribeEvent
+	public void entityJoinWorld(EntityJoinWorldEvent event) {
+		if(!event.world.isRemote)
+			ServerHandler.handleEntityJoin(event.world, event.entity);
 	}
 	
 	/*
