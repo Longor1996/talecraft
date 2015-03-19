@@ -50,9 +50,10 @@ public class BoxRenderer {
 	) {
         // top
         worldrenderer.startDrawingQuads();
-        worldrenderer.setBrightness(0xEE);
         
         worldrenderer.setColorRGBA_F(r, g, b, a);
+        worldrenderer.setColorRGBA_F(1, 0, 0, 1);
+        worldrenderer.setBrightness(0xEE);
         
         worldrenderer.addVertexWithUV(minX, maxY, maxZ, 0, 0);
         worldrenderer.addVertexWithUV(maxX, maxY, maxZ, 1, 0);

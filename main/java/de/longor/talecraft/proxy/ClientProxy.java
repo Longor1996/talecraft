@@ -15,6 +15,7 @@ import javax.vecmath.Vector3f;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.glu.GLU;
 
 import com.google.common.eventbus.Subscribe;
@@ -254,7 +255,11 @@ public class ClientProxy extends CommonProxy
 		
 		GlStateManager.disableCull();
 		GlStateManager.disableTexture2D();
+		GlStateManager.disableBlend();
 		GlStateManager.shadeModel(GL11.GL_FLAT);
+		
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO);
 		
 		// Wand Selection Rendering
 		NBTTagCompound playerData = mc.thePlayer.getEntityData();
@@ -267,7 +272,9 @@ public class ClientProxy extends CommonProxy
 				
 				GL11.glPolygonMode(GL11.GL_FRONT, GL11.GL_POINT);
 				GL11.glPolygonMode(GL11.GL_BACK, GL11.GL_FILL);
-				BoxRenderer.renderBox(tessellator, worldrenderer, cursor[0]-E, cursor[1]-E, cursor[2]-E, cursor[0]+1+E, cursor[1]+1+E, cursor[2]+1+E, 1f,1f,1f,1f);
+				GlStateManager.enableTexture2D();
+				mc.getTextureManager().bindTexture(new ResourceLocation("talecraft:textures/blocks/util/white.png"));
+				BoxRenderer.renderBox(tessellator, worldrenderer, cursor[0]-E, cursor[1]-E, cursor[2]-E, cursor[0]+1+E, cursor[1]+1+E, cursor[2]+1+E, 0f,1f,1f,1f);
 				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 			}
 			
@@ -289,7 +296,6 @@ public class ClientProxy extends CommonProxy
 				final float E = 1f / 32f;
 				
 				// Prepare state
-				GlStateManager.disableBlend();
 				GlStateManager.disableLighting();
 				GlStateManager.disableNormalize();
 				GlStateManager.enableTexture2D();
@@ -305,11 +311,11 @@ public class ClientProxy extends CommonProxy
 				BoxRenderer.renderSelectionBox(tessellator, worldrenderer, ix-E, iy-E, iz-E, ax+1+E, ay+1+E, az+1+E, 1);
 				GlStateManager.enableDepth();
 				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-				
-				// Reset state
-				GlStateManager.enableLighting();
 			}
 		}
+		
+		GlStateManager.disableBlend();
+		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
 		// Render all the temporary renderables
 		for(ITemporaryRenderable renderable : clientRenderQeue) {
