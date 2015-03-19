@@ -1,6 +1,5 @@
 package de.longor.talecraft.blocks;
 
-import de.longor.talecraft.TCAdminiumMaterial;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.TaleCraftTabs;
 import net.minecraft.block.Block;

@@ -18,8 +18,7 @@ import de.longor.talecraft.items.WandItem;
 public class TaleCraftItems {
 	public static WandItem wand;
 	
-	static void init()
-	{
+	static void init() {
 		wand = new WandItem();
 		wand.setUnlocalizedName("wand");
 		GameRegistry.registerItem(wand, "wand", "talecraft");

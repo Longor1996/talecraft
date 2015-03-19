@@ -22,7 +22,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import de.longor.talecraft.TCAdminiumMaterial;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.TaleCraftTabs;
 import de.longor.talecraft.client.gui.TCGuiScreen;
