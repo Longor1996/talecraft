@@ -35,8 +35,7 @@ public class QADGuiScreen extends GuiScreen {
 	
 	public QADGuiScreen() {
 		super.allowUserInput = false;
-		components = new ArrayList<QADComponent>();
-		buildGui(components);
+		components = null;
 	}
 	
 	public void buildGui(ArrayList<QADComponent> components) {
@@ -63,6 +62,12 @@ public class QADGuiScreen extends GuiScreen {
 	@Override
     public final void initGui() {
     	System.out.println("Gui.init()");
+    	
+    	if(components == null) {
+    		components = new ArrayList<QADComponent>();
+    		buildGui(components);
+    	}
+    	
     	layoutGui();
     }
 	
