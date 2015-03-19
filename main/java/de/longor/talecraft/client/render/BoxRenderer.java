@@ -91,39 +91,44 @@ public class BoxRenderer {
 			float minX, float minY, float minZ,
 			float maxX, float maxY, float maxZ, float a
 	) {
+		float U = Math.round(maxX - minX);
+		float V = Math.round(maxY - minY);
+		float W = Math.round(maxZ - minZ);
+		
         // top
         worldrenderer.startDrawingQuads();
         worldrenderer.setBrightness(0xEE);
+        worldrenderer.setColorRGBA_F(1, 1, 1, a);
         
-        worldrenderer.setColorRGBA_F(0, 1, 1, a); worldrenderer.addVertexWithUV(minX, maxY, maxZ, 0, 0);
-        worldrenderer.setColorRGBA_F(1, 1, 1, a); worldrenderer.addVertexWithUV(maxX, maxY, maxZ, 1, 0);
-        worldrenderer.setColorRGBA_F(1, 1, 0, a); worldrenderer.addVertexWithUV(maxX, maxY, minZ, 1, 1);
-        worldrenderer.setColorRGBA_F(0, 1, 0, a); worldrenderer.addVertexWithUV(minX, maxY, minZ, 0, 1);
+        worldrenderer.addVertexWithUV(minX, maxY, maxZ, 0, 0);
+        worldrenderer.addVertexWithUV(maxX, maxY, maxZ, U, 0);
+        worldrenderer.addVertexWithUV(maxX, maxY, minZ, U, W);
+        worldrenderer.addVertexWithUV(minX, maxY, minZ, 0, W);
         // bottom
-        worldrenderer.setColorRGBA_F(0, 0, 0, a); worldrenderer.addVertexWithUV(minX, minY, minZ, 0, 0);
-        worldrenderer.setColorRGBA_F(1, 0, 0, a); worldrenderer.addVertexWithUV(maxX, minY, minZ, 1, 0);
-        worldrenderer.setColorRGBA_F(1, 0, 1, a); worldrenderer.addVertexWithUV(maxX, minY, maxZ, 1, 1);
-        worldrenderer.setColorRGBA_F(0, 0, 1, a); worldrenderer.addVertexWithUV(minX, minY, maxZ, 0, 1);
+        worldrenderer.addVertexWithUV(minX, minY, minZ, 0, 0);
+        worldrenderer.addVertexWithUV(maxX, minY, minZ, U, 0);
+        worldrenderer.addVertexWithUV(maxX, minY, maxZ, U, W);
+        worldrenderer.addVertexWithUV(minX, minY, maxZ, 0, W);
         // negative z | north
-        worldrenderer.setColorRGBA_F(0, 1, 0, a); worldrenderer.addVertexWithUV(minX, maxY, minZ, 0, 0);
-        worldrenderer.setColorRGBA_F(1, 1, 0, a); worldrenderer.addVertexWithUV(maxX, maxY, minZ, 1, 0);
-        worldrenderer.setColorRGBA_F(1, 0, 0, a); worldrenderer.addVertexWithUV(maxX, minY, minZ, 1, 1);
-        worldrenderer.setColorRGBA_F(0, 0, 0, a); worldrenderer.addVertexWithUV(minX, minY, minZ, 0, 1);
+        worldrenderer.addVertexWithUV(minX, maxY, minZ, 0, 0);
+        worldrenderer.addVertexWithUV(maxX, maxY, minZ, U, 0);
+        worldrenderer.addVertexWithUV(maxX, minY, minZ, U, V);
+        worldrenderer.addVertexWithUV(minX, minY, minZ, 0, V);
         // positive z | south
-        worldrenderer.setColorRGBA_F(1, 1, 1, a); worldrenderer.addVertexWithUV(maxX, maxY, maxZ, 0, 0);
-        worldrenderer.setColorRGBA_F(0, 1, 1, a); worldrenderer.addVertexWithUV(minX, maxY, maxZ, 1, 0);
-        worldrenderer.setColorRGBA_F(0, 0, 1, a); worldrenderer.addVertexWithUV(minX, minY, maxZ, 1, 1);
-        worldrenderer.setColorRGBA_F(1, 0, 1, a); worldrenderer.addVertexWithUV(maxX, minY, maxZ, 0, 1);
+        worldrenderer.addVertexWithUV(maxX, maxY, maxZ, 0, 0);
+        worldrenderer.addVertexWithUV(minX, maxY, maxZ, U, 0);
+        worldrenderer.addVertexWithUV(minX, minY, maxZ, U, V);
+        worldrenderer.addVertexWithUV(maxX, minY, maxZ, 0, V);
         // positive x | east
-        worldrenderer.setColorRGBA_F(1, 1, 0, a); worldrenderer.addVertexWithUV(maxX, maxY, minZ, 0, 0);
-        worldrenderer.setColorRGBA_F(1, 1, 1, a); worldrenderer.addVertexWithUV(maxX, maxY, maxZ, 1, 0);
-        worldrenderer.setColorRGBA_F(1, 0, 1, a); worldrenderer.addVertexWithUV(maxX, minY, maxZ, 1, 1);
-        worldrenderer.setColorRGBA_F(1, 0, 0, a); worldrenderer.addVertexWithUV(maxX, minY, minZ, 0, 1);
+        worldrenderer.addVertexWithUV(maxX, maxY, minZ, 0, 0);
+        worldrenderer.addVertexWithUV(maxX, maxY, maxZ, W, 0);
+        worldrenderer.addVertexWithUV(maxX, minY, maxZ, W, V);
+        worldrenderer.addVertexWithUV(maxX, minY, minZ, 0, V);
         // negative x | west
-        worldrenderer.setColorRGBA_F(0, 1, 1, a); worldrenderer.addVertexWithUV(minX, maxY, maxZ, 0, 0);
-        worldrenderer.setColorRGBA_F(0, 1, 0, a); worldrenderer.addVertexWithUV(minX, maxY, minZ, 1, 0);
-        worldrenderer.setColorRGBA_F(0, 0, 0, a); worldrenderer.addVertexWithUV(minX, minY, minZ, 1, 1);
-        worldrenderer.setColorRGBA_F(0, 0, 1, a); worldrenderer.addVertexWithUV(minX, minY, maxZ, 0, 1);
+        worldrenderer.addVertexWithUV(minX, maxY, maxZ, 0, 0);
+        worldrenderer.addVertexWithUV(minX, maxY, minZ, W, 0);
+        worldrenderer.addVertexWithUV(minX, minY, minZ, W, V);
+        worldrenderer.addVertexWithUV(minX, minY, maxZ, 0, V);
         tessellator.draw();
 	}
 	
