@@ -1,6 +1,7 @@
 package de.longor.talecraft.invoke;
 
 import de.longor.talecraft.TaleCraft;
+import de.longor.talecraft.network.StringNBTCommand;
 import de.longor.talecraft.util.WorldHelper;
 import de.longor.talecraft.util.WorldHelper.$682953;
 import net.minecraft.block.Block;
@@ -42,8 +43,14 @@ public class Invoke {
 			// Logging this is a bad idea if a lot of these is executed very fast (ClockBlock, anyone?)
 			// TaleCraft.logger.info("--> [" + ix + ","+ iy + ","+ iz + ","+ ax + ","+ ay + ","+ az + "]");
 			
-			// If enabled ("gamerule visualEventDebugging"),
-			// TODO: send a packet to all players (in creative mode) that a BlockRegionTrigger just happened.
+			if(source.getWorld().getGameRules().getGameRuleBooleanValue("visualEventDebugging")) {
+				// Send a packet to all players that a BlockRegionTrigger just happened.
+				NBTTagCompound pktdata = new NBTTagCompound();
+				pktdata.setString("type", "line-to-box");
+				pktdata.setIntArray("src", new int[]{source.getPosition().getX(),source.getPosition().getY(),source.getPosition().getZ()});
+				pktdata.setIntArray("box", new int[]{ix,iy,iz,ax,ay,az});
+				TaleCraft.simpleNetworkWrapper.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
+			}
 			
 			final World world = source.getWorld();
 			
