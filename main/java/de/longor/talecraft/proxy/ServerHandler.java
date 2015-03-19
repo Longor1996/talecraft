@@ -14,16 +14,24 @@ import de.longor.talecraft.network.PlayerNBTDataMerge;
 import de.longor.talecraft.network.StringNBTCommand;
 
 public class ServerHandler {
-
+	
+	public static void handleEntityJoin(World world, Entity entity) {
+		// If this is a player, send the player the persistent EntityData.
+		if(entity instanceof EntityPlayerMP) {
+			TaleCraft.simpleNetworkWrapper.sendTo(new PlayerNBTDataMerge(entity.getEntityData()), (EntityPlayerMP) entity);
+		}
+	}
+	
 	public static void handleSNBTCommand(NetHandlerPlayServer serverHandler, StringNBTCommand cmd) {
 		EntityPlayerMP playerEntity = serverHandler.playerEntity;
 		WorldServer worldServer = playerEntity.getServerForPlayer();
 		handleSNBTCommand(playerEntity, worldServer, cmd);
 	}
 	
+	/** This method actually handles the SNBT-command. **/
 	private static void handleSNBTCommand(EntityPlayerMP player, World world, StringNBTCommand command) {
 		if(world.isRemote){
-			System.out.println("FATAL ERROR: ServerHandler method was called on client-side!");
+			TaleCraft.logger.error("FATAL ERROR: ServerHandler method was called on client-side!");
 			return;
 		}
 		
@@ -41,6 +49,7 @@ public class ServerHandler {
 		}
 	}
 	
+	/** Merges the given {@link NBTTagCompound} into the given {@link TileEntity} data. **/
 	private static void mergeTileEntityData(TileEntity entity, NBTTagCompound data) {
 		BlockPos blockpos = entity.getPos();
 		NBTTagCompound compound = new NBTTagCompound();
@@ -54,15 +63,6 @@ public class ServerHandler {
 		entity.readFromNBT(compound);
 		entity.markDirty();
 		entity.getWorld().markBlockForUpdate(blockpos);
-	}
-	
-	public static void handleEntityJoin(World world, Entity entity) {
-		
-		if(entity instanceof EntityPlayerMP) {
-			System.out.println("Sending extended EntityData to player: " + entity);
-	    	TaleCraft.simpleNetworkWrapper.sendTo(new PlayerNBTDataMerge(entity.getEntityData()), (EntityPlayerMP) entity);
-		}
-		
 	}
 	
 }
