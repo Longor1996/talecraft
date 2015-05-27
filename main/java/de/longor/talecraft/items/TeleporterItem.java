@@ -41,21 +41,25 @@ public class TeleporterItem extends TCItem {
         // Get Old Rotation
         float rY = playerIn.rotationYaw;
         float rP = playerIn.rotationPitch;
-        
-        // Force-Unmount the Player
-        playerIn.mountEntity((Entity)null);
-           
-        // Teleport
-        if(playerIn instanceof EntityPlayerMP) {
-        	// Its a MP player
-        	((EntityPlayerMP) playerIn).playerNetServerHandler.setPlayerLocation(nX,nY,nZ, rY, rP);
-			playerIn.velocityChanged = true;
-        } else if (playerIn instanceof EntityPlayerSP) {
-        	// Its a SP player
-        	/// This will probably never be called.
-        	playerIn.setPositionAndRotation(nX, nY, nZ, rY, rP);
-			playerIn.velocityChanged = true;
-		}
+    	
+    	// Teleport
+    	if(playerIn instanceof EntityPlayerMP) {
+    		// Its a MP player
+    		
+			if(playerIn.ridingEntity == null) {
+				((EntityPlayerMP) playerIn).playerNetServerHandler.setPlayerLocation(nX,nY,nZ, rY, rP);
+				playerIn.velocityChanged = true;
+			} else {
+				Entity riding = playerIn.ridingEntity;
+				riding.setPositionAndUpdate(nX, nY+0.01f, nZ);
+				riding.velocityChanged = true;
+			}
+			
+			playerIn.worldObj.playSoundAtEntity(
+					playerIn, "mob.endermen.portal",
+					1.5f, (float) (1f + Math.random()*0.1)
+			);
+    	}
         
     	return true;
     }
@@ -73,7 +77,14 @@ public class TeleporterItem extends TCItem {
     	
         MovingObjectPosition MOP = worldIn.rayTraceBlocks(start, end, false, false, false);
     	
-        if(MOP != null && MOP.typeOfHit == MovingObjectType.BLOCK) {
+        if(MOP == null)
+        	return itemStackIn;
+        
+        if(MOP.typeOfHit == MovingObjectType.ENTITY) {
+        	TaleCraft.logger.info("Hit Entity: " + MOP.entityHit);
+        }
+        
+        if(MOP.typeOfHit == MovingObjectType.BLOCK) {
         	// Extract Block Hit
         	BlockPos newPos = MOP.getBlockPos();
         	
@@ -86,23 +97,37 @@ public class TeleporterItem extends TCItem {
         	float rY = playerIn.rotationYaw;
         	float rP = playerIn.rotationPitch;
         	
-        	// Force-Unmount the Player
-        	playerIn.mountEntity((Entity)null);
-            
         	// Teleport
         	if(playerIn instanceof EntityPlayerMP) {
         		// Its a MP player
-        		((EntityPlayerMP) playerIn).playerNetServerHandler.setPlayerLocation(nX,nY,nZ, rY, rP);
-				playerIn.velocityChanged = true;
-        	} else if (playerIn instanceof EntityPlayerSP) {
-        		// Its a SP player
-        		/// This will probably never be called.
-        		playerIn.setPositionAndRotation(nX, nY, nZ, rY, rP);
-				playerIn.velocityChanged = true;
-			}
+        		
+				if(playerIn.ridingEntity == null) {
+					((EntityPlayerMP) playerIn).playerNetServerHandler.setPlayerLocation(nX,nY,nZ, rY, rP);
+					playerIn.velocityChanged = true;
+				} else {
+					Entity riding = playerIn.ridingEntity;
+					riding.setPositionAndUpdate(nX, nY+0.01f, nZ);
+					riding.velocityChanged = true;
+				}
+				
+				playerIn.worldObj.playSoundAtEntity(
+						playerIn, "mob.endermen.portal",
+						1.5f, (float) (1f + Math.random()*0.1)
+				);
+        	}
         }
         
         return itemStackIn;
+    }
+    
+    public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
+    	TaleCraft.logger.info("Mounting: " + target);
+    	
+    	attacker.mountEntity(target);
+    	attacker.velocityChanged = true;
+    	target.velocityChanged = true;
+    	
+        return false;
     }
     
 }
