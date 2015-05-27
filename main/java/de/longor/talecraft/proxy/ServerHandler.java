@@ -12,6 +12,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import de.longor.talecraft.TaleCraft;
+import de.longor.talecraft.blocks.BlockCommandReceiver;
 import de.longor.talecraft.network.PlayerNBTDataMerge;
 import de.longor.talecraft.network.StringNBTCommand;
 import de.longor.talecraft.util.PlayerHelper;
@@ -53,6 +54,30 @@ public class ServerHandler {
 			if(entity != null) {
 				TaleCraft.logger.info("(datamerge) " + position + " -> " + commandPacket.data);
 				mergeTileEntityData(entity, commandPacket.data);
+			} else {
+				player.addChatMessage(new ChatComponentText("Error: Failed to merge block data: TileEntity does not exist."));
+				return;
+			}
+		}
+		
+		if(commandPacket.command.startsWith("blockcommand:")) {
+			if(!PlayerHelper.isOp(player)) {
+				player.addChatMessage(new ChatComponentText("Error: 'blockcommand' is a operator only command."));
+				return;
+			}
+			
+			String positionString = commandPacket.command.substring(13);
+			String[] posStrings = positionString.split(" ");
+			BlockPos position = new BlockPos(Integer.valueOf(posStrings[0]), Integer.valueOf(posStrings[1]), Integer.valueOf(posStrings[2]));
+			
+			TileEntity entity = world.getTileEntity(position);
+			
+			if(entity != null) {
+				TaleCraft.logger.info("(block command) " + position + " -> " + commandPacket.data);
+				
+				if(entity instanceof BlockCommandReceiver) {
+					((BlockCommandReceiver) entity).commandReceived(commandPacket.data.getString("command"), commandPacket.data);
+				}
 			} else {
 				player.addChatMessage(new ChatComponentText("Error: Failed to merge block data: TileEntity does not exist."));
 				return;

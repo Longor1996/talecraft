@@ -35,10 +35,12 @@ import de.longor.talecraft.client.render.BoxRenderer;
 import de.longor.talecraft.client.render.CustomSkyRenderer;
 import de.longor.talecraft.client.render.EXTFontRenderer;
 import de.longor.talecraft.client.render.ITemporaryRenderable;
+import de.longor.talecraft.client.render.ItemMetaWorldRenderer;
 import de.longor.talecraft.client.render.WireframeMode;
 import de.longor.talecraft.client.render.tileentity.ClockBlockTileEntityRenderer;
 import de.longor.talecraft.client.render.tileentity.GenericTileEntityRenderer;
 import de.longor.talecraft.client.render.tileentity.IEXTTileEntityRenderer;
+import de.longor.talecraft.items.TCItem;
 import de.longor.talecraft.network.PlayerNBTDataMerge;
 import de.longor.talecraft.network.StringNBTCommand;
 import net.minecraft.block.Block;
@@ -82,6 +84,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.RegistrySimple;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec3i;
 import net.minecraft.world.World;
 import net.minecraftforge.client.IItemRenderer;
@@ -329,6 +332,21 @@ public class ClientProxy extends CommonProxy
 		// Render all the temporary renderables
 		for(ITemporaryRenderable renderable : clientRenderQeue) {
 			renderable.render(mc, this, tessellator, worldrenderer, partialTicks);
+		}
+		
+		// Render Item Meta Renderables
+		if(mc.thePlayer != null && mc.thePlayer.getCurrentEquippedItem() != null) {
+			ItemStack itemStack = mc.thePlayer.getCurrentEquippedItem();
+			Item itemType = itemStack.getItem();
+			
+			ItemMetaWorldRenderer.tessellator = tessellator;
+			ItemMetaWorldRenderer.worldrenderer = worldrenderer;
+			ItemMetaWorldRenderer.partialTicks = partialTicks;
+			ItemMetaWorldRenderer.clientProxy = this;
+			ItemMetaWorldRenderer.world = mc.theWorld;
+			ItemMetaWorldRenderer.player = mc.thePlayer;
+			ItemMetaWorldRenderer.playerPosition = new Vec3(px, py, pz);
+			ItemMetaWorldRenderer.render(itemType, itemStack);
 		}
 		
 	}

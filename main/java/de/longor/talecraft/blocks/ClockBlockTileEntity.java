@@ -24,23 +24,35 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ClockBlockTileEntity extends TileEntity implements IUpdatePlayerListBox, ICommandSender, IInvokeSource {
+public class ClockBlockTileEntity extends TileEntity implements
+		IUpdatePlayerListBox,
+		ICommandSender,
+		IInvokeSource,
+		BlockCommandReceiver {
+	
 	NBTTagCompound clockInvoke;
 	IInvokeSource selfSource;
 	
-	int set_repeat;
-	int set_speed;
-	int set_time;
+	public int set_repeat;
+	public int set_speed;
+	public int set_time;
 	
-	boolean active;
-	int repeat;
-	int speed;
-	int time;
+	/** Countdown Active? **/
+	public boolean active;
+	
+	/** Countdown Repeats! **/
+	public int repeat;
+	
+	/** Countdown Speed! **/
+	public int speed;
+	
+	/** Countdown Value! **/
+	public int time;
 	
 	public ClockBlockTileEntity() {
 		clockInvoke = new NBTTagCompound();
 		
-		set_repeat = Integer.MAX_VALUE;
+		set_repeat = 10;
 		set_speed = 1;
 		set_time = 20;
 		
@@ -93,6 +105,7 @@ public class ClockBlockTileEntity extends TileEntity implements IUpdatePlayerLis
     {
     	NBTTagCompound comp = pkt.getNbtCompound();
     	readNBT_do(comp);;
+    	// TaleCraft.logger.info("CBLOCK : onDataPacket : " + comp);
     }
     
     @Override
@@ -111,7 +124,7 @@ public class ClockBlockTileEntity extends TileEntity implements IUpdatePlayerLis
     }
 	
     public void clockPause() {
-		active = false;
+		active ^= true;
     }
     
     public void clockStop() {
@@ -157,6 +170,24 @@ public class ClockBlockTileEntity extends TileEntity implements IUpdatePlayerLis
     	}
     	
     }
+    
+	@Override
+	public void commandReceived(String command, NBTTagCompound data) {
+		TaleCraft.logger.info("command @ " + this + ": " + command + " -> " + data);
+		
+		if("start".equals(command)) {
+			clockStart();
+		}
+		
+		if("pause".equals(command)) {
+			clockPause();
+		}
+		
+		if("stop".equals(command)) {
+			clockStop();
+		}
+		
+	}
     
     @Override
     @SideOnly(Side.CLIENT)
@@ -241,5 +272,5 @@ public class ClockBlockTileEntity extends TileEntity implements IUpdatePlayerLis
 	public void getInvokeDataCompounds(List<NBTTagCompound> invokes) {
 		invokes.add(clockInvoke);
 	}
-    
+	
 }

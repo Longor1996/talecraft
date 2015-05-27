@@ -64,4 +64,5 @@ public class TCItem extends Item {
     public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player) {
         return true;
     }
+    
 }

@@ -98,7 +98,6 @@ public class BoxRenderer {
         worldrenderer.startDrawingQuads();
         
         worldrenderer.setColorRGBA_F(r, g, b, a);
-        worldrenderer.setColorRGBA_F(1, 0, 0, 1);
         worldrenderer.setBrightness(0xEE);
         
         worldrenderer.addVertexWithUV(minX, maxY, maxZ, 0, 0);
@@ -139,13 +138,13 @@ public class BoxRenderer {
 			double maxX, double maxY, double maxZ,
 			float r, float g, float b, float a
 	) {
-        // top
         worldrenderer.startDrawingQuads();
         
         worldrenderer.setColorRGBA_F(r, g, b, a);
-        worldrenderer.setColorRGBA_F(1, 0, 0, 1);
-        worldrenderer.setBrightness(0xEE);
+        worldrenderer.setBrightness(0xFF);
         
+        // top
+        worldrenderer.setNormal(0, 1, 0);
         worldrenderer.addVertexWithUV(minX, maxY, maxZ, 0, 0);
         worldrenderer.addVertexWithUV(maxX, maxY, maxZ, 1, 0);
         worldrenderer.addVertexWithUV(maxX, maxY, minZ, 1, 1);
@@ -189,8 +188,8 @@ public class BoxRenderer {
 		
         // top
         worldrenderer.startDrawingQuads();
-        worldrenderer.setBrightness(0xEE);
         worldrenderer.setColorRGBA_F(1, 1, 1, a);
+        worldrenderer.setBrightness(0xEE);
         
         worldrenderer.addVertexWithUV(minX, maxY, maxZ, 0, 0);
         worldrenderer.addVertexWithUV(maxX, maxY, maxZ, U, 0);
