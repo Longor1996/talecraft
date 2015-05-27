@@ -29,9 +29,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class FillerItem extends TCItem {
+public class EraserItem extends TCItem {
 	
-	public FillerItem() {
+	public EraserItem() {
         this.setCreativeTab(TaleCraftTabs.tab_TaleCraftTab);
 	}
 	
@@ -40,9 +40,9 @@ public class FillerItem extends TCItem {
     	if(worldIn.isRemote)
     		return true;
     	
-    	// TaleCraft.logger.info("ITEM FILLER : Block Click -> " + pos);
+		// TaleCraft.logger.info("ITEM ERASER : Block Click -> " + pos);
     	
-    	IBlockState state = worldIn.getBlockState(pos);
+    	IBlockState state = Blocks.air.getDefaultState();
     	
     	// note: the bounds are already sorted
     	int[] bounds = WandItem.getBoundsFromPLAYERorNULL(playerIn);

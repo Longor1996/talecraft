@@ -1,5 +1,6 @@
 package de.longor.talecraft.blocks;
 
+import java.util.List;
 import java.util.Random;
 
 import de.longor.talecraft.TaleCraft;
@@ -23,7 +24,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class RedstoneTriggerTileEntity extends TileEntity implements ICommandSender {
+public class RedstoneTriggerTileEntity extends TileEntity implements ICommandSender, IInvokeSource {
 	NBTTagCompound triggerInvoke;
 	IInvokeSource selfSource;
 	
@@ -135,6 +136,16 @@ public class RedstoneTriggerTileEntity extends TileEntity implements ICommandSen
 	@Override
 	public String toString() {
 		return "RedstoneTriggerTileEntity:{}";
+	}
+
+	@Override
+	public ICommandSender getCommandSender() {
+		return this;
+	}
+
+	@Override
+	public void getInvokeDataCompounds(List<NBTTagCompound> invokes) {
+		invokes.add(triggerInvoke);
 	}
 	
 }

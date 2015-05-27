@@ -13,12 +13,16 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import com.google.common.base.Function;
 
+import de.longor.talecraft.items.EraserItem;
 import de.longor.talecraft.items.FillerItem;
+import de.longor.talecraft.items.TeleporterItem;
 import de.longor.talecraft.items.WandItem;
 
 public class TaleCraftItems {
 	public static WandItem wand;
 	public static FillerItem filler;
+	public static EraserItem eraser;
+	public static TeleporterItem teleporter;
 	
 	static void init() {
 		wand = new WandItem();
@@ -28,6 +32,14 @@ public class TaleCraftItems {
 		filler = new FillerItem();
 		filler.setUnlocalizedName("filler");
 		GameRegistry.registerItem(filler, "filler", "talecraft");
+		
+		eraser = new EraserItem();
+		eraser.setUnlocalizedName("eraser");
+		GameRegistry.registerItem(eraser, "eraser", "talecraft");
+		
+		teleporter = new TeleporterItem();
+		teleporter.setUnlocalizedName("teleporter");
+		GameRegistry.registerItem(teleporter, "teleporter", "talecraft");
 	}
 	
 }

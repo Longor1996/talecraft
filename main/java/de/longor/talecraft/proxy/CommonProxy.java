@@ -18,7 +18,6 @@ public abstract class CommonProxy {
 	public final ClientProxy asClient() {
 		return (ClientProxy) this;
 	}
-	@SideOnly(Side.SERVER)
 	public final ServerProxy asServer() {
 		return (ServerProxy) this;
 	}
@@ -45,7 +44,7 @@ public abstract class CommonProxy {
 		TCWorldManager mng = taleCraft.coremanager.fetchManager(event.world);
 		
 		if(mng == null) {
-			System.err.println("No WorldManager for @" + event.world.hashCode());
+			TaleCraft.logger.error("No WorldManager for @" + event.world.hashCode());
 			return;
 		}
 		

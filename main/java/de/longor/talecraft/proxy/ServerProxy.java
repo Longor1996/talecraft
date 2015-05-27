@@ -2,6 +2,9 @@ package de.longor.talecraft.proxy;
 
 import de.longor.talecraft.managers.TCWorldsManager;
 import de.longor.talecraft.managers.TCWorldManager;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.UserListOps;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -35,5 +38,5 @@ public class ServerProxy extends CommonProxy
 	public void tickWorld(WorldTickEvent event) {
 		super.tickWorld(event);
 	}
-
+	
 }

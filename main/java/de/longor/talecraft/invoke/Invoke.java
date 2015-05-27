@@ -3,7 +3,7 @@ package de.longor.talecraft.invoke;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.network.StringNBTCommand;
 import de.longor.talecraft.util.WorldHelper;
-import de.longor.talecraft.util.WorldHelper.$682953;
+import de.longor.talecraft.util.WorldHelper.BlockRegionIterator;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCommandBlock;
 import net.minecraft.block.state.IBlockState;
@@ -55,7 +55,7 @@ public class Invoke {
 			final World world = source.getWorld();
 			
 			// Since we dont have lambda's, lets do things the old (ugly) way.
-			WorldHelper.foreach(world, ix, iy, iz, ax, ay, az, new $682953() {
+			WorldHelper.foreach(world, ix, iy, iz, ax, ay, az, new BlockRegionIterator() {
 				@Override public void $(IBlockState state, BlockPos position) {
 					Block block = state.getBlock();
 					if(block instanceof ITriggerableBlock){

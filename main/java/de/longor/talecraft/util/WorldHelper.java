@@ -14,7 +14,7 @@ public class WorldHelper {
 	 * Iterates trough every block and executes a given action.
 	 * WARNING: This method assumes that the bounds given as parameters are already validated!
 	 **/
-	public static final void foreach(World world, int ix, int iy, int iz, int ax, int ay, int az, $682953 function) {
+	public static final void foreach(World world, int ix, int iy, int iz, int ax, int ay, int az, BlockRegionIterator function) {
 		if(world == null)
 			return;
 		if(function == null)
@@ -53,7 +53,7 @@ public class WorldHelper {
 	/**
 	 * Dummy functional interface with only one method.
 	 **/
-	public static interface $682953 {
+	public static interface BlockRegionIterator {
 		void $(IBlockState state, BlockPos position);
 	}
 	

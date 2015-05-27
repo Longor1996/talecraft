@@ -1,6 +1,9 @@
 package de.longor.talecraft.invoke;
 
+import java.util.List;
+
 import net.minecraft.command.ICommandSender;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -34,6 +37,11 @@ public class BlockInvokeSource implements IInvokeSource {
 	@Override
 	public String toString() {
 		return "BlockInvokeSource:{"+commandSender+"}@"+position;
+	}
+	
+	@Override
+	public void getInvokeDataCompounds(List<NBTTagCompound> invokes) {
+		// none
 	}
 	
 }

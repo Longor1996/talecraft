@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -18,6 +19,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.glu.GLU;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.eventbus.Subscribe;
 
 import de.longor.talecraft.Reference;
@@ -36,6 +38,7 @@ import de.longor.talecraft.client.render.ITemporaryRenderable;
 import de.longor.talecraft.client.render.WireframeMode;
 import de.longor.talecraft.client.render.tileentity.ClockBlockTileEntityRenderer;
 import de.longor.talecraft.client.render.tileentity.GenericTileEntityRenderer;
+import de.longor.talecraft.client.render.tileentity.IEXTTileEntityRenderer;
 import de.longor.talecraft.network.PlayerNBTDataMerge;
 import de.longor.talecraft.network.StringNBTCommand;
 import net.minecraft.block.Block;
@@ -71,6 +74,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
@@ -123,6 +127,7 @@ public class ClientProxy extends CommonProxy
  	private final KeyBinding buildModeBinding = new KeyBinding("key.toggleBuildMode", Keyboard.KEY_B, "key.categories.misc");
  	private final KeyBinding visualizationBinding = new KeyBinding("key.toggleWireframe", Keyboard.KEY_PERIOD, "key.categories.misc");
  	private final ResourceLocation selectionBoxTextuResourceLocation = new ResourceLocation("talecraft:textures/wandselection.png");
+ 	private final ResourceLocation whitePixelTextureResourceLocation = new ResourceLocation("talecraft:textures/blocks/util/white.png");
  	
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
@@ -135,8 +140,10 @@ public class ClientProxy extends CommonProxy
 		ClientRegistry.registerKeyBinding(visualizationBinding);
 		
 		// register all tileentity renderers
-		ClientRegistry.bindTileEntitySpecialRenderer(ClockBlockTileEntity.class, new GenericTileEntityRenderer<ClockBlockTileEntity>("talecraft:textures/blocks/util/timer.png"));
-		ClientRegistry.bindTileEntitySpecialRenderer(RedstoneTriggerTileEntity.class, new GenericTileEntityRenderer<RedstoneTriggerTileEntity>("talecraft:textures/blocks/util/redstoneTriggerOff.png"));
+		ClientRegistry.bindTileEntitySpecialRenderer(ClockBlockTileEntity.class,
+				new GenericTileEntityRenderer<ClockBlockTileEntity>("talecraft:textures/blocks/util/timer.png"));
+		ClientRegistry.bindTileEntitySpecialRenderer(RedstoneTriggerTileEntity.class,
+				new GenericTileEntityRenderer<RedstoneTriggerTileEntity>("talecraft:textures/blocks/util/redstoneTriggerOff.png"));
 		
 	}
 	
@@ -153,14 +160,15 @@ public class ClientProxy extends CommonProxy
 		
 		mesher.register(TaleCraftItems.wand, 0, new ModelResourceLocation("talecraft:wand", "inventory"));
 		mesher.register(TaleCraftItems.filler, 0, new ModelResourceLocation("talecraft:filler", "inventory"));
+		mesher.register(TaleCraftItems.eraser, 0, new ModelResourceLocation("talecraft:eraser", "inventory"));
+		mesher.register(TaleCraftItems.teleporter, 0, new ModelResourceLocation("talecraft:teleporter", "inventory"));
 		
 		// register StringNBTCommand-Packet
 		TaleCraft.instance.simpleNetworkWrapper.registerMessage(new IMessageHandler() {
 			@Override public IMessage onMessage(IMessage message, MessageContext ctx) {
 				if(message instanceof StringNBTCommand) {
 					StringNBTCommand cmd = (StringNBTCommand) message;
-					System.out.println("RECEIVED COMMAND : " + cmd);
-					// We dont do anything yet with these.
+					// TODO: We dont do anything yet with these.
 				}
 				return null;
 			}
@@ -230,6 +238,7 @@ public class ClientProxy extends CommonProxy
 		
 		// XXX: EXPERIMENTAL FEATURE
 		// If active, render a fade-effect (this makes the screen go dark).
+		// This overlays everything except the hand and the GUI, which is wrong.
 		double fade = 0f;
 		int color = 0x000000;
 		if(fade > 0 && mc.ingameGUI != null) {
@@ -273,7 +282,7 @@ public class ClientProxy extends CommonProxy
 				GL11.glPolygonMode(GL11.GL_FRONT, GL11.GL_POINT);
 				GL11.glPolygonMode(GL11.GL_BACK, GL11.GL_FILL);
 				GlStateManager.enableTexture2D();
-				mc.getTextureManager().bindTexture(new ResourceLocation("talecraft:textures/blocks/util/white.png"));
+				mc.getTextureManager().bindTexture(whitePixelTextureResourceLocation);
 				BoxRenderer.renderBox(tessellator, worldrenderer, cursor[0]-E, cursor[1]-E, cursor[2]-E, cursor[0]+1+E, cursor[1]+1+E, cursor[2]+1+E, 0f,1f,1f,1f);
 				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 			}

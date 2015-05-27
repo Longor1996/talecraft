@@ -24,7 +24,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class WandItem extends Item {
+public class WandItem extends TCItem {
 	
 	public WandItem() {
         this.setCreativeTab(TaleCraftTabs.tab_TaleCraftTab);
@@ -71,48 +71,12 @@ public class WandItem extends Item {
     	
         return true;
     }
-
-    public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn)
-    {
-    	if(worldIn.isRemote)
-    		return itemStackIn;
-        return itemStackIn;
-    }
-
-    public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityPlayer playerIn)
-    {
-        return stack;
-    }
-
-    public boolean isDamageable()
-    {
-        return false;
-    }
-
-    public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-        return false;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public boolean isFull3D()
-    {
-        return true;
-    }
-
-    public EnumAction getItemUseAction(ItemStack stack)
-    {
-        return EnumAction.NONE;
-    }
-
-    public boolean canHarvestBlock(Block blockIn)
-    {
-        return false;
-    }
     
-    @Override
-    public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player) {
-        return true;
-    }
+    
+    
+    
+    
+    
     
     public static final int[] getBoundsFromPLAYERorNULL(EntityPlayer player) {
     	return getBoundsFromPLAYERDATAorNULL(player.getEntityData());

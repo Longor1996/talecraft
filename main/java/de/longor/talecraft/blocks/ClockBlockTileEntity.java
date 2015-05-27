@@ -1,5 +1,7 @@
 package de.longor.talecraft.blocks;
 
+import java.util.List;
+
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.TaleCraftBlocks;
 import de.longor.talecraft.invoke.BlockInvokeSource;
@@ -22,7 +24,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ClockBlockTileEntity extends TileEntity implements IUpdatePlayerListBox, ICommandSender {
+public class ClockBlockTileEntity extends TileEntity implements IUpdatePlayerListBox, ICommandSender, IInvokeSource {
 	NBTTagCompound clockInvoke;
 	IInvokeSource selfSource;
 	
@@ -229,5 +231,15 @@ public class ClockBlockTileEntity extends TileEntity implements IUpdatePlayerLis
 
 	@Override
 	public void setCommandStat(Type type, int amount) {}
+
+	@Override
+	public ICommandSender getCommandSender() {
+		return this;
+	}
+
+	@Override
+	public void getInvokeDataCompounds(List<NBTTagCompound> invokes) {
+		invokes.add(clockInvoke);
+	}
     
 }

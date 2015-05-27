@@ -5,6 +5,8 @@ itemGroup.talecraftTab=TaleCraft [Main]
 
 item.wand.name=Wand
 item.filler.name=Filler
+item.eraser.name=Eraser
+item.teleporter.name=Teleporter
 
 tile.talecraft:clockblock.name=Clock
 tile.talecraft:redstone_trigger.name=Redstone Trigger

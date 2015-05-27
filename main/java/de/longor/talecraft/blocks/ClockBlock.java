@@ -53,8 +53,6 @@ public class ClockBlock extends BlockContainer implements ITriggerableBlock {
     	if(playerIn.isSneaking())
 			return true;
     	
-		System.out.println("HELLO "+playerIn.getName().toUpperCase()+", THIS IS CLOCK");
-		
 		Minecraft mc = Minecraft.getMinecraft();
 		mc.displayGuiScreen(new GuiClockBlock((ClockBlockTileEntity)worldIn.getTileEntity(pos)));
 		

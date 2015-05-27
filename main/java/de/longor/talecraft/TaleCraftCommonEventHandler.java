@@ -30,25 +30,25 @@ public class TaleCraftCommonEventHandler
 	@Subscribe
 	public void serverStarting(FMLServerStartingEvent event)
 	{
-		System.out.println("Server starting: " + event + " [TCINFO]");
+		// TaleCraft.logger.info("Server starting: " + event + " [TCINFO]");
 	}
 	
 	@Subscribe
 	public void serverStopping(FMLServerStoppingEvent event)
 	{
-		System.out.println("Server stopping: " + event + " [TCINFO]");
+		// TaleCraft.logger.info("Server stopping: " + event + " [TCINFO]");
 	}
 	
 	@Subscribe
 	public void serverStarted(FMLServerStartedEvent event)
 	{
-		System.out.println("Server started: " + event + " [TCINFO]");
+		// TaleCraft.logger.info("Server started: " + event + " [TCINFO]");
 	}
 	
 	@Subscribe
 	public void serverStopped(FMLServerStoppedEvent event)
 	{
-		System.out.println("Server stopped: " + event + " [TCINFO]");
+		// TaleCraft.logger.info("Server stopped: " + event + " [TCINFO]");
 	}
 	
 	@SideOnly(Side.CLIENT)

@@ -5,13 +5,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.network.PlayerNBTDataMerge;
 import de.longor.talecraft.network.StringNBTCommand;
+import de.longor.talecraft.util.PlayerHelper;
 
 public class ServerHandler {
 	
@@ -29,22 +32,30 @@ public class ServerHandler {
 	}
 	
 	/** This method actually handles the SNBT-command. **/
-	private static void handleSNBTCommand(EntityPlayerMP player, World world, StringNBTCommand command) {
+	private static void handleSNBTCommand(EntityPlayerMP player, World world, StringNBTCommand commandPacket) {
 		if(world.isRemote){
 			TaleCraft.logger.error("FATAL ERROR: ServerHandler method was called on client-side!");
 			return;
 		}
 		
-		if(command.command.startsWith("blockdatamerge:")) {
-			String positionString = command.command.substring(15);
+		if(commandPacket.command.startsWith("blockdatamerge:")) {
+			if(!PlayerHelper.isOp(player)) {
+				player.addChatMessage(new ChatComponentText("Error: 'blockdatamerge' is a operator only command."));
+				return;
+			}
+			
+			String positionString = commandPacket.command.substring(15);
 			String[] posStrings = positionString.split(" ");
 			BlockPos position = new BlockPos(Integer.valueOf(posStrings[0]), Integer.valueOf(posStrings[1]), Integer.valueOf(posStrings[2]));
 			
 			TileEntity entity = world.getTileEntity(position);
 			
 			if(entity != null) {
-				TaleCraft.logger.info("(datamerge) " + position + " -> " + command.data);
-				mergeTileEntityData(entity, command.data);
+				TaleCraft.logger.info("(datamerge) " + position + " -> " + commandPacket.data);
+				mergeTileEntityData(entity, commandPacket.data);
+			} else {
+				player.addChatMessage(new ChatComponentText("Error: Failed to merge block data: TileEntity does not exist."));
+				return;
 			}
 		}
 	}
