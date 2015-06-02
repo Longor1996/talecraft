@@ -36,10 +36,13 @@ import de.longor.talecraft.client.render.CustomSkyRenderer;
 import de.longor.talecraft.client.render.EXTFontRenderer;
 import de.longor.talecraft.client.render.ITemporaryRenderable;
 import de.longor.talecraft.client.render.ItemMetaWorldRenderer;
+import de.longor.talecraft.client.render.PushRenderableFactory;
 import de.longor.talecraft.client.render.WireframeMode;
+import de.longor.talecraft.client.render.entity.PointEntityRenderer;
 import de.longor.talecraft.client.render.tileentity.ClockBlockTileEntityRenderer;
 import de.longor.talecraft.client.render.tileentity.GenericTileEntityRenderer;
 import de.longor.talecraft.client.render.tileentity.IEXTTileEntityRenderer;
+import de.longor.talecraft.entities.EntityPoint;
 import de.longor.talecraft.items.TCItem;
 import de.longor.talecraft.network.PlayerNBTDataMerge;
 import de.longor.talecraft.network.StringNBTCommand;
@@ -94,6 +97,7 @@ import net.minecraftforge.client.event.RenderWorldEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -132,6 +136,14 @@ public class ClientProxy extends CommonProxy
  	private final ResourceLocation selectionBoxTextuResourceLocation = new ResourceLocation("talecraft:textures/wandselection.png");
  	private final ResourceLocation whitePixelTextureResourceLocation = new ResourceLocation("talecraft:textures/blocks/util/white.png");
  	
+ 	public static final ResourceLocation colorReslocWhite = new ResourceLocation("talecraft:textures/colors/white.png");
+ 	public static final ResourceLocation colorReslocBlack = new ResourceLocation("talecraft:textures/colors/black.png");
+ 	public static final ResourceLocation colorReslocRed = new ResourceLocation("talecraft:textures/colors/red.png");
+ 	public static final ResourceLocation colorReslocBlue = new ResourceLocation("talecraft:textures/colors/blue.png");
+ 	public static final ResourceLocation colorReslocGreen = new ResourceLocation("talecraft:textures/colors/green.png");
+ 	public static final ResourceLocation colorReslocYellow = new ResourceLocation("talecraft:textures/colors/yellow.png");
+ 	public static final ResourceLocation colorReslocOrange = new ResourceLocation("talecraft:textures/colors/orange.png");
+ 	
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
@@ -165,13 +177,16 @@ public class ClientProxy extends CommonProxy
 		mesher.register(TaleCraftItems.filler, 0, new ModelResourceLocation("talecraft:filler", "inventory"));
 		mesher.register(TaleCraftItems.eraser, 0, new ModelResourceLocation("talecraft:eraser", "inventory"));
 		mesher.register(TaleCraftItems.teleporter, 0, new ModelResourceLocation("talecraft:teleporter", "inventory"));
+		mesher.register(TaleCraftItems.instakill, 0, new ModelResourceLocation("talecraft:instakill", "inventory"));
+		
+		RenderingRegistry.registerEntityRenderingHandler(EntityPoint.class, new PointEntityRenderer(mc.getRenderManager()));
 		
 		// register StringNBTCommand-Packet
 		TaleCraft.instance.simpleNetworkWrapper.registerMessage(new IMessageHandler() {
 			@Override public IMessage onMessage(IMessage message, MessageContext ctx) {
 				if(message instanceof StringNBTCommand) {
 					StringNBTCommand cmd = (StringNBTCommand) message;
-					// TODO: We dont do anything yet with these.
+					ClientProxy.this.handleClientCommand(cmd.command,cmd.data);
 				}
 				return null;
 			}
@@ -198,6 +213,19 @@ public class ClientProxy extends CommonProxy
 		}, PlayerNBTDataMerge.class, 0x02, Side.CLIENT);
 	} // init(..){}
 	
+	protected void handleClientCommand(String command, NBTTagCompound data) {
+		// TODO: Commands SERVER->CLIENT ?
+		
+		if(command.equals("pushRenderable")) {
+			ITemporaryRenderable renderable = PushRenderableFactory.parsePushRenderableFromNBT(data);
+			if(renderable != null) {
+				clientRenderQeue.offer(renderable);
+			}
+			return;
+		}
+		
+	}
+
 	public void modelBake(ModelBakeEvent event) {
 	    this.mc_modelManager = event.modelManager;
 	}
@@ -239,7 +267,7 @@ public class ClientProxy extends CommonProxy
 		// Enable textures again, since the GUI-prerender doesn't enable it again by itself.
 		GlStateManager.enableTexture2D();
 		
-		// XXX: EXPERIMENTAL FEATURE
+		// XXX: UNUSED EXPERIMENTAL FEATURE
 		// If active, render a fade-effect (this makes the screen go dark).
 		// This overlays everything except the hand and the GUI, which is wrong.
 		double fade = 0f;

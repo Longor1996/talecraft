@@ -187,6 +187,7 @@ public class ClockBlockTileEntity extends TileEntity implements
 			clockStop();
 		}
 		
+        worldObj.markBlockForUpdate(this.pos);
 	}
     
     @Override

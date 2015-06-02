@@ -171,14 +171,11 @@ public class QADTextField extends QADComponent {
 
 	@Override
 	public void onMouseReleased(int localMouseX, int localMouseY, int state) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onMouseClickMove(int localMouseX, int localMouseY,
-			int clickedMouseButton, long timeSinceLastClick) {
-		// TODO Auto-generated method stub
+	public void onMouseClickMove(int localMouseX, int localMouseY, int clickedMouseButton, long timeSinceLastClick) {
 		
 	}
 	

@@ -83,9 +83,6 @@ block -> Trigger:
 
 
 
-item -> Teleporter:
-  - Teleports you right above the block you are looking at, instantly, at at no cost.
-  - Range is limited to 256 blocks.
 
 item -> InstaKill:
   - Destroys ANY entity hit by it.

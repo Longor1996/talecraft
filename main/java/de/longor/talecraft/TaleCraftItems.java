@@ -15,6 +15,7 @@ import com.google.common.base.Function;
 
 import de.longor.talecraft.items.EraserItem;
 import de.longor.talecraft.items.FillerItem;
+import de.longor.talecraft.items.InstaKillItem;
 import de.longor.talecraft.items.TeleporterItem;
 import de.longor.talecraft.items.WandItem;
 
@@ -23,6 +24,7 @@ public class TaleCraftItems {
 	public static FillerItem filler;
 	public static EraserItem eraser;
 	public static TeleporterItem teleporter;
+	public static InstaKillItem instakill;
 	
 	static void init() {
 		wand = new WandItem();
@@ -40,6 +42,10 @@ public class TaleCraftItems {
 		teleporter = new TeleporterItem();
 		teleporter.setUnlocalizedName("teleporter");
 		GameRegistry.registerItem(teleporter, "teleporter", "talecraft");
+		
+		instakill = new InstaKillItem();
+		instakill.setUnlocalizedName("instakill");
+		GameRegistry.registerItem(instakill, "instakill", "talecraft");
 	}
 	
 }

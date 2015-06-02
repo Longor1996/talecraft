@@ -1,5 +1,7 @@
 package de.longor.talecraft;
 
+import java.util.Random;
+
 import org.apache.logging.log4j.Logger;
 
 import sun.net.NetworkClient;
@@ -55,10 +57,11 @@ public class TaleCraft
     public static SimpleNetworkWrapper simpleNetworkWrapper;
     public static TimedExecutor timedExecutor;
     public static Logger logger;
+    public static Random random;
     
     @SidedProxy(clientSide = Reference.CLIENT_PROXY, serverSide = Reference.SERVER_PROXY, modId = Reference.MOD_ID)
     public static CommonProxy proxy;
-    
+	
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
@@ -70,6 +73,8 @@ public class TaleCraft
     	logger.info("TaleCraft ModContainer: " + container);
     	
     	MinecraftForge.EVENT_BUS.register(this);
+    	
+    	random = new Random(42);
     	
     	coremanager = new TCWorldsManager(this);
     	timedExecutor = new TimedExecutor();
@@ -107,6 +112,7 @@ public class TaleCraft
     	TaleCraftTabs.init();
     	TaleCraftBlocks.init();
     	TaleCraftItems.init();
+    	TaleCraftEntities.init();
     	TaleCraftCommands.init();
     	
     	// Initialize the Proxy(s)

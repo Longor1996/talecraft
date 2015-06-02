@@ -3,6 +3,8 @@ key.toggleWireframe=Toggle Wireframe
 
 itemGroup.talecraftTab=TaleCraft [Main]
 
+entity.talecraft.tc_point.name=Point Entity
+
 item.wand.name=Wand
 item.filler.name=Filler
 item.eraser.name=Eraser
