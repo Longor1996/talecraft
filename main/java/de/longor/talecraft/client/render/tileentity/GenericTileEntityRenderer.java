@@ -42,8 +42,9 @@ public class GenericTileEntityRenderer<T extends TileEntity> extends TileEntityS
         GlStateManager.translate((float)posX, (float)posY, (float)posZ);
         
         // bounds
-        final float I = 1f / 64f;
-        final float A = 63f / 64f;
+        final float D = 2f / 64f;
+        final float I = D;
+        final float A = 1f - D;
         
         // render states
         GlStateManager.disableLighting();
@@ -72,25 +73,25 @@ public class GenericTileEntityRenderer<T extends TileEntity> extends TileEntityS
         worldrenderer.addVertexWithUV(A, I, A, 1, 1);
         worldrenderer.addVertexWithUV(I, I, A, 0, 1);
         // negative z | north
-        worldrenderer.addVertexWithUV(I, A, I, 0, 0);
-        worldrenderer.addVertexWithUV(A, A, I, 1, 0);
-        worldrenderer.addVertexWithUV(A, I, I, 1, 1);
-        worldrenderer.addVertexWithUV(I, I, I, 0, 1);
-        // positive z | south
-        worldrenderer.addVertexWithUV(A, A, A, 0, 0);
-        worldrenderer.addVertexWithUV(I, A, A, 1, 0);
-        worldrenderer.addVertexWithUV(I, I, A, 1, 1);
-        worldrenderer.addVertexWithUV(A, I, A, 0, 1);
-        // positive x | east
-        worldrenderer.addVertexWithUV(A, A, I, 0, 0);
-        worldrenderer.addVertexWithUV(A, A, A, 1, 0);
-        worldrenderer.addVertexWithUV(A, I, A, 1, 1);
-        worldrenderer.addVertexWithUV(A, I, I, 0, 1);
-        // negative x | west
-        worldrenderer.addVertexWithUV(I, A, A, 0, 0);
         worldrenderer.addVertexWithUV(I, A, I, 1, 0);
+        worldrenderer.addVertexWithUV(A, A, I, 0, 0);
+        worldrenderer.addVertexWithUV(A, I, I, 0, 1);
         worldrenderer.addVertexWithUV(I, I, I, 1, 1);
+        // positive z | south
+        worldrenderer.addVertexWithUV(A, A, A, 1, 0);
+        worldrenderer.addVertexWithUV(I, A, A, 0, 0);
         worldrenderer.addVertexWithUV(I, I, A, 0, 1);
+        worldrenderer.addVertexWithUV(A, I, A, 1, 1);
+        // positive x | east
+        worldrenderer.addVertexWithUV(A, A, I, 1, 0);
+        worldrenderer.addVertexWithUV(A, A, A, 0, 0);
+        worldrenderer.addVertexWithUV(A, I, A, 0, 1);
+        worldrenderer.addVertexWithUV(A, I, I, 1, 1);
+        // negative x | west
+        worldrenderer.addVertexWithUV(I, A, A, 1, 0);
+        worldrenderer.addVertexWithUV(I, A, I, 0, 0);
+        worldrenderer.addVertexWithUV(I, I, I, 0, 1);
+        worldrenderer.addVertexWithUV(I, I, A, 1, 1);
         tessellator.draw();
         
         if(extRenderer != null) {
