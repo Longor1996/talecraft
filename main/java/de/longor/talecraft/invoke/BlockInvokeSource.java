@@ -40,8 +40,13 @@ public class BlockInvokeSource implements IInvokeSource {
 	}
 	
 	@Override
-	public void getInvokeDataCompounds(List<NBTTagCompound> invokes) {
-		// none
+	public void getInvokes(List<IInvoke> invokes) {
+		// null
 	}
+	
+//	@Override
+//	public void getInvokesAsDataCompounds(List<NBTTagCompound> invokes) {
+//		// none
+//	}
 	
 }

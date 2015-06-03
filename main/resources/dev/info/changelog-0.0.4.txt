@@ -45,3 +45,9 @@
   The entity is only visible in creative-mode.
   Can currently only be created with the 'summon' command.
   Name can be changed by right-click with a nametag.
+
+- COMPLETELY REDID THE TRIGGER/INVOKE SYSTEM!
+  The system does now support multiply kinds of invokes.
+  Right now there is only the good old BlockTriggerInvoke.
+
+- Added new block: Relay (incomplete: GUI is missing!)

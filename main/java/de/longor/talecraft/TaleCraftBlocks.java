@@ -16,12 +16,15 @@ import de.longor.talecraft.blocks.ClockBlockTileEntity;
 import de.longor.talecraft.blocks.KillBlock;
 import de.longor.talecraft.blocks.RedstoneTrigger;
 import de.longor.talecraft.blocks.RedstoneTriggerTileEntity;
+import de.longor.talecraft.blocks.RelayBlock;
+import de.longor.talecraft.blocks.RelayBlockTileEntity;
 
 public class TaleCraftBlocks
 {
 	public static KillBlock killBlock;
 	public static ClockBlock clockBlock;
 	public static RedstoneTrigger redstoneTrigger;
+	public static RelayBlock relayBlock;
 	public static HashMap<String, Block> allBlocks;
 	
 	static void init()
@@ -32,7 +35,6 @@ public class TaleCraftBlocks
 		killBlock = register("killblock", new KillBlock(), new BlockRegisterFunc() {
 			@Override public void call(Block block, String name) {
 				GameRegistry.registerBlock(block, ItemBlockKillBlock.class, name);
-				
 			}
 		});
 		
@@ -41,6 +43,9 @@ public class TaleCraftBlocks
 		
 		redstoneTrigger = register("redstone_trigger", new RedstoneTrigger());
 		GameRegistry.registerTileEntity(RedstoneTriggerTileEntity.class, "tc_redstonetrigger");
+		
+		relayBlock = register("relayblock", new RelayBlock());
+		GameRegistry.registerTileEntity(RelayBlockTileEntity.class, "tc_relayblock");
 		
 	}
 	

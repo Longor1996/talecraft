@@ -49,7 +49,7 @@ public class BoxRenderer {
 		
 	}
 	
-	// TODO: Finish Implementation
+	// XXX: Finish Implementation
 //	public static final void renderBoxLine(Tessellator tessellator, WorldRenderer worldrenderer,
 //			float x0, float y0, float z0, float x1, float y1, float z1,
 //			float r, float g, float b, float a) {

@@ -10,7 +10,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-// TODO: Finish Implementation for ExplosionCommand
+// XXX: Finish Implementation for ExplosionCommand
 public class ExplosionCommand extends CommandBase {
 	
 	@Override

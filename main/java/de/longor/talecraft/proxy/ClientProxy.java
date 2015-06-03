@@ -28,6 +28,7 @@ import de.longor.talecraft.TaleCraftBlocks;
 import de.longor.talecraft.TaleCraftItems;
 import de.longor.talecraft.blocks.ClockBlockTileEntity;
 import de.longor.talecraft.blocks.RedstoneTriggerTileEntity;
+import de.longor.talecraft.blocks.RelayBlockTileEntity;
 import de.longor.talecraft.client.InfoBar;
 import de.longor.talecraft.client.gui.TCGuiScreen;
 import de.longor.talecraft.client.gui.vcui.VCUIRenderer;
@@ -158,7 +159,9 @@ public class ClientProxy extends CommonProxy
 		ClientRegistry.bindTileEntitySpecialRenderer(ClockBlockTileEntity.class,
 				new GenericTileEntityRenderer<ClockBlockTileEntity>("talecraft:textures/blocks/util/timer.png"));
 		ClientRegistry.bindTileEntitySpecialRenderer(RedstoneTriggerTileEntity.class,
-				new GenericTileEntityRenderer<RedstoneTriggerTileEntity>("talecraft:textures/blocks/util/redstoneTriggerOff.png"));
+				new GenericTileEntityRenderer<RedstoneTriggerTileEntity>("talecraft:textures/blocks/util/redstoneTrigger.png"));
+		ClientRegistry.bindTileEntitySpecialRenderer(RelayBlockTileEntity.class,
+				new GenericTileEntityRenderer<RedstoneTriggerTileEntity>("talecraft:textures/blocks/util/relay.png"));
 		
 	}
 	
@@ -172,6 +175,7 @@ public class ClientProxy extends CommonProxy
 		for(int i = 0; i < 7; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.killBlock), i, new ModelResourceLocation("talecraft:killblock", "inventory"));
 		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.clockBlock), 0, new ModelResourceLocation("talecraft:clockblock", "inventory"));
 		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.redstoneTrigger), 0, new ModelResourceLocation("talecraft:redstone_trigger", "inventory"));
+		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.relayBlock), 0, new ModelResourceLocation("talecraft:relayblock", "inventory"));
 		
 		mesher.register(TaleCraftItems.wand, 0, new ModelResourceLocation("talecraft:wand", "inventory"));
 		mesher.register(TaleCraftItems.filler, 0, new ModelResourceLocation("talecraft:filler", "inventory"));
@@ -214,8 +218,6 @@ public class ClientProxy extends CommonProxy
 	} // init(..){}
 	
 	protected void handleClientCommand(String command, NBTTagCompound data) {
-		// TODO: Commands SERVER->CLIENT ?
-		
 		if(command.equals("pushRenderable")) {
 			ITemporaryRenderable renderable = PushRenderableFactory.parsePushRenderableFromNBT(data);
 			if(renderable != null) {
@@ -224,6 +226,7 @@ public class ClientProxy extends CommonProxy
 			return;
 		}
 		
+		// XXX: Implement more Server->Client commands.
 	}
 
 	public void modelBake(ModelBakeEvent event) {
@@ -377,6 +380,8 @@ public class ClientProxy extends CommonProxy
 			ItemMetaWorldRenderer.render(itemType, itemStack);
 		}
 		
+		
+		GlStateManager.enableCull();
 	}
 	
 	@SubscribeEvent

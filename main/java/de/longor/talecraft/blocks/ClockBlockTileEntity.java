@@ -5,8 +5,10 @@ import java.util.List;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.TaleCraftBlocks;
 import de.longor.talecraft.invoke.BlockInvokeSource;
+import de.longor.talecraft.invoke.IInvoke;
 import de.longor.talecraft.invoke.IInvokeSource;
 import de.longor.talecraft.invoke.Invoke;
+import de.longor.talecraft.invoke.NullInvoke;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandResultStats.Type;
 import net.minecraft.command.ICommandSender;
@@ -29,9 +31,7 @@ public class ClockBlockTileEntity extends TileEntity implements
 		ICommandSender,
 		IInvokeSource,
 		BlockCommandReceiver {
-	
-	NBTTagCompound clockInvoke;
-	IInvokeSource selfSource;
+	IInvoke clockInvoke;
 	
 	public int set_repeat;
 	public int set_speed;
@@ -50,7 +50,7 @@ public class ClockBlockTileEntity extends TileEntity implements
 	public int time;
 	
 	public ClockBlockTileEntity() {
-		clockInvoke = new NBTTagCompound();
+		clockInvoke = NullInvoke.instance;
 		
 		set_repeat = 10;
 		set_speed = 1;
@@ -83,7 +83,7 @@ public class ClockBlockTileEntity extends TileEntity implements
     	compound.setInteger("init_speed", set_speed);
     	compound.setInteger("init_time", set_time);
     	
-    	compound.setTag("clockInvoke", clockInvoke);
+    	compound.setTag("clockInvoke", IInvoke.Serializer.write(clockInvoke));
     }
     
     private void readNBT_do(NBTTagCompound compound) {
@@ -96,8 +96,7 @@ public class ClockBlockTileEntity extends TileEntity implements
         speed = compound.getInteger("speed");
         time = compound.getInteger("time");
         
-    	NBTTagCompound cTagCompound = compound.getCompoundTag("clockInvoke");
-    	clockInvoke.merge(cTagCompound);
+        clockInvoke = IInvoke.Serializer.read(compound.getCompoundTag("clockInvoke"));
 	}
     
     @Override
@@ -135,10 +134,7 @@ public class ClockBlockTileEntity extends TileEntity implements
     }
     
     public void clockTick() {
-		if(selfSource == null)
-			selfSource = new BlockInvokeSource(this);
-    	
-		Invoke.invoke(clockInvoke, selfSource);
+		Invoke.invoke(clockInvoke, this);
     }
     
     @Override
@@ -194,7 +190,7 @@ public class ClockBlockTileEntity extends TileEntity implements
     @SideOnly(Side.CLIENT)
     public double getMaxRenderDistanceSquared()
     {
-        return 4096; // 128 blocks!
+        return 2048; // 128 blocks!
     }
     
     @Override
@@ -270,8 +266,13 @@ public class ClockBlockTileEntity extends TileEntity implements
 	}
 
 	@Override
-	public void getInvokeDataCompounds(List<NBTTagCompound> invokes) {
+	public void getInvokes(List<IInvoke> invokes) {
 		invokes.add(clockInvoke);
 	}
+
+//	@Override
+//	public void getInvokesAsDataCompounds(List<NBTTagCompound> invokes) {
+//		invokes.add(clockInvoke);
+//	}
 	
 }

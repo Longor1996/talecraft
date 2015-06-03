@@ -48,7 +48,7 @@ public class GuiRedstoneTriggerBlock extends QADGuiScreen {
 				NBTTagCompound commandData = new NBTTagCompound();
 				NBTTagCompound invokeData = new NBTTagCompound();
 				commandData.setTag("triggerInvoke", invokeData);
-				invokeData.setString("type", "blockRegionTrigger");
+				invokeData.setString("type", "BlockTriggerInvoke");
 				invokeData.setIntArray("bounds", bounds);
 				
 				TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandData));

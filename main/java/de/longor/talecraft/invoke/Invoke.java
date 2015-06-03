@@ -2,6 +2,7 @@ package de.longor.talecraft.invoke;
 
 import java.util.Random;
 
+import scala.tools.nsc.settings.Final;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.network.StringNBTCommand;
 import de.longor.talecraft.util.WorldHelper;
@@ -26,21 +27,23 @@ import net.minecraft.world.World;
 
 public class Invoke {
 	
-	public static final void invoke(NBTTagCompound invokeData, IInvokeSource source) {
-		String type = invokeData.getString("type");
-		
-		if(type.length() <= 0) {
-			TaleCraft.logger.error("Uh oh, a invoke without a type-tag from "+source+"! :: " + invokeData);
+	public static final void invoke(IInvoke invoke, IInvokeSource source) {
+		if(invoke == null) {
+			TaleCraft.logger.error("NULL was passed to the invoke method! Source: "+source+"!");
 			return;
 		}
 		
+		if(invoke instanceof NullInvoke) {
+			TaleCraft.logger.error("Uh oh, a NULL invoke from "+source+"!");
+			return;
+		}
 		
 		// TODO: Refactor this out into its own method.
-		if("blockRegionTrigger".equals(type)) {
+		if(invoke instanceof BlockTriggerInvoke) {
 			// TaleCraft.logger.info("--> Executing BlockRegionTrigger from " + source.getPosition());
 			
-			int[] bounds = invokeData.getIntArray("bounds");
-			int data = invokeData.getInteger("triggerData");
+			int[] bounds = ((BlockTriggerInvoke) invoke).getBounds();
+			int data = ((BlockTriggerInvoke) invoke).getTriggerData();
 			
 			if(bounds == null || bounds.length != 6) {
 				TaleCraft.logger.error("Invalid bounds @ BlockRegionTrigger @ " + source.getPosition());
@@ -54,33 +57,37 @@ public class Invoke {
 			int ay = Math.max(bounds[1], bounds[4]);
 			int az = Math.max(bounds[2], bounds[5]);
 			
-			// Logging this is a bad idea if a lot of these is executed very fast (ClockBlock, anyone?)
-			// TaleCraft.logger.info("--> [" + ix + ","+ iy + ","+ iz + ","+ ax + ","+ ay + ","+ az + "]");
-			
-			if(source.getWorld().getGameRules().getGameRuleBooleanValue("visualEventDebugging")) {
-				// Send a packet to all players that a BlockRegionTrigger just happened.
-				// This could possibly create a crapton of lag if many events are fired.
-				NBTTagCompound pktdata = new NBTTagCompound();
-				pktdata.setString("type", "line-to-box");
-				pktdata.setIntArray("src", new int[]{source.getPosition().getX(),source.getPosition().getY(),source.getPosition().getZ()});
-				pktdata.setIntArray("box", new int[]{ix,iy,iz,ax,ay,az});
-				TaleCraft.simpleNetworkWrapper.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
-			}
-			
-			final World world = source.getWorld();
-			
-			// Since we dont have lambda's, lets do things the old (ugly) way.
-			WorldHelper.foreach(world, ix, iy, iz, ax, ay, az, new BlockRegionIterator() {
-				@Override public void $(IBlockState state, BlockPos position) {
-					trigger(world, position, state, 0);
-				}
-			});
+			trigger(source, ix, iy, iz, ax, ay, az);
 			
 			return;
 		}
 		
-		TaleCraft.logger.error("! Unknown Invoke Type --> " + type);
+		TaleCraft.logger.error("! Unknown Invoke Type --> " + invoke.getType());
 		
+	}
+	
+	public static final void trigger(IInvokeSource source, int ix, int iy, int iz, int ax, int ay, int az) {
+		// Logging this is a bad idea if a lot of these is executed very fast (ClockBlock, anyone?)
+		// TaleCraft.logger.info("--> [" + ix + ","+ iy + ","+ iz + ","+ ax + ","+ ay + ","+ az + "]");
+		
+		if(source.getWorld().getGameRules().getGameRuleBooleanValue("visualEventDebugging")) {
+			// Send a packet to all players that a BlockRegionTrigger just happened.
+			// This could possibly create a crapton of lag if many events are fired.
+			NBTTagCompound pktdata = new NBTTagCompound();
+			pktdata.setString("type", "line-to-box");
+			pktdata.setIntArray("src", new int[]{source.getPosition().getX(),source.getPosition().getY(),source.getPosition().getZ()});
+			pktdata.setIntArray("box", new int[]{ix,iy,iz,ax,ay,az});
+			TaleCraft.simpleNetworkWrapper.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
+		}
+		
+		final World world = source.getWorld();
+		
+		// Since we dont have lambda's, lets do things the old (ugly) way.
+		WorldHelper.foreach(world, ix, iy, iz, ax, ay, az, new BlockRegionIterator() {
+			@Override public void $(IBlockState state, BlockPos position) {
+				trigger(world, position, state, 0);
+			}
+		});
 	}
 	
 	public static final void trigger(World world, BlockPos position, IBlockState state, int flag) {

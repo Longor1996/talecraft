@@ -12,6 +12,7 @@ item.teleporter.name=Teleporter
 
 tile.talecraft:clockblock.name=Clock
 tile.talecraft:redstone_trigger.name=Redstone Trigger
+tile.talecraft:relayblock.name=Relay
 
 tile.talecraft:killblock.name=Killblock
 tile.talecraft:killblock.all.name=Killblock (ALL)

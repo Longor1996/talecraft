@@ -16,6 +16,6 @@ public interface IInvokeSource {
 	
 	public World getWorld();
 	
-	public void getInvokeDataCompounds(List<NBTTagCompound> invokes);
+	public void getInvokes(List<IInvoke> invokes);
 	
 }

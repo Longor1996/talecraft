@@ -5,8 +5,10 @@ import java.util.Random;
 
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.invoke.BlockInvokeSource;
+import de.longor.talecraft.invoke.IInvoke;
 import de.longor.talecraft.invoke.IInvokeSource;
 import de.longor.talecraft.invoke.Invoke;
+import de.longor.talecraft.invoke.NullInvoke;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandResultStats.Type;
 import net.minecraft.command.ICommandSender;
@@ -25,11 +27,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class RedstoneTriggerTileEntity extends TileEntity implements ICommandSender, IInvokeSource {
-	NBTTagCompound triggerInvoke;
+	IInvoke triggerInvoke;
 	IInvokeSource selfSource;
 	
 	public RedstoneTriggerTileEntity() {
-		triggerInvoke = new NBTTagCompound();
+		triggerInvoke = NullInvoke.instance;
 	}
 	
     @Override
@@ -40,9 +42,7 @@ public class RedstoneTriggerTileEntity extends TileEntity implements ICommandSen
     }
     
     private void readFromNBT_do(NBTTagCompound compound) {
-    	NBTTagCompound cTagCompound = compound.getCompoundTag("triggerInvoke");
-    	
-    	triggerInvoke.merge(cTagCompound);
+    	triggerInvoke = IInvoke.Serializer.read(compound.getCompoundTag("triggerInvoke"));
     }
     
 	@Override
@@ -52,14 +52,14 @@ public class RedstoneTriggerTileEntity extends TileEntity implements ICommandSen
     }
     
     private void writeToNBT_do(NBTTagCompound compound) {
-    	compound.setTag("triggerInvoke", triggerInvoke);
+    	compound.setTag("triggerInvoke", IInvoke.Serializer.write(triggerInvoke));
     }
     
     @Override
     @SideOnly(Side.CLIENT)
     public double getMaxRenderDistanceSquared()
     {
-        return 4096; // 128 blocks!
+        return 2048; // 128 blocks!
     }
     
     @Override
@@ -144,8 +144,13 @@ public class RedstoneTriggerTileEntity extends TileEntity implements ICommandSen
 	}
 
 	@Override
-	public void getInvokeDataCompounds(List<NBTTagCompound> invokes) {
+	public void getInvokes(List<IInvoke> invokes) {
 		invokes.add(triggerInvoke);
 	}
+
+//	@Override
+//	public void getInvokesAsDataCompounds(List<NBTTagCompound> invokes) {
+//		invokes.add(triggerInvoke);
+//	}
 	
 }
