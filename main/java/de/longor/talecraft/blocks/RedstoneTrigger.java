@@ -22,7 +22,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import de.longor.talecraft.TCAdminiumMaterial;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.TaleCraftTabs;
 import de.longor.talecraft.client.gui.TCGuiScreen;
@@ -74,15 +73,13 @@ public class RedstoneTrigger extends BlockContainer {
         return 1;
     }
 	
-    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
-    {
+    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
     	if (worldIn.isRemote)
     		return;
     	
         TileEntity tileentity = worldIn.getTileEntity(pos);
         
-        if (tileentity instanceof RedstoneTriggerTileEntity)
-        {
+        if (tileentity instanceof RedstoneTriggerTileEntity) {
             ((RedstoneTriggerTileEntity)tileentity).invokeFromUpdateTick(worldIn, pos, state, rand);
         }
     }
@@ -98,7 +95,7 @@ public class RedstoneTrigger extends BlockContainer {
 			return true;
     	
 		Minecraft mc = Minecraft.getMinecraft();
-		mc.displayGuiScreen(new GuiRedstoneTriggerBlock());
+		mc.displayGuiScreen(new GuiRedstoneTriggerBlock((RedstoneTriggerTileEntity)worldIn.getTileEntity(pos)));
 		
 		return true;
     }

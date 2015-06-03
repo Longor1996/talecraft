@@ -3,6 +3,13 @@ key.toggleWireframe=Toggle Wireframe
 
 itemGroup.talecraftTab=TaleCraft [Main]
 
+entity.talecraft.tc_point.name=Point Entity
+
+item.wand.name=Wand
+item.filler.name=Filler
+item.eraser.name=Eraser
+item.teleporter.name=Teleporter
+
 tile.talecraft:clockblock.name=Clock
 tile.talecraft:redstone_trigger.name=Redstone Trigger
 

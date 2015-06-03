@@ -35,8 +35,7 @@ public class QADGuiScreen extends GuiScreen {
 	
 	public QADGuiScreen() {
 		super.allowUserInput = false;
-		components = new ArrayList<QADComponent>();
-		buildGui(components);
+		components = null;
 	}
 	
 	public void buildGui(ArrayList<QADComponent> components) {
@@ -62,13 +61,21 @@ public class QADGuiScreen extends GuiScreen {
 	
 	@Override
     public final void initGui() {
-    	System.out.println("Gui.init()");
+		TaleCraft.logger.info("Gui.init() -> " + this.getClass().getName());
+    	Keyboard.enableRepeatEvents(true);
+		
+    	if(components == null) {
+    		components = new ArrayList<QADComponent>();
+    		buildGui(components);
+    	}
+    	
     	layoutGui();
     }
 	
 	@Override
     public final void onGuiClosed() {
-    	System.out.println("Gui.close()");
+		TaleCraft.logger.info("Gui.close() -> " + this.getClass().getName());
+		Keyboard.enableRepeatEvents(false);
     }
 	
 	@Override

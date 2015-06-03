@@ -1,0 +1,6 @@
+ADD
+- Add sliders to the ClockBlock-GUI for the missing settings.
+
+CHANGE
+
+FIX

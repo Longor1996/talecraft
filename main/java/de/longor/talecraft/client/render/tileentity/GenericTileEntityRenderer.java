@@ -1,8 +1,13 @@
 package de.longor.talecraft.client.render.tileentity;
 
+import java.util.Random;
+
+import org.lwjgl.opengl.GL11;
+
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.ClockBlockTileEntity;
 import de.longor.talecraft.client.render.RenderHelper;
+import de.longor.talecraft.invoke.IInvokeSource;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -17,13 +22,20 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class GenericTileEntityRenderer<T extends TileEntity> extends TileEntitySpecialRenderer {
     private final ResourceLocation texture;
+    private final IEXTTileEntityRenderer<T> extRenderer;
+	
+    public GenericTileEntityRenderer(String texturePath, IEXTTileEntityRenderer<T> exr) {
+    	texture = new ResourceLocation(texturePath);
+    	extRenderer = exr;
+    }
 	
     public GenericTileEntityRenderer(String texturePath) {
     	texture = new ResourceLocation(texturePath);
+    	extRenderer = null;
     }
-    
+
 	@Override
-	public void renderTileEntityAt(TileEntity p_180535_1_, double posX, double posY, double posZ, float p_180535_8_, int p_180535_9_) {
+	public void renderTileEntityAt(TileEntity p_180535_1_, double posX, double posY, double posZ, float partialTicks, int p_180535_9_) {
 		T tile = (T) p_180535_1_;
 		
         GlStateManager.pushMatrix();
@@ -81,6 +93,10 @@ public class GenericTileEntityRenderer<T extends TileEntity> extends TileEntityS
         worldrenderer.addVertexWithUV(I, I, A, 0, 1);
         tessellator.draw();
         
+        if(extRenderer != null) {
+        	extRenderer.render(tile, posX, posY, posZ, partialTicks);
+        }
+        
         /*
         final String TEXT = null; // tile.getStateAsString();
         if(TEXT != null || Boolean.FALSE) {
@@ -99,5 +115,7 @@ public class GenericTileEntityRenderer<T extends TileEntity> extends TileEntityS
         
         GlStateManager.popMatrix();
 	}
+	
+	
 	
 }

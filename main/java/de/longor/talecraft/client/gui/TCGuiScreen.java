@@ -55,7 +55,7 @@ public class TCGuiScreen extends GuiScreen {
 	
 	@Override /****/
     public final void initGui() {
-    	System.out.println("Gui.init()");
+		TaleCraft.logger.info("Gui.init() -> " + this.getClass().getName());
     	layoutGui();
     }
 	
@@ -72,7 +72,7 @@ public class TCGuiScreen extends GuiScreen {
 	
 	@Override
     public final void onGuiClosed() {
-    	System.out.println("Gui.close()");
+		TaleCraft.logger.info("Gui.close() -> " + this.getClass().getName());
     }
 	
 	@Override

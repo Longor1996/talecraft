@@ -1,4 +1,4 @@
-package de.longor.talecraft;
+package de.longor.talecraft.blocks;
 
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;

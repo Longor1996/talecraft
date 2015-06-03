@@ -21,14 +21,14 @@ public class CustomSkyRenderer extends IRenderHandler {
 		
 		if(useDebugSky) {
 			renderDebugSky(partialTicks, world, mc);
-			if(((ClientProxy)TaleCraft.instance.proxy).wireframeMode != 0) {
-				WireframeMode.ENABLE(((ClientProxy)TaleCraft.instance.proxy).wireframeMode);
+			if(((ClientProxy)TaleCraft.instance.proxy).getVisualizationmode() != 0) {
+				WireframeMode.ENABLE(((ClientProxy)TaleCraft.instance.proxy).getVisualizationmode());
 			}
 			return;
 		}
 		
-		if(((ClientProxy)TaleCraft.instance.proxy).wireframeMode != 0) {
-			WireframeMode.ENABLE(((ClientProxy)TaleCraft.instance.proxy).wireframeMode);
+		if(((ClientProxy)TaleCraft.instance.proxy).getVisualizationmode() != 0) {
+			WireframeMode.ENABLE(((ClientProxy)TaleCraft.instance.proxy).getVisualizationmode());
 		}
 	}
 	
