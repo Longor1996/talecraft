@@ -6,9 +6,5 @@ It's all up to you.
 
 If you want to help, fork this repository and add a new feature or fix a bug, then make a pull-request. If your pull-request is good, it will be merged into the master branch.
 
-## Features
-
-A incomplete list of features can be found in `/src/main/resources/dev/info/features.md`.
-
 ## License
 Copyright @ Lars Longor K
