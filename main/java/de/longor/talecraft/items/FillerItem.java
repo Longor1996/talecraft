@@ -44,6 +44,10 @@ public class FillerItem extends TCItem {
     	
     	IBlockState state = worldIn.getBlockState(pos);
     	
+    	if(playerIn.isSneaking()){
+    		state = worldIn.getBlockState(pos.add(0, 1, 0));
+    	}
+    	
     	// note: the bounds are already sorted
     	int[] bounds = WandItem.getBoundsFromPLAYERorNULL(playerIn);
     	
