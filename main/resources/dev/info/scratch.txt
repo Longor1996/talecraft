@@ -2,9 +2,7 @@ WARNING:
   This is a scratch file! That means that the content of this file is NOT to be taken as a specification for the mod.
   EVERYTHING IN THIS FILE COULD CHANGE AT ANY TIME.
 
-
-
-
+This document contains things that are probably going to be implemented sooner or later.
 
 block -> Script:
   | A block that can execute commands when invoked.
@@ -42,10 +40,9 @@ block -> Clock:
 ^^
 
 block -> DataStore:
-  | This block stres any kind/amount of NBT-Data, permanently.
+  | This block stores any kind/amount of NBT-Data, permanently.
   * Properties
     - nbtCompound:DATA: The data stored within this block.
-    - invoke:ONCHANGE: The command to execute when the data is modified.
   * (trigger)
     - arg0=-1: Clear/Delete all stored data.
 ^^
@@ -61,7 +58,7 @@ block -> Storage:
     - arg0=2: Clear stored data.
 ^^
 
-block -> BlockUpdateDetector:
+block -> BlockUpdateTrigger:
   * Properties
     - ACTIVE: Is the detector active?
     - invoke:ONUPDATE: The command to execute when a block next (t,b,n,e,s,w) to the BUD updates.
@@ -84,12 +81,6 @@ block -> Trigger:
 
 
 
-item -> InstaKill:
-  - Destroys ANY entity hit by it.
-
-item -> BlockRegionSelector:
-  - Selects a box region of blocks.
-  - Left/Right-Click sets the MIN/MAX corners respectively.
 
 item -> BlockRegionMover:
   - Moves the selected region of blocks in the direction one is looking.
@@ -107,33 +98,49 @@ item -> BlockRegionPaste:
   - Places whatever is in the 'clipboard' into the world.
   - Note: This tool will not cause block-updates.
 
-item -> BlockRegionHammer:
-  - LMB: Select the block to use.
-  - RMB: Fill the currently selected region with the LMB-selected block.
-  - Note: This tool will not cause block-updates.
-
-item -> BlockRegionErasor:
-  - Erases the currently selected region by filling it with air.
-  - Note: This tool will not cause block-updates.
-
 item -> VoxelBrush:
   - Note: This tool will not cause block-updates.
   - SHAPES
     * Box
     * Sphere
     * Cylinder
-    * Polygon (?)
+    * NoiseSphere
   - FUNCTIONS
-    * replace -> DST with ARG
-    * replace -> DST with ARG if DST equals MASK
-    * smooth-average -> ?
-    * smooth-cubic -> ?
+    * replace     : replace -> DST with ARG
+    * maskreplace : replace -> DST with ARG if DST equals MASK
+    * airreplace  : replace -> DST with ARG if DST equals minecraft:air
+    * smooth-average -> Smooths the voxels together over a given area based on a average.
+    * smooth-cubic -> Smooths the voxels together over a given area with a cube-kernel.
+^^
+
+item -> TerrainBrush:
+  This tool acts upon the worlds heightmap.
+  - SHAPES
+    * Box
+    * Circle (default)
+  - FUNCTIONS
+    * brush
+      The brush can be any size between 4 and 32.
+      The brush works solely on the heightmap (which is 2D!).
+      The brush should have a direct visualization of what changes.
+      The brush formula is as following:
+        height.new = height.old + brush.power * brush.value[|height.xz -> brush.center.xz|]
+      
+      * add : Adds height to the terrain.
+      * subtract : Subtracts height from the terrain.
+      * flatten : Flattens the terrain to the height at the center of the brush.
+      * smooth : Smooths out the terrain.
+      * BRUSHES
+        * Flat
+        * Linear
+        * Smooth (default)
+        * Sinus
+        * Spike
+        * Gaussian
+        * Noise
     * grassify -> Replace every solid block that is euqal to ARG2 or is natural and has air above it with grass.
     * winterify -> Let it snow!
 ^^
-
-
-
 
 
 gui -> MapInterface:
@@ -146,13 +153,6 @@ gui -> MapInterface:
     - Resources: View and browse ALL resources currently loaded in the game. (textures[block, item, entity, *], sounds, music)
 ^^
 
-command -> Trigger:
-  | This calls a special 'onTrigger'-method on a specified block.
-  * /tc_trigger <dst.{x y z}> <arg0> [arg1]
-    - dst.{x y z}: The position of the block to trigger.
-    - arg0: The first argument to send.
-    - arg1: The second argument to send. (optional)
-    - (return): triggered | notrigger
 
 command -> RegionTrigger:
   | This calls a special 'onTrigger'-method on a region of blocks.
@@ -165,8 +165,6 @@ command -> RegionTrigger:
   * Types:
     - ScriptInvoke: Execute a script.
     - CommandInvoke: Execute a server command.
-    - BlockTriggerInvoke: Trigger a certain block.
-    - RegionTriggerInvoke: Trigger all blocks in a region of blocks.
 ^^
 
 
