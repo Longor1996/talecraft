@@ -137,7 +137,7 @@ public class InfoBar {
 		        if(b) {
 			        builder.append(mc.theWorld.getBlockState(lookAt));
 		        } else {
-			        builder.append(mc.theWorld.getBlockState(lookAt).getBlock().getLocalizedName());
+			        builder.append(new ItemStack(mc.theWorld.getBlockState(lookAt).getBlock()).getDisplayName());
 		        }
             }
             
