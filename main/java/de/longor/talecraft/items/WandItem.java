@@ -105,5 +105,22 @@ public class WandItem extends TCItem {
 		
 		return new int[]{ix,iy,iz,ax,ay,az};
     }
+    
+    public static final void setBounds(EntityPlayer player, int ix, int iy, int iz, int ax, int ay, int az) {
+    	NBTTagCompound playerData = player.getEntityData();
+    	NBTTagCompound wandData = playerData.getCompoundTag("tcWand");
+    	
+    	int _ix = Math.min(ix, ax);
+    	int _iy = Math.min(iy, ay);
+    	int _iz = Math.min(iz, az);
+    	int _ax = Math.max(ix, ax);
+    	int _ay = Math.max(iy, ay);
+    	int _az = Math.max(iz, az);
+    	
+    	wandData.setIntArray("boundsA", new int[]{_ix,_iy,_iz});
+    	wandData.setIntArray("boundsB", new int[]{_ax,_ay,_az});
+    	
+    	TaleCraft.simpleNetworkWrapper.sendTo(new PlayerNBTDataMerge(playerData), (EntityPlayerMP) player);
+    }
 	
 }

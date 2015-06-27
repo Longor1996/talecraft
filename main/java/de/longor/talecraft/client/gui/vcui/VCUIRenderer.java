@@ -1,6 +1,11 @@
 package de.longor.talecraft.client.gui.vcui;
 
-import de.longor.talecraft.client.render.EXTFontRenderer;
+import java.util.Stack;
+
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
+
+import de.longor.talecraft.client.render.renderers.EXTFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -11,6 +16,7 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 
 public class VCUIRenderer {
@@ -49,6 +55,11 @@ public class VCUIRenderer {
 		guiScreen.drawDefaultBackground();
 	}
 	
+	public void offset(int offX, int offY) {
+		this.offsetX += offX;
+		this.offsetY += offY;
+	}
+	
 	public void drawHorizontalLine(int startX, int endX, int y, int color) {
 		do_drawHorizontalLine(startX+offsetX, endX+offsetX, y+offsetY, color);
 	}
@@ -78,27 +89,33 @@ public class VCUIRenderer {
 	}
 	
 	public void drawString(String text, int x, int y, int color, boolean shadow) {
-		fontRenderer.drawString(text, x, y, color, shadow);
+		fontRenderer.drawString(text, x+offsetX, y+offsetY, color, shadow);
 	}
 	
 	public void drawString(String text, int x, int y, boolean shadow) {
-		fontRenderer.drawString(text, x, y, 0xFFFFFFFF, shadow);
+		fontRenderer.drawString(text, x+offsetX, y+offsetY, 0xFFFFFFFF, shadow);
 	}
 	
 	public void drawString(String text, int x, int y, int color) {
-		fontRenderer.drawString(text, x, y, color, false);
+		fontRenderer.drawString(text, x+offsetX, y+offsetY, color, false);
 	}
 	
 	public void drawString(String text, int x, int y) {
-		fontRenderer.drawString(text, x, y, 0xFFFFFFFF, false);
+		fontRenderer.drawString(text, x+offsetX, y+offsetY, 0xFFFFFFFF, false);
 	}
 	
 	public void drawStringWithShadow(String text, int x, int y, int color) {
-		fontRenderer.drawString(text, x, y, color, true);
+		fontRenderer.drawString(text, x+offsetX, y+offsetY, color, true);
 	}
 	
 	public void drawStringWithShadow(String text, int x, int y) {
-		fontRenderer.drawString(text, x, y, 0xFFFFFFFF, true);
+		fontRenderer.drawString(text, x+offsetX, y+offsetY, 0xFFFFFFFF, true);
+	}
+	
+	public void drawCenteredString(String str, int x, int y, int color, boolean shadow) {
+		int width = fontRenderer.stringWidth(str);
+		x -= width / 2;
+		fontRenderer.drawString(str, x + offsetX, y + offsetY, color, shadow);
 	}
 	
 	public EXTFontRenderer getFontRenderer() {
@@ -301,5 +318,51 @@ public class VCUIRenderer {
         worldrenderer.addVertexWithUV((double)x, (double)y, 0.0D, (double)(u * f4), (double)(v * f5));
         tessellator.draw();
     }
+	
+	Stack<ScissorFrame> scissorStack = new Stack<ScissorFrame>();
+	
+	public void pushScissor(int x, int y, int width, int height) {
+		x += offsetX;
+		y += offsetY;
+		
+		if(scissorStack.isEmpty()) {
+			GL11.glEnable(GL11.GL_SCISSOR_TEST);
+		}
+		
+		float factorX = MathHelper.ceiling_float_int((float)Display.getWidth() / (float)minecraft.currentScreen.width);
+		float factorY = MathHelper.ceiling_float_int((float)Display.getHeight() / (float)minecraft.currentScreen.height);
+		
+		y = minecraft.currentScreen.height - y - height;
+		
+		ScissorFrame frame = new ScissorFrame();
+		frame.x = (int) (x * factorX);
+		frame.y = (int) (y * factorY);
+		frame.w = (int) (width * factorX);
+		frame.h = (int) (height * factorY);
+		frame.use();
+		
+		scissorStack.push(frame);
+	}
+	
+	public void popScissor() {
+		scissorStack.pop();
+		
+		if(scissorStack.isEmpty()) {
+			GL11.glDisable(GL11.GL_SCISSOR_TEST);
+		} else {
+			scissorStack.peek().use();
+		}
+	}
+	
+	private class ScissorFrame {
+		int x;
+		int y;
+		int w;
+		int h;
+		
+		void use() {
+			GL11.glScissor(x, y, w, h);
+		}
+	}
 	
 }

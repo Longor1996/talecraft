@@ -4,11 +4,15 @@ import java.util.Random;
 
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.eventbus.Subscribe;
+
 import sun.net.NetworkClient;
 import de.longor.talecraft.managers.TCWorldsManager;
 import de.longor.talecraft.network.StringNBTCommand;
 import de.longor.talecraft.proxy.CommonProxy;
 import de.longor.talecraft.proxy.ServerHandler;
+import de.longor.talecraft.script.GlobalScriptManager;
+import de.longor.talecraft.server.ServerMirror;
 import de.longor.util.TimedExecutor;
 import net.minecraft.block.Block;
 import net.minecraft.client.main.GameConfiguration;
@@ -34,7 +38,10 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -51,9 +58,10 @@ public class TaleCraft
     @Mod.Instance(Reference.MOD_ID)
     public static TaleCraft instance;
     public static ModContainer container;
-    public static TCWorldsManager coremanager;
+    public static TCWorldsManager worldsmanager;
     public static TaleCraftCommonEventHandler fmlEventHandler;
     public static TaleCraftForgeEventHandler forgeEventHandler;
+    public static GlobalScriptManager globalScriptManager;
     public static SimpleNetworkWrapper simpleNetworkWrapper;
     public static TimedExecutor timedExecutor;
     public static Logger logger;
@@ -76,8 +84,10 @@ public class TaleCraft
     	
     	random = new Random(42);
     	
-    	coremanager = new TCWorldsManager(this);
+    	worldsmanager = new TCWorldsManager(this);
     	timedExecutor = new TimedExecutor();
+    	globalScriptManager = new GlobalScriptManager();
+    	globalScriptManager.init(this, proxy);
     	simpleNetworkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("TaleCraftNet");
 		
     	// this does NOT belong here!
@@ -93,7 +103,7 @@ public class TaleCraft
 		}, StringNBTCommand.class, 0x01, Side.SERVER);
     	
 		/// print debug information
-    	logger.info("TaleCraft CoreManager @" + coremanager.hashCode());
+    	logger.info("TaleCraft CoreManager @" + worldsmanager.hashCode());
     	logger.info("TaleCraft TimedExecutor @" + timedExecutor.hashCode());
     	logger.info("TaleCraft NET SimpleNetworkWrapper @" + simpleNetworkWrapper.hashCode());
     	
@@ -136,10 +146,35 @@ public class TaleCraft
 	
 	@Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event){
-		ICommandManager cmdmng = MinecraftServer.getServer().getCommandManager();
+		MinecraftServer server = event.getServer();
+		
+		ICommandManager cmdmng = server.getCommandManager();
 		if (cmdmng instanceof ServerCommandManager && cmdmng instanceof CommandHandler) {
 			CommandHandler cmdhnd = (CommandHandler) cmdmng;
 			TaleCraftCommands.register(cmdhnd);
 		}
+		
+		// By calling this method, we create the ServerMirror for the given server.
+		ServerHandler.getServerMirror(server);
+	}
+	
+	@Mod.EventHandler
+	public void serverStopping(FMLServerStoppingEvent event)
+	{
+		// Calling this method destroys all server instances that exist,
+		// because the 'event' given above does NOT give us the server-instance that is being stopped.
+		ServerHandler.destroyServerMirror(null);
+	}
+	
+	@Mod.EventHandler
+	public void serverStarted(FMLServerStartedEvent event)
+	{
+		// TaleCraft.logger.info("Server started: " + event + " [TCINFO]");
+	}
+	
+	@Mod.EventHandler
+	public void serverStopped(FMLServerStoppedEvent event)
+	{
+		// TaleCraft.logger.info("Server stopped: " + event + " [TCINFO]");
 	}
 }

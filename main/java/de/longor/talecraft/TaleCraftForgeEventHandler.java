@@ -1,5 +1,7 @@
 package de.longor.talecraft;
 
+import com.google.common.eventbus.Subscribe;
+
 import de.longor.talecraft.managers.TCWorldsManager;
 import de.longor.talecraft.managers.TCWorldManager;
 import de.longor.talecraft.proxy.ServerHandler;
@@ -14,7 +16,10 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
@@ -30,13 +35,13 @@ public class TaleCraftForgeEventHandler
 	@SubscribeEvent
 	public void worldLoad(WorldEvent.Load event)
 	{
-		taleCraft.coremanager.registerWorld(event.world);
+		taleCraft.worldsmanager.registerWorld(event.world);
 	}
 	
 	@SubscribeEvent
-	public void worldLoad(WorldEvent.Unload event)
+	public void worldUnload(WorldEvent.Unload event)
 	{
-		taleCraft.coremanager.unregisterWorld(event.world);
+		taleCraft.worldsmanager.unregisterWorld(event.world);
 	}
 	
 	@SubscribeEvent
@@ -45,14 +50,11 @@ public class TaleCraftForgeEventHandler
 	}
 	
 	@SubscribeEvent
-	public void modelBake(ModelBakeEvent event) {
-		taleCraft.proxy.asClient().modelBake(event);
-	}
-	
-	@SubscribeEvent
 	public void entityJoinWorld(EntityJoinWorldEvent event) {
-		if(!event.world.isRemote)
+		if(!event.world.isRemote) {
 			ServerHandler.handleEntityJoin(event.world, event.entity);
+			taleCraft.worldsmanager.fetchManager(event.world).joinWorld(event.entity);
+		}
 	}
 	
 	/*

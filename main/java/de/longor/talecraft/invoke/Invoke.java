@@ -2,8 +2,11 @@ package de.longor.talecraft.invoke;
 
 import java.util.Random;
 
+import org.mozilla.javascript.Scriptable;
+
 import scala.tools.nsc.settings.Final;
 import de.longor.talecraft.TaleCraft;
+import de.longor.talecraft.blocks.TCITriggerableBlock;
 import de.longor.talecraft.network.StringNBTCommand;
 import de.longor.talecraft.util.WorldHelper;
 import de.longor.talecraft.util.WorldHelper.BlockRegionIterator;
@@ -16,10 +19,13 @@ import net.minecraft.block.BlockLever;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.BlockTNT;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.command.ICommandManager;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntityCommandBlock;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -38,7 +44,40 @@ public class Invoke {
 			return;
 		}
 		
-		// TODO: Refactor this out into its own method.
+		if(invoke instanceof IScriptInvoke) {
+			String script = ((IScriptInvoke) invoke).getScript();
+			Scriptable scope = source.getScriptScope();
+			
+			TaleCraft.globalScriptManager.interpret(script, source.toString(), scope);
+			
+			if(source.getWorld().getGameRules().getGameRuleBooleanValue("visualEventDebugging")) {
+				// This could possibly create a crapton of lag if many events are fired.
+				NBTTagCompound pktdata = new NBTTagCompound();
+				pktdata.setString("type", "pos-marker");
+				pktdata.setIntArray("pos", new int[]{source.getPosition().getX(),source.getPosition().getY(),source.getPosition().getZ()});
+				pktdata.setInteger("color", 0xFF0000);
+				TaleCraft.simpleNetworkWrapper.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
+			}
+			return;
+		}
+		
+		if(invoke instanceof CommandInvoke) {
+			MinecraftServer server = MinecraftServer.getServer();
+			ICommandManager commandManager = server.getCommandManager();
+			ICommandSender sender = source.getCommandSender();
+			String command = ((CommandInvoke) invoke).getCommand();
+			commandManager.executeCommand(sender, command);
+			
+			if(source.getWorld().getGameRules().getGameRuleBooleanValue("visualEventDebugging")) {
+				// This could possibly create a crapton of lag if many events are fired.
+				NBTTagCompound pktdata = new NBTTagCompound();
+				pktdata.setString("type", "pos-marker");
+				pktdata.setIntArray("pos", new int[]{source.getPosition().getX(),source.getPosition().getY(),source.getPosition().getZ()});
+				pktdata.setInteger("color", 0x0099FF);
+				TaleCraft.simpleNetworkWrapper.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
+			}
+		}
+		
 		if(invoke instanceof BlockTriggerInvoke) {
 			// TaleCraft.logger.info("--> Executing BlockRegionTrigger from " + source.getPosition());
 			
@@ -93,8 +132,8 @@ public class Invoke {
 	public static final void trigger(World world, BlockPos position, IBlockState state, int flag) {
 		Block block = state.getBlock();
 		
-		if(block instanceof ITriggerableBlock){
-			((ITriggerableBlock) state.getBlock()).trigger(world, position, 0);
+		if(block instanceof TCITriggerableBlock){
+			((TCITriggerableBlock) state.getBlock()).trigger(world, position, 0);
 			return;
 		}
 		
@@ -141,8 +180,7 @@ public class Invoke {
             world.scheduleUpdate(position, block, block.tickRate(world));
 		}
 		
-		
-		// TODO: Implement more vanilla triggers?
+		// XXX: Implement more vanilla triggers?
 	}
 	
 }

@@ -8,10 +8,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public interface ITemporaryRenderable {
+public interface ITemporaryRenderable extends IRenderable {
 	
 	boolean canRemove();
-	
-	void render(Minecraft mc, ClientProxy clientProxy, Tessellator tessellator, WorldRenderer worldrenderer, double partialTicks);
 	
 }

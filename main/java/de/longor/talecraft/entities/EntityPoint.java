@@ -8,6 +8,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
@@ -26,35 +27,29 @@ public class EntityPoint extends Entity {
 		// This is a point. There is nothing to do here.
 	}
 
-    protected boolean canTriggerWalking()
-    {
+    protected boolean canTriggerWalking() {
         return false;
     }
 
-    public void onUpdate()
-    {
+    public void onUpdate() {
         this.prevPosX = this.posX;
         this.prevPosY = this.posY;
         this.prevPosZ = this.posZ;
     }
 
-    public boolean canBeCollidedWith()
-    {
+    public boolean canBeCollidedWith() {
         return TaleCraft.proxy.isBuildMode();
     }
 
-    public boolean isEntityInvulnerable(DamageSource p_180431_1_)
-    {
+    public boolean isEntityInvulnerable(DamageSource p_180431_1_) {
         return !p_180431_1_.isCreativePlayer();
     }
 
-    public boolean interact(EntityPlayer player)
-    {
+    public boolean interact(EntityPlayer player) {
     	return false;
     }
 
-    public boolean interactFirst(EntityPlayer playerIn)
-    {
+    public boolean interactFirst(EntityPlayer playerIn) {
     	if(playerIn.worldObj.isRemote)
     		return false;
     	
@@ -71,8 +66,7 @@ public class EntityPoint extends Entity {
     	return false;
     }
 
-    public boolean attackEntityFrom(DamageSource source, float amount)
-    {
+    public boolean attackEntityFrom(DamageSource source, float amount) {
     	if(worldObj.isRemote)
     		return false;
     	
@@ -82,6 +76,19 @@ public class EntityPoint extends Entity {
     	}
     	
 		return false;
+    }
+    
+    public AxisAlignedBB getBoundingBox() {
+    	if(Boolean.FALSE.booleanValue()) {
+        	final double f = getCollisionBorderSize();
+            return new AxisAlignedBB(0, 0, 0, 0, 0, 0).offset(prevPosX, prevPosY, prevPosZ).expand(f, f, f);
+    	}
+    	
+    	return null;
+    }
+
+    public float getEyeHeight() {
+        return height*0.5f;
     }
 	
 	@Override

@@ -40,8 +40,6 @@ public class FillerItem extends TCItem {
     	if(worldIn.isRemote)
     		return true;
     	
-    	// TaleCraft.logger.info("ITEM FILLER : Block Click -> " + pos);
-    	
     	IBlockState state = worldIn.getBlockState(pos);
     	
     	// note: the bounds are already sorted

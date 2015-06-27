@@ -1,105 +1,31 @@
 package de.longor.talecraft.proxy;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.function.Consumer;
 
-import javax.vecmath.Vector3f;
-
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.util.glu.GLU;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.eventbus.Subscribe;
-
-import de.longor.talecraft.Reference;
-import de.longor.talecraft.TaleCraft;
-import de.longor.talecraft.TaleCraftBlocks;
-import de.longor.talecraft.TaleCraftItems;
-import de.longor.talecraft.blocks.ClockBlockTileEntity;
-import de.longor.talecraft.blocks.RedstoneTriggerTileEntity;
-import de.longor.talecraft.blocks.RelayBlockTileEntity;
-import de.longor.talecraft.client.InfoBar;
-import de.longor.talecraft.client.gui.TCGuiScreen;
-import de.longor.talecraft.client.gui.vcui.VCUIRenderer;
-import de.longor.talecraft.client.render.BoxRenderer;
-import de.longor.talecraft.client.render.CustomSkyRenderer;
-import de.longor.talecraft.client.render.EXTFontRenderer;
-import de.longor.talecraft.client.render.ITemporaryRenderable;
-import de.longor.talecraft.client.render.ItemMetaWorldRenderer;
-import de.longor.talecraft.client.render.PushRenderableFactory;
-import de.longor.talecraft.client.render.WireframeMode;
-import de.longor.talecraft.client.render.entity.PointEntityRenderer;
-import de.longor.talecraft.client.render.tileentity.ClockBlockTileEntityRenderer;
-import de.longor.talecraft.client.render.tileentity.GenericTileEntityRenderer;
-import de.longor.talecraft.client.render.tileentity.IEXTTileEntityRenderer;
-import de.longor.talecraft.entities.EntityPoint;
-import de.longor.talecraft.items.TCItem;
-import de.longor.talecraft.network.PlayerNBTDataMerge;
-import de.longor.talecraft.network.StringNBTCommand;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiIngameMenu;
-import net.minecraft.client.model.ModelChest;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemModelMesher;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
-import net.minecraft.client.renderer.block.statemap.IStateMapper;
-import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.resources.model.BuiltInModel;
-import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.RegistrySimple;
-import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
-import net.minecraft.util.Vec3i;
 import net.minecraft.world.World;
-import net.minecraftforge.client.IItemRenderer;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.RenderWorldEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -109,128 +35,171 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Type;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.common.registry.LanguageRegistry;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
+
+import de.longor.talecraft.TaleCraft;
+import de.longor.talecraft.TaleCraftBlocks;
+import de.longor.talecraft.TaleCraftItems;
+import de.longor.talecraft.blocks.util.tileentity.ClockBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.RedstoneTriggerBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.RelayBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.ScriptBlockTileEntity;
+import de.longor.talecraft.client.InfoBar;
+import de.longor.talecraft.client.network.PlayerDataMergeMessageHandler;
+import de.longor.talecraft.client.network.StringNBTCommandMessageHandler;
+import de.longor.talecraft.client.render.IRenderable;
+import de.longor.talecraft.client.render.ITemporaryRenderable;
+import de.longor.talecraft.client.render.PushRenderableFactory;
+import de.longor.talecraft.client.render.RenderModeHelper;
+import de.longor.talecraft.client.render.entity.PointEntityRenderer;
+import de.longor.talecraft.client.render.renderables.SelectionBoxRenderer;
+import de.longor.talecraft.client.render.renderers.CustomSkyRenderer;
+import de.longor.talecraft.client.render.renderers.EXTFontRenderer;
+import de.longor.talecraft.client.render.renderers.ItemMetaWorldRenderer;
+import de.longor.talecraft.client.render.tileentity.GenericTileEntityRenderer;
+import de.longor.talecraft.entities.EntityPoint;
+import de.longor.talecraft.network.PlayerNBTDataMerge;
+import de.longor.talecraft.network.StringNBTCommand;
+
+/**
+ * WARNING: God-Class
+ **/
 public class ClientProxy extends CommonProxy
 {
 	public final Minecraft mc = Minecraft.getMinecraft();
-	
-	// mc internals (exposed)
-	public ModelManager mc_modelManager;
-	
+
 	// tc internals
-    private int visualizationMode = 0;
-    private EXTFontRenderer fontRenderer;
-    private InfoBar infoBarInstance = new InfoBar();
-    private ConcurrentLinkedDeque<Runnable> clientTickQeue = new ConcurrentLinkedDeque<Runnable>();
-    private ConcurrentLinkedDeque<ITemporaryRenderable> clientRenderQeue = new ConcurrentLinkedDeque<ITemporaryRenderable>();
-    
-    // tc internals (final / constants)
- 	private final KeyBinding buildModeBinding = new KeyBinding("key.toggleBuildMode", Keyboard.KEY_B, "key.categories.misc");
- 	private final KeyBinding visualizationBinding = new KeyBinding("key.toggleWireframe", Keyboard.KEY_PERIOD, "key.categories.misc");
- 	private final ResourceLocation selectionBoxTextuResourceLocation = new ResourceLocation("talecraft:textures/wandselection.png");
- 	private final ResourceLocation whitePixelTextureResourceLocation = new ResourceLocation("talecraft:textures/blocks/util/white.png");
- 	
- 	public static final ResourceLocation colorReslocWhite = new ResourceLocation("talecraft:textures/colors/white.png");
- 	public static final ResourceLocation colorReslocBlack = new ResourceLocation("talecraft:textures/colors/black.png");
- 	public static final ResourceLocation colorReslocRed = new ResourceLocation("talecraft:textures/colors/red.png");
- 	public static final ResourceLocation colorReslocBlue = new ResourceLocation("talecraft:textures/colors/blue.png");
- 	public static final ResourceLocation colorReslocGreen = new ResourceLocation("talecraft:textures/colors/green.png");
- 	public static final ResourceLocation colorReslocYellow = new ResourceLocation("talecraft:textures/colors/yellow.png");
- 	public static final ResourceLocation colorReslocOrange = new ResourceLocation("talecraft:textures/colors/orange.png");
- 	
+	private int visualizationMode = 0;
+	private EXTFontRenderer fontRenderer;
+	private InfoBar infoBarInstance = new InfoBar();
+	private ConcurrentLinkedDeque<Runnable> clientTickQeue = new ConcurrentLinkedDeque<Runnable>();
+	private ConcurrentLinkedDeque<ITemporaryRenderable> clientRenderTemporary = new ConcurrentLinkedDeque<ITemporaryRenderable>();
+	private ConcurrentLinkedDeque<IRenderable> clientRenderStatic = new ConcurrentLinkedDeque<IRenderable>();
+
+	// tc internals (final / constants)
+	private final KeyBinding mapSettingsBinding = new KeyBinding("key.mapSettings", Keyboard.KEY_M, "key.categories.misc");
+	private final KeyBinding buildModeBinding = new KeyBinding("key.toggleBuildMode", Keyboard.KEY_B, "key.categories.misc");
+	private final KeyBinding visualizationBinding = new KeyBinding("key.toggleWireframe", Keyboard.KEY_PERIOD, "key.categories.misc");
+
+	// Resource Locations
+	public static final ResourceLocation textureReslocSelectionBox = new ResourceLocation("talecraft:textures/wandselection.png");
+	public static final ResourceLocation colorReslocWhite = new ResourceLocation("talecraft:textures/colors/white.png");
+	public static final ResourceLocation colorReslocBlack = new ResourceLocation("talecraft:textures/colors/black.png");
+	public static final ResourceLocation colorReslocRed = new ResourceLocation("talecraft:textures/colors/red.png");
+	public static final ResourceLocation colorReslocBlue = new ResourceLocation("talecraft:textures/colors/blue.png");
+	public static final ResourceLocation colorReslocGreen = new ResourceLocation("talecraft:textures/colors/green.png");
+	public static final ResourceLocation colorReslocYellow = new ResourceLocation("talecraft:textures/colors/yellow.png");
+	public static final ResourceLocation colorReslocOrange = new ResourceLocation("talecraft:textures/colors/orange.png");
+
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
-		
+
 		MinecraftForge.EVENT_BUS.register(this);
-		
-		// register all keybindings
-		ClientRegistry.registerKeyBinding(buildModeBinding);
-		ClientRegistry.registerKeyBinding(visualizationBinding);
-		
-		// register all tileentity renderers
-		ClientRegistry.bindTileEntitySpecialRenderer(ClockBlockTileEntity.class,
-				new GenericTileEntityRenderer<ClockBlockTileEntity>("talecraft:textures/blocks/util/timer.png"));
-		ClientRegistry.bindTileEntitySpecialRenderer(RedstoneTriggerTileEntity.class,
-				new GenericTileEntityRenderer<RedstoneTriggerTileEntity>("talecraft:textures/blocks/util/redstoneTrigger.png"));
-		ClientRegistry.bindTileEntitySpecialRenderer(RelayBlockTileEntity.class,
-				new GenericTileEntityRenderer<RedstoneTriggerTileEntity>("talecraft:textures/blocks/util/relay.png"));
-		
+
+		init_logic_keybindings();
+		init_render_tilentity();
 	}
-	
+
 	@Override
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
-		
-		// get hte ModelMesher and register ALL item-models
+
+		// Get the ModelMesher and register ALL item-models
 		ItemModelMesher mesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
-		
-		for(int i = 0; i < 7; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.killBlock), i, new ModelResourceLocation("talecraft:killblock", "inventory"));
-		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.clockBlock), 0, new ModelResourceLocation("talecraft:clockblock", "inventory"));
-		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.redstoneTrigger), 0, new ModelResourceLocation("talecraft:redstone_trigger", "inventory"));
-		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.relayBlock), 0, new ModelResourceLocation("talecraft:relayblock", "inventory"));
-		
+
+		init_render_block(mesher);
+		init_render_item(mesher);
+
+		init_render_entity();
+
+		init_logic_network();
+
+	} // init(..){}
+
+	private void init_logic_keybindings() {
+		// register all keybindings
+		ClientRegistry.registerKeyBinding(mapSettingsBinding);
+		ClientRegistry.registerKeyBinding(buildModeBinding);
+		ClientRegistry.registerKeyBinding(visualizationBinding);
+	}
+
+	private void init_logic_network() {
+		SimpleNetworkWrapper net = TaleCraft.instance.simpleNetworkWrapper;
+		net.registerMessage(new StringNBTCommandMessageHandler(), StringNBTCommand.class, 0x01, Side.CLIENT);
+		net.registerMessage(new PlayerDataMergeMessageHandler(), PlayerNBTDataMerge.class, 0x02, Side.CLIENT);
+	}
+
+	private void init_render_tilentity() {
+		ClientRegistry.bindTileEntitySpecialRenderer(ClockBlockTileEntity.class,
+				new GenericTileEntityRenderer<ClockBlockTileEntity>("talecraft:textures/blocks/util/timer.png"));
+		ClientRegistry.bindTileEntitySpecialRenderer(RedstoneTriggerBlockTileEntity.class,
+				new GenericTileEntityRenderer<RedstoneTriggerBlockTileEntity>("talecraft:textures/blocks/util/redstoneTrigger.png"));
+		ClientRegistry.bindTileEntitySpecialRenderer(RelayBlockTileEntity.class,
+				new GenericTileEntityRenderer<RelayBlockTileEntity>("talecraft:textures/blocks/util/relay.png"));
+		ClientRegistry.bindTileEntitySpecialRenderer(ScriptBlockTileEntity.class,
+				new GenericTileEntityRenderer<ScriptBlockTileEntity>("talecraft:textures/blocks/util/script.png"));
+	}
+
+	private void init_render_item(ItemModelMesher mesher) {
+		// items
 		mesher.register(TaleCraftItems.wand, 0, new ModelResourceLocation("talecraft:wand", "inventory"));
 		mesher.register(TaleCraftItems.filler, 0, new ModelResourceLocation("talecraft:filler", "inventory"));
 		mesher.register(TaleCraftItems.eraser, 0, new ModelResourceLocation("talecraft:eraser", "inventory"));
 		mesher.register(TaleCraftItems.teleporter, 0, new ModelResourceLocation("talecraft:teleporter", "inventory"));
 		mesher.register(TaleCraftItems.instakill, 0, new ModelResourceLocation("talecraft:instakill", "inventory"));
-		
+		mesher.register(TaleCraftItems.voxelbrush, 0, new ModelResourceLocation("talecraft:voxelbrush", "inventory"));
+	}
+
+	private void init_render_block(ItemModelMesher mesher) {
+		// killblock (why?!)
+		for(int i = 0; i < 7; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.killBlock), i, new ModelResourceLocation("talecraft:killblock", "inventory"));
+		// blocks
+		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.clockBlock), 0, new ModelResourceLocation("talecraft:clockblock", "inventory"));
+		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.redstoneTrigger), 0, new ModelResourceLocation("talecraft:redstone_trigger", "inventory"));
+		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.redstoneActivator), 0, new ModelResourceLocation("talecraft:redstone_activator", "inventory"));
+		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.relayBlock), 0, new ModelResourceLocation("talecraft:relayblock", "inventory"));
+		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.scriptBlock), 0, new ModelResourceLocation("talecraft:scriptblock", "inventory"));
+	}
+
+	private void init_render_entity() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityPoint.class, new PointEntityRenderer(mc.getRenderManager()));
-		
-		// register StringNBTCommand-Packet
-		TaleCraft.instance.simpleNetworkWrapper.registerMessage(new IMessageHandler() {
-			@Override public IMessage onMessage(IMessage message, MessageContext ctx) {
-				if(message instanceof StringNBTCommand) {
-					StringNBTCommand cmd = (StringNBTCommand) message;
-					ClientProxy.this.handleClientCommand(cmd.command,cmd.data);
-				}
-				return null;
-			}
-		}, StringNBTCommand.class, 0x01, Side.CLIENT);
-		
-		// register PlayerNBTDataMerge-Packet
-		TaleCraft.instance.simpleNetworkWrapper.registerMessage(new IMessageHandler() {
-			@Override public IMessage onMessage(final IMessage message, MessageContext ctx) {
-				if(message instanceof PlayerNBTDataMerge) {
-					final Minecraft mc = ClientProxy.this.mc;
-					
-					clientTickQeue.add(new Runnable(){
-						Minecraft micr = mc;
-						PlayerNBTDataMerge mpakDataMerge = (PlayerNBTDataMerge) message;
-						@Override public void run() {
-							if(micr.thePlayer != null) {
-								micr.thePlayer.getEntityData().merge((mpakDataMerge.data));
-							}
-						}
-					});
-				}
-				return null;
-			}
-		}, PlayerNBTDataMerge.class, 0x02, Side.CLIENT);
-	} // init(..){}
+	}
 	
-	protected void handleClientCommand(String command, NBTTagCompound data) {
+	public void handleClientCommand(String command, NBTTagCompound data) {
 		if(command.equals("pushRenderable")) {
 			ITemporaryRenderable renderable = PushRenderableFactory.parsePushRenderableFromNBT(data);
 			if(renderable != null) {
-				clientRenderQeue.offer(renderable);
+				clientRenderTemporary.offer(renderable);
 			}
 			return;
 		}
 		
+		if(command.equals("switchShader") && Boolean.FALSE.booleanValue()) {
+			final String sh = data.getString("shaderName");
+			clientTickQeue.offer(new Runnable() {
+				String shader = sh;
+				@Override
+				public void run() {
+					System.out.println("SWITCH : " + shader);
+					
+					Field[] fields = mc.entityRenderer.getClass().getDeclaredFields();
+					Field shaderResourceLocations = null;
+					for(Field field : fields) {
+						System.out.println("entityRenderer."+field.getName() + " : " + field.getType());
+					}
+				}
+			});
+			return;
+		}
+		
+		TaleCraft.logger.info("Received Command -> " + command + ", with data: " + data);
 		// XXX: Implement more Server->Client commands.
-	}
-
-	public void modelBake(ModelBakeEvent event) {
-	    this.mc_modelManager = event.modelManager;
 	}
 	
 	@Override
@@ -239,14 +208,16 @@ public class ClientProxy extends CommonProxy
 		
 		// Create the singleton instance of the EXTFontRenderer
 		fontRenderer = new EXTFontRenderer(mc.fontRendererObj);
+		
+		clientRenderStatic.offer(new SelectionBoxRenderer());
 	}
-	
+
 	@SubscribeEvent
 	public void worldPass(RenderWorldLastEvent event) {
-		WireframeMode.DISABLE();
+		RenderModeHelper.DISABLE();
 		
 		// Iterate trough all ITemporaryRenderables and remove the ones that can be removed.
-		Iterator<ITemporaryRenderable> iterator = clientRenderQeue.iterator();
+		Iterator<ITemporaryRenderable> iterator = clientRenderTemporary.iterator();
 		while(iterator.hasNext()) {
 			ITemporaryRenderable itr = iterator.next();
 			if(itr.canRemove()) {
@@ -288,82 +259,45 @@ public class ClientProxy extends CommonProxy
 			}
 		}
 	}
-	
+
 	private void worldPostRender(double partialTicks, Tessellator tessellator, WorldRenderer worldrenderer) {
 		// Translate into World-Space
 		double px = mc.thePlayer.prevPosX + (mc.thePlayer.posX - mc.thePlayer.prevPosX) * (double)partialTicks;
-        double py = mc.thePlayer.prevPosY + (mc.thePlayer.posY - mc.thePlayer.prevPosY) * (double)partialTicks;
-        double pz = mc.thePlayer.prevPosZ + (mc.thePlayer.posZ - mc.thePlayer.prevPosZ) * (double)partialTicks;
+		double py = mc.thePlayer.prevPosY + (mc.thePlayer.posY - mc.thePlayer.prevPosY) * (double)partialTicks;
+		double pz = mc.thePlayer.prevPosZ + (mc.thePlayer.posZ - mc.thePlayer.prevPosZ) * (double)partialTicks;
 		GL11.glTranslated(-px, -py, -pz);
 		
 		GlStateManager.disableCull();
-		GlStateManager.disableTexture2D();
-		GlStateManager.disableBlend();
-		GlStateManager.shadeModel(GL11.GL_FLAT);
+		GlStateManager.enableLighting();
+		GlStateManager.enableTexture2D();
+		GlStateManager.color(1, 1, 1, 1);
+		RenderHelper.enableStandardItemLighting();
 		
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO);
-		
-		// Wand Selection Rendering
-		NBTTagCompound playerData = mc.thePlayer.getEntityData();
-		if(playerData.hasKey("tcWand")) {
-			NBTTagCompound tcWand = playerData.getCompoundTag("tcWand");
-			
-			if(tcWand.hasKey("cursor")) {
-				final float E = -1f / 64f;
-				int[] cursor = tcWand.getIntArray("cursor");
-				
-				GL11.glPolygonMode(GL11.GL_FRONT, GL11.GL_POINT);
-				GL11.glPolygonMode(GL11.GL_BACK, GL11.GL_FILL);
-				GlStateManager.enableTexture2D();
-				mc.getTextureManager().bindTexture(whitePixelTextureResourceLocation);
-				BoxRenderer.renderBox(tessellator, worldrenderer, cursor[0]-E, cursor[1]-E, cursor[2]-E, cursor[0]+1+E, cursor[1]+1+E, cursor[2]+1+E, 0f,1f,1f,1f);
-				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-			}
-			
-			// If not null, render the cursor selections boundaries.
-			if(tcWand.hasKey("boundsA") && tcWand.hasKey("boundsB")) {
-				// get bounds
-				int[] a = tcWand.getIntArray("boundsA");
-				int[] b = tcWand.getIntArray("boundsB");
-				
-				// make sure its correctly sorted
-				int ix = Math.min(a[0], b[0]);
-				int iy = Math.min(a[1], b[1]);
-				int iz = Math.min(a[2], b[2]);
-				int ax = Math.max(a[0], b[0]);
-				int ay = Math.max(a[1], b[1]);
-				int az = Math.max(a[2], b[2]);
-				
-				// 'error' offset
-				final float E = 1f / 32f;
-				
-				// Prepare state
-				GlStateManager.disableLighting();
-				GlStateManager.disableNormalize();
-				GlStateManager.enableTexture2D();
-				RenderHelper.disableStandardItemLighting();
-				mc.getTextureManager().bindTexture(selectionBoxTextuResourceLocation);
-				
-				// Render primary (with-depth) box
-				BoxRenderer.renderSelectionBox(tessellator, worldrenderer, ix-E, iy-E, iz-E, ax+1+E, ay+1+E, az+1+E, 1);
-				
-				// Render secondary (no-depth) box
-				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-				GlStateManager.disableDepth();
-				BoxRenderer.renderSelectionBox(tessellator, worldrenderer, ix-E, iy-E, iz-E, ax+1+E, ay+1+E, az+1+E, 1);
-				GlStateManager.enableDepth();
-				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-			}
-		}
-		
-		GlStateManager.disableBlend();
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		
-		// Render all the temporary renderables
-		for(ITemporaryRenderable renderable : clientRenderQeue) {
+		// Render all the renderables
+		for(IRenderable renderable : clientRenderStatic) {
 			renderable.render(mc, this, tessellator, worldrenderer, partialTicks);
 		}
+		
+		GlStateManager.disableCull();
+		GlStateManager.enableBlend();
+		GlStateManager.enableLighting();
+		GlStateManager.enableTexture2D();
+		GlStateManager.color(1, 1, 1, 1);
+		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		RenderHelper.enableStandardItemLighting();
+		
+		// Render all the temporary renderables
+		for(ITemporaryRenderable renderable : clientRenderTemporary) {
+			renderable.render(mc, this, tessellator, worldrenderer, partialTicks);
+		}
+		
+		GlStateManager.disableCull();
+		GlStateManager.enableBlend();
+		GlStateManager.enableLighting();
+		GlStateManager.enableTexture2D();
+		GlStateManager.color(1, 1, 1, 1);
+		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		RenderHelper.enableStandardItemLighting();
 		
 		// Render Item Meta Renderables
 		if(mc.thePlayer != null && mc.thePlayer.getCurrentEquippedItem() != null) {
@@ -380,8 +314,11 @@ public class ClientProxy extends CommonProxy
 			ItemMetaWorldRenderer.render(itemType, itemStack);
 		}
 		
-		
-		GlStateManager.enableCull();
+		GlStateManager.enableCull();;
+		GlStateManager.enableLighting();
+		GlStateManager.enableTexture2D();
+		GlStateManager.color(1, 1, 1, 1);
+		RenderHelper.enableStandardItemLighting();
 	}
 	
 	@SubscribeEvent
@@ -390,20 +327,25 @@ public class ClientProxy extends CommonProxy
 	}
 	
 	/**
-	 * This method is only called when the world is unloaded.
+	 * This method is called when the world is unloaded.
 	 **/
 	public void unloadWorld(World world) {
 		if(world instanceof WorldClient) {
 			// the client is either changing dimensions or leaving the server.
-			// reset all temporary world related settings
+			// reset all temporary world related settings here
+			// delete all temporary world related objects here
 			visualizationMode = 0;
+			clientRenderTemporary.clear();
 		}
 	}
 	
+	/**
+	 * @return TRUE, if the client is in build-mode (aka: creative-mode), FALSE if not.
+	 **/
 	public boolean isBuildMode() {
 		return mc.playerController != null && mc.playerController.isInCreativeMode();
 	}
-	
+
 	public void tick(TickEvent event) {
 		super.tick(event);
 		
@@ -432,12 +374,25 @@ public class ClientProxy extends CommonProxy
 				
 				// this enables the WIREFRAME-MODE if we are ingame
 				if(mc.theWorld != null && mc.thePlayer != null) {
-					WireframeMode.ENABLE(mc.thePlayer.capabilities.isCreativeMode ? visualizationMode : 0);
-				}
-				
-				// this is part of the LIGHTING visualization mode
-				if(visualizationMode == 3) {
-					GlStateManager.disableTexture2D();
+					RenderModeHelper.ENABLE(mc.thePlayer.capabilities.isCreativeMode ? visualizationMode : 0);
+					
+					if(visualizationMode == 0) {
+						mc.gameSettings.clouds = true;
+					} else {
+						mc.gameSettings.clouds = false;
+					}
+					
+					// this is part of the LIGHTING visualization mode
+					if(visualizationMode == 3) {
+						GlStateManager.disableTexture2D();
+					}
+					
+					if(visualizationMode == 4) {
+				        GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+				        GlStateManager.disableTexture2D();
+				        GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+				        GlStateManager.disableFog();
+					}
 				}
 			}
 			
@@ -449,19 +404,22 @@ public class ClientProxy extends CommonProxy
 			}
 		}// RenderTickEvent {}
 	}// tick {}
-	
+
 	/****/
 	public void keyEvent(KeyInputEvent event) {
 		// this toggles between the various visualization modes
 		if(visualizationBinding.isPressed() && visualizationBinding.isKeyDown()) {
-			visualizationMode = (visualizationMode + 1) & 3;
+			visualizationMode++;
+			if(visualizationMode > 4) {
+				visualizationMode = 0;
+			}
 		}
-		
+
 		// this toggles between buildmode and adventuremode
 		if(buildModeBinding.isPressed() && buildModeBinding.isKeyDown() && mc.theWorld != null && mc.thePlayer != null && !mc.isGamePaused()) {
 			taleCraft.logger.info("Switching GameMode using the buildmode-key.");
 			mc.thePlayer.sendChatMessage("/gamemode " + (isBuildMode() ? "2" : "1"));
-			
+
 			// these bunch of lines delete all display lists,
 			// thus forcing the renderer to reupload the world to the GPU
 			// (this process only takes several milliseconds)
@@ -475,26 +433,35 @@ public class ClientProxy extends CommonProxy
 				}
 			}, 250);
 		}
+		
+		if(
+			mapSettingsBinding.isPressed() && mapSettingsBinding.isKeyDown() &&
+			isBuildMode() && mc.thePlayer != null && mc.theWorld != null
+		) {
+			// XXX: Disabled functionality.
+			// mc.displayGuiScreen(new GuiMapControl());
+		}
+		
 	}
-	
+
 	/***********************************/
 	/**                               **/
 	/**                               **/
 	/**                               **/
 	/***********************************/
-	
+
 	/****/
 	public void sheduleClientTickTask(Runnable runnable) {
 		this.clientTickQeue.push(runnable);
 	}
-	
+
 	/****/
 	public void sheduleClientRenderTask(ITemporaryRenderable renderable) {
-		this.clientRenderQeue.push(renderable);
+		this.clientRenderTemporary.push(renderable);
 	}
-	
+
 	public int getVisualizationmode() {
 		return this.visualizationMode;
 	}
-	
+
 }

@@ -5,7 +5,7 @@ import java.util.Random;
 import org.lwjgl.opengl.GL11;
 
 import de.longor.talecraft.TaleCraft;
-import de.longor.talecraft.blocks.ClockBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.ClockBlockTileEntity;
 import de.longor.talecraft.client.render.RenderHelper;
 import de.longor.talecraft.invoke.IInvokeSource;
 import net.minecraft.client.Minecraft;
@@ -47,7 +47,9 @@ public class GenericTileEntityRenderer<T extends TileEntity> extends TileEntityS
         final float A = 1f - D;
         
         // render states
-        GlStateManager.disableLighting();
+        net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
+        GlStateManager.enableLighting();
+        GlStateManager.color(1, 1, 1, 1);
         GlStateManager.disableBlend();
         GlStateManager.enableCull();
         // bind texture
@@ -113,6 +115,7 @@ public class GenericTileEntityRenderer<T extends TileEntity> extends TileEntityS
         
         GlStateManager.enableLighting();
         GlStateManager.enableCull();
+        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
         
         GlStateManager.popMatrix();
 	}

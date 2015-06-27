@@ -25,7 +25,6 @@ public class ExplosionCommand extends CommandBase {
 	
 	@Override
 	public void execute(ICommandSender sender, String[] args) throws CommandException {
-		
 		// Pattern Matching?
 		// 0 1 -> [strength]
 		// 1 2 -> <entity> [strength]
@@ -37,8 +36,6 @@ public class ExplosionCommand extends CommandBase {
 //		if(args.length != 3) {
 //			throw new CommandException("Wrong number of parameters: " + args.length + " given, 3 needed.");
 //		}
-		
-		
 		
 		{
 			BlockPos originPos = sender.getPosition();

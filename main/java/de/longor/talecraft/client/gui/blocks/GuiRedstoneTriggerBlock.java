@@ -3,6 +3,8 @@ package de.longor.talecraft.client.gui.blocks;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.google.common.collect.Lists;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.JsonToNBT;
@@ -13,7 +15,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.util.Constants.NBT;
 import de.longor.talecraft.TaleCraft;
-import de.longor.talecraft.blocks.RedstoneTriggerTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.RedstoneTriggerBlockTileEntity;
 import de.longor.talecraft.client.gui.qad.QADButton;
 import de.longor.talecraft.client.gui.qad.QADComponent;
 import de.longor.talecraft.client.gui.qad.QADGuiScreen;
@@ -22,9 +24,9 @@ import de.longor.talecraft.items.WandItem;
 import de.longor.talecraft.network.StringNBTCommand;
 
 public class GuiRedstoneTriggerBlock extends QADGuiScreen {
-	RedstoneTriggerTileEntity tileEntity;
+	RedstoneTriggerBlockTileEntity tileEntity;
 	
-	public GuiRedstoneTriggerBlock(RedstoneTriggerTileEntity tileEntity) {
+	public GuiRedstoneTriggerBlock(RedstoneTriggerBlockTileEntity tileEntity) {
 		this.tileEntity = tileEntity;
 	}
 	
@@ -54,6 +56,10 @@ public class GuiRedstoneTriggerBlock extends QADGuiScreen {
 				TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandData));
 			}
 		});
+		setRegionButton.setTooltip(
+				"Sets the region that this redstone-trigger",
+				"triggers when it gets powered."
+		);
 		components.add(setRegionButton);
 		
 	}

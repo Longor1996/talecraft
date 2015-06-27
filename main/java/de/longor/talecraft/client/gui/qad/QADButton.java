@@ -1,9 +1,12 @@
 package de.longor.talecraft.client.gui.qad;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
 import com.mojang.realmsclient.dto.RealmsServer.McoServerComparator;
 
 import de.longor.talecraft.client.gui.vcui.VCUIRenderer;
-import de.longor.talecraft.client.render.EXTFontRenderer;
+import de.longor.talecraft.client.render.renderers.EXTFontRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
@@ -23,7 +26,6 @@ public class QADButton extends QADComponent {
 	boolean enabled = true;
     boolean hovered = false;
     
-
     public QADButton(int x, int y, int width, String text)
     {
         this.text = text;
@@ -104,18 +106,18 @@ public class QADButton extends QADComponent {
             renderer.drawTexturedModalRectangle(this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + k * 20, this.width / 2, this.height);
             // this.mouseDragged(mc, mouseX, mouseY);
             
-            int l = 14737632;
+            int fontColor = 14737632;
             
             if (!this.enabled)
             {
-                l = 10526880;
+                fontColor = 10526880;
             }
             else if (this.hovered)
             {
-                l = 16777120;
+                fontColor = 16777120;
             }
             
-            fontrenderer.drawCenteredString(text, x + width / 2, y + (height - 8) / 2, l, true);
+            renderer.drawCenteredString(text, x + width / 2, y + (height - 8) / 2, fontColor, true);
         }
 	}
 	
@@ -150,5 +152,16 @@ public class QADButton extends QADComponent {
     	SoundHandler soundHandlerIn = Minecraft.getMinecraft().getSoundHandler();
         soundHandlerIn.playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
     }
+    
+	@Override
+	public boolean isPointInside(int mouseX, int mouseY) {
+		int localMouseX = mouseX - x;
+		int localMouseY = mouseY - y;
+		return localMouseX >= 0 && localMouseY >= 0 && localMouseX < this.width && localMouseY < this.height;
+	}
+	
+	public List<String> getTooltip(int mouseX, int mouseY) {
+		return getTooltip();
+	}
 	
 }

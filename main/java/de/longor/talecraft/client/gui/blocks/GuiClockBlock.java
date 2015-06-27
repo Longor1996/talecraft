@@ -2,14 +2,16 @@ package de.longor.talecraft.client.gui.blocks;
 
 import java.util.ArrayList;
 
+import com.google.common.collect.Lists;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
 import de.longor.talecraft.TaleCraft;
-import de.longor.talecraft.blocks.ClockBlockTileEntity;
-import de.longor.talecraft.blocks.RedstoneTriggerTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.ClockBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.RedstoneTriggerBlockTileEntity;
 import de.longor.talecraft.client.gui.TCGuiScreen;
 import de.longor.talecraft.client.gui.qad.QADButton;
 import de.longor.talecraft.client.gui.qad.QADComponent;
@@ -66,6 +68,9 @@ public class GuiClockBlock extends QADGuiScreen {
 		final QADTextField fieldRepeat = QADFACTORY.createNumberTextField(tileEntity.set_repeat, column1x+2, row1y+2, column1w-4, 1000000, 0);
 		final QADTextField fieldSpeed = QADFACTORY.createNumberTextField(tileEntity.set_speed, column1x+2, row2y+2, column1w-4, 20*60, 1);
 		final QADTextField fieldTime = QADFACTORY.createNumberTextField(tileEntity.set_time, column1x+2, row3y+2, column1w-4, 20*60*1, 1);
+		fieldRepeat.tooltip = Lists.newArrayList("The amount of times this clock will 'tick'.");
+		fieldSpeed.tooltip = Lists.newArrayList("How fast this clock will count down.");
+		fieldTime.tooltip = Lists.newArrayList("The number the countdown starts at.");
 		components.add(fieldRepeat);
 		components.add(fieldSpeed);
 		components.add(fieldTime);
@@ -85,6 +90,7 @@ public class GuiClockBlock extends QADGuiScreen {
 				TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandData));
 			}
 		});
+		setDataButton.setTooltip("There is no auto-save, ", "so don't forget to click this button!");
 		components.add(setDataButton);
 		
 		QADButton buttonStart = QADFACTORY.createButton("Start", column0x, row7y, column0w, null);
@@ -97,6 +103,7 @@ public class GuiClockBlock extends QADGuiScreen {
 				GuiClockBlock.this.mc.displayGuiScreen(null);
 			}
 		});
+		buttonStart.setTooltip("Start the clocks countdown.");
 		components.add(buttonStart);
 		
 		QADButton buttonPause = QADFACTORY.createButton("Pause", column1x, row7y, column1w, null);
@@ -109,6 +116,7 @@ public class GuiClockBlock extends QADGuiScreen {
 				GuiClockBlock.this.mc.displayGuiScreen(null);
 			}
 		});
+		buttonPause.setTooltip("This button pauses the clocks countdown.");
 		components.add(buttonPause);
 		
 		QADButton buttonStop = QADFACTORY.createButton("Stop", column2x, row7y, column2w, null);
@@ -121,6 +129,7 @@ public class GuiClockBlock extends QADGuiScreen {
 				GuiClockBlock.this.mc.displayGuiScreen(null);
 			}
 		});
+		buttonStop.setTooltip("This button stops the clocks countdown.");
 		components.add(buttonStop);
 		
 		QADButton setRegionButton = new QADButton(column1x, row0y, column1w, "Set Region");
@@ -144,6 +153,7 @@ public class GuiClockBlock extends QADGuiScreen {
 				TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandData));
 			}
 		});
+		setRegionButton.setTooltip("Sets the region the clock triggers when it 'ticks'.");
 		components.add(setRegionButton);
 		
 	}

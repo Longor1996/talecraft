@@ -3,16 +3,18 @@ package de.longor.talecraft.client.render.entity;
 import org.lwjgl.opengl.GL11;
 
 import de.longor.talecraft.TaleCraft;
-import de.longor.talecraft.client.render.BoxRenderer;
+import de.longor.talecraft.client.render.renderers.BoxRenderer;
 import de.longor.talecraft.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 
 public class PointEntityRenderer extends Render {
@@ -34,34 +36,45 @@ public class PointEntityRenderer extends Render {
         
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        float r=1,g=1,b=1,a=1;
+        float r=1,g=1,b=1,a=1,yeoffset=entity.getEyeHeight();
 		
         bindTexture(ClientProxy.colorReslocWhite);
 		
+        RenderHelper.disableStandardItemLighting();
 		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO);
 		
-		GL11.glPolygonMode(GL11.GL_FRONT, GL11.GL_POINTS);
-		GL11.glPolygonMode(GL11.GL_BACK, GL11.GL_LINE);
-		for(int i = 0; i < 4; i++) {
-			float E = (i + 1) / 11f;
-			BoxRenderer.renderBox(tessellator, worldrenderer, x-E, y-E, z-E, x+E, y+E, z+E, 1, 1, 1, a);
+		// if(Boolean.TRUE.booleanValue())
+		{
+			GL11.glPushMatrix();
+			GL11.glTranslated(x, y+yeoffset, z);
+	    	GL11.glRotatef(entity.rotationYaw, 0, 1, 0);
+	    	GL11.glRotatef(entity.rotationPitch, 1, 0, 0);
 			
-			E *= 0.3f;
-			BoxRenderer.renderBox(tessellator, worldrenderer, x-E, y-E, z-E, x+E, y+E, z+E, 0, 0, 0, a);
+	    	GL11.glPolygonMode(GL11.GL_FRONT, GL11.GL_POINTS);
+			GL11.glPolygonMode(GL11.GL_BACK, GL11.GL_LINE);
+			
+			for(int i = 0; i < 4; i++) {
+				float E = (i + 1) / 16f;
+				GlStateManager.blendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO);
+				BoxRenderer.renderBox(tessellator, worldrenderer, -E, -E, -E, +E, +E, +E, 1, 1, 1, a);
+				
+				E *= 0.3f;
+				GlStateManager.blendFunc(GL11.GL_DST_COLOR, GL11.GL_DST_ALPHA);
+				BoxRenderer.renderBox(tessellator, worldrenderer, -E, -E, -E, +E, +E, +E, 0, 0, 0, a);
+			}
+			GL11.glPopMatrix();
 		}
-		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 		
 		GlStateManager.disableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        
+		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 		
 		boolean shouldDrawName = (x*x+y*y+z*z) < 128;
 		
         final String TEXT = entity.getName(); // tile.getStateAsString();
         if(TEXT != null && shouldDrawName) {
         	GL11.glPushMatrix();
-        	GL11.glTranslated(x, y, z);
+        	GL11.glTranslated(x, y+yeoffset, z);
         	FontRenderer fntrnd = TaleCraft.proxy.asClient().mc.fontRendererObj;
         	final int TEXT_W = fntrnd.getStringWidth(TEXT);
         	final float HEX = 1f / 32f;

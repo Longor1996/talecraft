@@ -1,6 +1,7 @@
 package de.longor.talecraft.client.render;
 
 import de.longor.talecraft.TaleCraft;
+import de.longor.talecraft.client.render.temporables.BlockPosTemporable;
 import de.longor.talecraft.client.render.temporables.LineToBoxTemporable;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -13,13 +14,27 @@ public class PushRenderableFactory {
 			return null;
 		}
 		
-		TaleCraft.logger.info("New Push-Renderable: " + data.toString());
-		TaleCraft.logger.info("Parsing: " + type);
+		// TaleCraft.logger.info("New Push-Renderable: " + type + " :" + data.toString());
+		
+		if(type.equals("pos-marker")) {
+			int[] pos = data.getIntArray("pos");
+			int color = data.getInteger("color");
+			long deletionTimepoint = System.currentTimeMillis() + 250L;
+			
+			if(pos.length != 3)
+				return null;
+			
+			BlockPosTemporable ren = new BlockPosTemporable();
+			ren.pos = pos;
+			ren.color = color;
+			ren.deletionTimepoint = deletionTimepoint;
+			return ren;
+		}
 		
 		if(type.equals("line-to-box")) {
 			int[] src = data.getIntArray("src");
 			int[] box = data.getIntArray("box");
-			long deletionTimepoint = System.currentTimeMillis() + 1000L;
+			long deletionTimepoint = System.currentTimeMillis() + 100L;
 			
 			if(src.length != 3)
 				return null;
@@ -31,7 +46,7 @@ public class PushRenderableFactory {
 			ren.src = src;
 			ren.deletionTimepoint = deletionTimepoint;
 			
-			TaleCraft.logger.info("Parsed: " + ren);
+			// TaleCraft.logger.info("Parsed: " + ren);
 			return ren;
 		}
 		

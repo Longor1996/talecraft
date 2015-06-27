@@ -11,21 +11,27 @@ import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import de.longor.talecraft.blocks.ClockBlock;
-import de.longor.talecraft.blocks.ClockBlockTileEntity;
-import de.longor.talecraft.blocks.KillBlock;
-import de.longor.talecraft.blocks.RedstoneTrigger;
-import de.longor.talecraft.blocks.RedstoneTriggerTileEntity;
-import de.longor.talecraft.blocks.RelayBlock;
-import de.longor.talecraft.blocks.RelayBlockTileEntity;
+import de.longor.talecraft.blocks.util.ClockBlock;
+import de.longor.talecraft.blocks.util.KillBlock;
+import de.longor.talecraft.blocks.util.RedstoneActivatorBlock;
+import de.longor.talecraft.blocks.util.RedstoneTriggerBlock;
+import de.longor.talecraft.blocks.util.RelayBlock;
+import de.longor.talecraft.blocks.util.ScriptBlock;
+import de.longor.talecraft.blocks.util.tileentity.ClockBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.RedstoneTriggerBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.RelayBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.ScriptBlockTileEntity;
 
 public class TaleCraftBlocks
 {
+	public static HashMap<String, Block> allBlocks;
+	
 	public static KillBlock killBlock;
 	public static ClockBlock clockBlock;
-	public static RedstoneTrigger redstoneTrigger;
+	public static RedstoneTriggerBlock redstoneTrigger;
+	public static RedstoneActivatorBlock redstoneActivator;
 	public static RelayBlock relayBlock;
-	public static HashMap<String, Block> allBlocks;
+	public static ScriptBlock scriptBlock;
 	
 	static void init()
 	{
@@ -41,11 +47,16 @@ public class TaleCraftBlocks
 		clockBlock = register("clockblock", new ClockBlock());
 		GameRegistry.registerTileEntity(ClockBlockTileEntity.class, "tc_clockblock");
 		
-		redstoneTrigger = register("redstone_trigger", new RedstoneTrigger());
-		GameRegistry.registerTileEntity(RedstoneTriggerTileEntity.class, "tc_redstonetrigger");
+		redstoneTrigger = register("redstone_trigger", new RedstoneTriggerBlock());
+		GameRegistry.registerTileEntity(RedstoneTriggerBlockTileEntity.class, "tc_redstonetrigger");
+		
+		redstoneActivator = register("redstone_activator", new RedstoneActivatorBlock());
 		
 		relayBlock = register("relayblock", new RelayBlock());
 		GameRegistry.registerTileEntity(RelayBlockTileEntity.class, "tc_relayblock");
+		
+		scriptBlock = register("scriptblock", new ScriptBlock());
+		GameRegistry.registerTileEntity(ScriptBlockTileEntity.class, "tc_scriptblock");
 		
 	}
 	

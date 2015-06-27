@@ -4,6 +4,8 @@ import com.google.common.eventbus.Subscribe;
 
 import de.longor.talecraft.managers.TCWorldsManager;
 import de.longor.talecraft.managers.TCWorldManager;
+import de.longor.talecraft.proxy.ServerHandler;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -13,7 +15,9 @@ import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -27,36 +31,12 @@ public class TaleCraftCommonEventHandler
 		this.taleCraft = taleCraft;
 	}
 	
-	@Subscribe
-	public void serverStarting(FMLServerStartingEvent event)
-	{
-		// TaleCraft.logger.info("Server starting: " + event + " [TCINFO]");
-	}
-	
-	@Subscribe
-	public void serverStopping(FMLServerStoppingEvent event)
-	{
-		// TaleCraft.logger.info("Server stopping: " + event + " [TCINFO]");
-	}
-	
-	@Subscribe
-	public void serverStarted(FMLServerStartedEvent event)
-	{
-		// TaleCraft.logger.info("Server started: " + event + " [TCINFO]");
-	}
-	
-	@Subscribe
-	public void serverStopped(FMLServerStoppedEvent event)
-	{
-		// TaleCraft.logger.info("Server stopped: " + event + " [TCINFO]");
-	}
-	
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void keyEvent(KeyInputEvent event) {
 		if(FMLCommonHandler.instance().getSide().isClient()) {
 			if(taleCraft.proxy instanceof de.longor.talecraft.proxy.ClientProxy) {
-				((de.longor.talecraft.proxy.ClientProxy)taleCraft.proxy).keyEvent(event);
+				taleCraft.proxy.asClient().keyEvent(event);
 			}
 		}
 	}
@@ -69,6 +49,20 @@ public class TaleCraftCommonEventHandler
 	@SubscribeEvent
 	public void tickWorld(WorldTickEvent event) {
 		taleCraft.proxy.tickWorld(event);
+	}
+	
+	@SubscribeEvent
+	public void playerLoggedIn(PlayerLoggedInEvent event) {
+		if(event.player instanceof EntityPlayerMP) {
+			ServerHandler.getServerMirror(null).playerList().playerJoin((EntityPlayerMP) event.player);
+		}
+	}
+	
+	@SubscribeEvent
+	public void playerLoggedOut(PlayerLoggedOutEvent event) {
+		if(event.player instanceof EntityPlayerMP) {
+			ServerHandler.getServerMirror(null).playerList().playerLeave((EntityPlayerMP) event.player);
+		}
 	}
 	
 }

@@ -1,5 +1,7 @@
 package de.longor.talecraft.client.gui.qad;
 
+import java.util.List;
+
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiPageButtonList;
@@ -12,6 +14,7 @@ import net.minecraft.util.MathHelper;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 import com.sun.org.glassfish.external.statistics.Statistic;
 
 import de.longor.talecraft.client.gui.vcui.VCUIRenderer;
@@ -25,12 +28,15 @@ public class QADTextField extends QADComponent {
 	private final FontRenderer fontRendererInstance;
     private Predicate field_175209_y = Predicates.alwaysTrue();
 //  private GuiPageButtonList.GuiResponder field_175210_x;
+    
     public TextChangeListener textChangedListener;
-    private String text = "";
+    public List<String> tooltip = null;
     public int xPosition;
     public int yPosition;
     public int width;
     public int height;
+    
+    private String text = "";
     private int maxStringLength = 32;
     private int cursorCounter;
     private boolean enableBackgroundDrawing = true;
@@ -43,7 +49,7 @@ public class QADTextField extends QADComponent {
     private int enabledColor = 14737632;
     private int disabledColor = 7368816;
     private boolean visible = true;
-    
+	
     public QADTextField(/*int __id__, */ FontRenderer FNTREN, int xPos, int yPos, int width, int height)
     {
         // this.ID = __id__;
@@ -741,6 +747,17 @@ public class QADTextField extends QADComponent {
 			e.printStackTrace();
 			return defaultValue;
 		}
+	}
+    
+	@Override
+	public boolean isPointInside(int mouseX, int mouseY) {
+		int localMouseX = mouseX - xPosition;
+		int localMouseY = mouseY - yPosition;
+		return localMouseX >= 0 && localMouseY >= 0 && localMouseX < this.width && localMouseY < this.height;
+	}
+	
+	public List<String> getTooltip(int mouseX, int mouseY) {
+		return getTooltip();
 	}
     
 }

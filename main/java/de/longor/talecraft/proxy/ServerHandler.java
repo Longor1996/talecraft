@@ -1,5 +1,7 @@
 package de.longor.talecraft.proxy;
 
+import java.util.HashMap;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -12,9 +14,10 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import de.longor.talecraft.TaleCraft;
-import de.longor.talecraft.blocks.BlockCommandReceiver;
+import de.longor.talecraft.blocks.TCIBlockCommandReceiver;
 import de.longor.talecraft.network.PlayerNBTDataMerge;
 import de.longor.talecraft.network.StringNBTCommand;
+import de.longor.talecraft.server.ServerMirror;
 import de.longor.talecraft.util.PlayerHelper;
 
 public class ServerHandler {
@@ -23,6 +26,7 @@ public class ServerHandler {
 		// If this is a player, send the player the persistent EntityData.
 		if(entity instanceof EntityPlayerMP) {
 			TaleCraft.simpleNetworkWrapper.sendTo(new PlayerNBTDataMerge(entity.getEntityData()), (EntityPlayerMP) entity);
+			// PlayerList.playerJoin((EntityPlayerMP)entity);
 		}
 	}
 	
@@ -75,8 +79,8 @@ public class ServerHandler {
 			if(entity != null) {
 				TaleCraft.logger.info("(block command) " + position + " -> " + commandPacket.data);
 				
-				if(entity instanceof BlockCommandReceiver) {
-					((BlockCommandReceiver) entity).commandReceived(commandPacket.data.getString("command"), commandPacket.data);
+				if(entity instanceof TCIBlockCommandReceiver) {
+					((TCIBlockCommandReceiver) entity).commandReceived(commandPacket.data.getString("command"), commandPacket.data);
 				}
 			} else {
 				player.addChatMessage(new ChatComponentText("Error: Failed to merge block data: TileEntity does not exist."));
@@ -99,6 +103,39 @@ public class ServerHandler {
 		entity.readFromNBT(compound);
 		entity.markDirty();
 		entity.getWorld().markBlockForUpdate(blockpos);
+	}
+	
+	private static HashMap<MinecraftServer, ServerMirror> serverMirrorsMap = new HashMap<MinecraftServer, ServerMirror>();
+	public static ServerMirror getServerMirror(MinecraftServer server) {
+		if(server == null) {
+			server = MinecraftServer.getServer();
+		}
+		
+		ServerMirror mirror = serverMirrorsMap.get(server);
+		
+		if(mirror == null) {
+			mirror = new ServerMirror();
+			mirror.create(server);
+			serverMirrorsMap.put(server, mirror);
+		}
+		
+		return mirror;
+	}
+	
+	public static void destroyServerMirror(MinecraftServer server) {
+		if(server == null) {
+			for(ServerMirror mirror : serverMirrorsMap.values()) {
+				mirror.destroy();
+			}
+			serverMirrorsMap.clear();
+			return;
+		}
+		
+		ServerMirror mirror = serverMirrorsMap.remove(server);
+		
+		if(mirror != null) {
+			mirror.destroy();
+		}
 	}
 	
 }

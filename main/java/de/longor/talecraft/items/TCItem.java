@@ -51,6 +51,11 @@ public class TCItem extends Item {
     public boolean isFull3D() {
         return true;
     }
+
+    public boolean isItemTool(ItemStack stack)
+    {
+        return true;
+    }
     
     public EnumAction getItemUseAction(ItemStack stack) {
         return EnumAction.NONE;
@@ -59,9 +64,24 @@ public class TCItem extends Item {
     public boolean canHarvestBlock(Block blockIn) {
         return false;
     }
+
+    public boolean canItemEditBlocks()
+    {
+        return false;
+    }
     
     @Override
     public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player) {
+        return true;
+    }
+    
+    public int getItemStackLimit(ItemStack stack)
+    {
+        return 1;
+    }
+
+    public boolean getShareTag()
+    {
         return true;
     }
     

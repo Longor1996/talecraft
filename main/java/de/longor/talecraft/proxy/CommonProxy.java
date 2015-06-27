@@ -41,7 +41,7 @@ public abstract class CommonProxy {
 	}
 	
 	public void tickWorld(WorldTickEvent event) {
-		TCWorldManager mng = taleCraft.coremanager.fetchManager(event.world);
+		TCWorldManager mng = taleCraft.worldsmanager.fetchManager(event.world);
 		
 		if(mng == null) {
 			TaleCraft.logger.error("No WorldManager for @" + event.world.hashCode());

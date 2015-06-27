@@ -19,6 +19,18 @@ public interface IInvoke {
 			return compound;
 		}
 		
+		public static final IScriptInvoke readSI(NBTTagCompound compoundTag) {
+			IInvoke invoke = read(compoundTag);
+			
+			if(invoke instanceof IScriptInvoke) {
+				TaleCraft.logger.info("Loaded IScriptInvoke : " + invoke.getType() + " : " + ((IScriptInvoke)invoke).getScriptName());
+				return (IScriptInvoke) invoke;
+			}
+			
+			TaleCraft.logger.error("Invalid Invoke Object! Required is IScriptInvoke, given is " + invoke.getType() + "!");
+			return new EmbeddedScriptInvoke("");
+		}
+		
 		public static final IInvoke read(NBTTagCompound compoundTag) {
 			String type = compoundTag.getString("type");
 			
@@ -31,6 +43,24 @@ public interface IInvoke {
 			
 			if("BlockTriggerInvoke".equals(type)) {
 				BlockTriggerInvoke invoke = new BlockTriggerInvoke();
+				invoke.readFromNBT(compoundTag);
+				return invoke;
+			}
+			
+			if("FileScriptInvoke".equals(type)) {
+				FileScriptInvoke invoke = new FileScriptInvoke();
+				invoke.readFromNBT(compoundTag);
+				return invoke;
+			}
+			
+			if("EmbeddedScriptInvoke".equals(type)) {
+				EmbeddedScriptInvoke invoke = new EmbeddedScriptInvoke();
+				invoke.readFromNBT(compoundTag);
+				return invoke;
+			}
+			
+			if("CommandInvoke".equals(type)) {
+				CommandInvoke invoke = new CommandInvoke();
 				invoke.readFromNBT(compoundTag);
 				return invoke;
 			}

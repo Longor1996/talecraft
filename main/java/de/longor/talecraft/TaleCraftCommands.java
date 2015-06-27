@@ -3,9 +3,14 @@ package de.longor.talecraft;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.longor.talecraft.commands.ButcherCommand;
 import de.longor.talecraft.commands.MountCommand;
+import de.longor.talecraft.commands.ScriptCommand;
+import de.longor.talecraft.commands.SwitchShaderCommand;
 import de.longor.talecraft.commands.TriggerCommand;
 import de.longor.talecraft.commands.VelocityCommand;
+import de.longor.talecraft.commands.VoxelBrushCommand;
+import de.longor.talecraft.commands.WandCommand;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 
@@ -15,9 +20,14 @@ public class TaleCraftCommands {
 	public static void init() {
 		// just add commands here and they automagically get registered!
 		
+		commands.add(new WandCommand());
 		commands.add(new MountCommand());
 		commands.add(new TriggerCommand());
 		commands.add(new VelocityCommand());
+		// commands.add(new SwitchShaderCommand());
+		commands.add(new VoxelBrushCommand());
+		commands.add(new ButcherCommand());
+		commands.add(new ScriptCommand());
 		
 	}
 	

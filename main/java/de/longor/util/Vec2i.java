@@ -1,5 +1,7 @@
 package de.longor.util;
 
+import de.longor.talecraft.util.MutableBlockPos;
+
 public class Vec2i {
 	public int x;
 	public int y;
@@ -66,6 +68,14 @@ public class Vec2i {
 		x += offset.x;
 		y += offset.y;
 		return this;
+	}
+	
+	/**
+	 * Returns a new blockpos were the y-Axis of this point is swapped to the z-Axis.
+	 * @return A new BlockPos that has the coordinates (x,0,y).
+	 **/
+	public MutableBlockPos getAsBlockPos() {
+		return new MutableBlockPos(x, 0, y);
 	}
 	
 }

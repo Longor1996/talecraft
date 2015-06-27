@@ -6,6 +6,7 @@ import org.lwjgl.input.Keyboard;
 
 import de.longor.talecraft.Reference;
 import de.longor.talecraft.proxy.ClientProxy;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiIngame;
@@ -14,6 +15,7 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
@@ -66,7 +68,11 @@ public class InfoBar {
         		int[] a = tcWand.getIntArray("boundsA");
         		int[] b = tcWand.getIntArray("boundsB");
         		
-        		int volume = (Math.abs(b[0]-a[0])+1) * (Math.abs(b[1]-a[1])+1) * (Math.abs(b[2]-a[2])+1);
+        		long volX = (Math.abs(b[0]-a[0])+1);
+        		long volY = (Math.abs(b[1]-a[1])+1);
+        		long volZ = (Math.abs(b[2]-a[2])+1);
+        		
+        		long volume = volX * volY * volZ;
         		
                 builder.append(EnumChatFormatting.DARK_GRAY);
         		builder.append(Arrays.toString(a));
@@ -109,6 +115,7 @@ public class InfoBar {
         	case 1: builder.append("[1:wireframe mode]"); break;
         	case 2: builder.append("[2:backface mode]"); break;
         	case 3: builder.append("[3:lighting mode]"); break;
+        	case 4: builder.append("[4:nightvision mode]"); break;
         	default: builder.append("[?:funny display mode]"); break;
         }
         
@@ -134,10 +141,20 @@ public class InfoBar {
 		        builder.append(' ');
 		        
 		        boolean b = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL);
+		        IBlockState state = mc.theWorld.getBlockState(lookAt);
+		        
 		        if(b) {
-			        builder.append(mc.theWorld.getBlockState(lookAt));
+			        builder.append(state);
 		        } else {
-			        builder.append(mc.theWorld.getBlockState(lookAt).getBlock().getLocalizedName());
+		        	if(state == null) {
+		        		builder.append("NULL-DATA ERROR");
+		        	} else if(state.getBlock() == null) {
+		        		builder.append("NULL-DATA ERROR");
+		        	} else if(Item.getItemFromBlock(state.getBlock()) == null) {
+		        		builder.append("NULL-DATA ERROR");
+		        	} else {
+			        	builder.append(new ItemStack(state.getBlock()).getDisplayName());
+		        	}
 		        }
             }
             

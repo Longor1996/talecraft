@@ -1,5 +1,7 @@
 package de.longor.talecraft.client.gui.qad;
 
+import java.util.List;
+
 import de.longor.talecraft.client.gui.vcui.VCUIRenderer;
 
 public class QADLabel extends QADComponent {
@@ -7,6 +9,8 @@ public class QADLabel extends QADComponent {
 	int x = 0;
 	int y = 0;
 	int color = 0xFFFFFFFF;
+	int lastKnownWidth = 0;
+	int lastKnownHeight = 0;
 	boolean shadow = true;
 	
 	public QADLabel(String text, int x, int y) {
@@ -60,7 +64,9 @@ public class QADLabel extends QADComponent {
 
 	@Override
 	public void draw(int localMouseX, int localMouseY, float partialTicks, VCUIRenderer renderer) {
-		renderer.getFontRenderer().drawString(text, x, y, color, shadow);
+		lastKnownWidth = renderer.getFontRenderer().stringWidth(text);
+		lastKnownHeight = renderer.getFontRenderer().fr.FONT_HEIGHT;
+		renderer.drawString(text, x, y, color, shadow);
 	}
 
 	@Override
@@ -77,5 +83,19 @@ public class QADLabel extends QADComponent {
 
 	@Override
 	public void onTickUpdate() {}
+    
+	@Override
+	public boolean isPointInside(int mouseX, int mouseY) {
+		if(lastKnownWidth == 0 || lastKnownHeight == 0)
+			return false;
+		
+		int localMouseX = mouseX - x;
+		int localMouseY = mouseY - y;
+		return localMouseX >= 0 && localMouseY >= 0 && localMouseX < lastKnownWidth && localMouseY < lastKnownHeight;
+	}
+	
+	public List<String> getTooltip(int mouseX, int mouseY) {
+		return getTooltip();
+	}
 	
 }

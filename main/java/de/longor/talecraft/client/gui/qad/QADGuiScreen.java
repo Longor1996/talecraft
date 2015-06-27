@@ -2,6 +2,7 @@ package de.longor.talecraft.client.gui.qad;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -32,10 +33,12 @@ public class QADGuiScreen extends GuiScreen {
 	public static final VCUIRenderer instance = new VCUIRenderer();
 	public ArrayList<QADComponent> components;
 	public GuiScreen returnScreen;
+	private GuiScreen behindScreen;
 	
 	public QADGuiScreen() {
 		super.allowUserInput = false;
 		components = null;
+		behindScreen = null;
 	}
 	
 	public void buildGui(ArrayList<QADComponent> components) {
@@ -61,12 +64,17 @@ public class QADGuiScreen extends GuiScreen {
 	
 	@Override
     public final void initGui() {
-		TaleCraft.logger.info("Gui.init() -> " + this.getClass().getName());
+		// TaleCraft.logger.info("Gui.init() -> " + this.getClass().getName());
     	Keyboard.enableRepeatEvents(true);
 		
     	if(components == null) {
     		components = new ArrayList<QADComponent>();
-    		buildGui(components);
+    		
+    		try {
+    			buildGui(components);
+    		} catch(Exception e) {
+    			e.printStackTrace();
+    		}
     	}
     	
     	layoutGui();
@@ -74,8 +82,12 @@ public class QADGuiScreen extends GuiScreen {
 	
 	@Override
     public final void onGuiClosed() {
-		TaleCraft.logger.info("Gui.close() -> " + this.getClass().getName());
+		// TaleCraft.logger.info("Gui.close() -> " + this.getClass().getName());
 		Keyboard.enableRepeatEvents(false);
+		
+		if(behindScreen != null) {
+			mc.displayGuiScreen(behindScreen);
+		}
     }
 	
 	@Override
@@ -120,8 +132,11 @@ public class QADGuiScreen extends GuiScreen {
     }
 	
 	@Override
-    public final void drawScreen(int mouseX, int mouseY, float partialTicks)
-    {
+    public final void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		if(behindScreen != null) {
+			behindScreen.drawScreen(-9999, -9999, partialTicks);
+		}
+		
 		instance.setCurrentScreen(this, this.zLevel, this.fontRendererObj, this.itemRender);
 		instance.drawDefaultBackground();
 		
@@ -134,6 +149,26 @@ public class QADGuiScreen extends GuiScreen {
 		for(QADComponent component : components) {
 			component.draw(mouseX-component.getX(), mouseY-component.getY(), partialTicks, instance);
 		}
+		
+		for(QADComponent component : components) {
+			if(component.isPointInside(mouseX, mouseY)) {
+				List<String> text = component.getTooltip(mouseX, mouseY);
+				
+				if(text != null) {
+					this.drawHoveringText(text, mouseX + 1, mouseY + 1);
+					break;
+				}
+			}
+		}
+		
     }
+	
+	public void setBehind(GuiScreen behind) {
+		behindScreen = behind;
+	}
+	
+	public GuiScreen getBehind() {
+		return behindScreen;
+	}
 	
 }

@@ -23,6 +23,7 @@ public class TCWorldsManager {
 		}
 		
 		TCWorldManager mng = new TCWorldManager(taleCraft, world);
+		mng.init();
 		worldMap.put(world, mng);
 	}
 	

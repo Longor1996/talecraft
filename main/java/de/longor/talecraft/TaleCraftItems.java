@@ -17,6 +17,7 @@ import de.longor.talecraft.items.EraserItem;
 import de.longor.talecraft.items.FillerItem;
 import de.longor.talecraft.items.InstaKillItem;
 import de.longor.talecraft.items.TeleporterItem;
+import de.longor.talecraft.items.VoxelBrushItem;
 import de.longor.talecraft.items.WandItem;
 
 public class TaleCraftItems {
@@ -25,6 +26,7 @@ public class TaleCraftItems {
 	public static EraserItem eraser;
 	public static TeleporterItem teleporter;
 	public static InstaKillItem instakill;
+	public static VoxelBrushItem voxelbrush;
 	
 	static void init() {
 		wand = new WandItem();
@@ -46,6 +48,10 @@ public class TaleCraftItems {
 		instakill = new InstaKillItem();
 		instakill.setUnlocalizedName("instakill");
 		GameRegistry.registerItem(instakill, "instakill", "talecraft");
+		
+		voxelbrush = new VoxelBrushItem();
+		voxelbrush.setUnlocalizedName("voxelbrush");
+		GameRegistry.registerItem(voxelbrush, "voxelbrush", "talecraft");
 	}
 	
 }

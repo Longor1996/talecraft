@@ -18,7 +18,7 @@ public class QADFACTORY {
 	}
 	
 	public static final QADTextField createTextField(String text, int x, int y, int width) {
-		QADTextField textField = new QADTextField(Minecraft.getMinecraft().fontRendererObj, x, y, width, 20);
+		QADTextField textField = new QADTextField(Minecraft.getMinecraft().fontRendererObj, x, y, width, 16);
 		textField.setText(text);
 		return textField;
 	}

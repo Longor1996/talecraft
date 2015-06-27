@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 
 public class WorldHelper {
@@ -20,15 +19,21 @@ public class WorldHelper {
 		if(function == null)
 			return;
 		
+		MutableBlockPos pos = new MutableBlockPos(0, 0, 0);
+		
 		for(int y = iy; y <= ay; y++) {
 			for(int z = iz; z <= az; z++) {
 				for(int x = ix; x <= ax; x++) {
-					BlockPos pos = new BlockPos(x, y, z);
+					pos.set(x, y, z);
 					IBlockState state = world.getBlockState(pos);
 					function.$(state, pos);
 				}
 			}
 		}
+	}
+	
+	public static final void fill(World world, int[] bounds, IBlockState block) {
+		fill(world, bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5], block);
 	}
 	
 	/**
@@ -39,11 +44,13 @@ public class WorldHelper {
 		if(world == null)
 			return;
 		
+		MutableBlockPos pos = new MutableBlockPos(0, 0, 0);
+		
 		for(int y = iy; y <= ay; y++) {
 			for(int z = iz; z <= az; z++) {
 				for(int x = ix; x <= ax; x++) {
-					BlockPos pos = new BlockPos(x, y, z);
-					world.setBlockState(pos, block);
+					pos.set(x, y, z);
+					world.setBlockState(new BlockPos(pos), block);
 				}
 			}
 		}
