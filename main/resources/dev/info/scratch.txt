@@ -2,16 +2,8 @@ WARNING:
   This is a scratch file! That means that the content of this file is NOT to be taken as a specification for the mod.
   EVERYTHING IN THIS FILE COULD CHANGE AT ANY TIME.
 
-This document contains things that are probably going to be implemented sooner or later.
-
-block -> Script:
-  | A block that can execute commands when invoked.
-  * Properties:
-    - NAME: The name of the script-block. It's visible when looking at the block. This property is purely visual.
-    - invoke:ONTRIGGER: The command to execute when the script-block is activated.
-  * (trigger)
-    - invoke ONTRIGGER
-^^
+This document contains things that are probably going to be implemented sooner or later,
+and things that are implemented but incomplete..
 
 block -> Clip:
   | This block is similar to the 'Barrier'-block from vanilla minecraft, except that it can filter specific objects.
@@ -143,6 +135,9 @@ item -> TerrainBrush:
 ^^
 
 
+
+
+
 gui -> MapInterface:
   - A gui that is opened by pressing 'H' on the keyboard without any special keys.
   - The gui contains tabs that contains GUI's for different tools and utilities.
@@ -160,11 +155,3 @@ command -> RegionTrigger:
     - dst.{x y z dx dy dz}: The region of blocks to trigger, given as a MINMAX-AABB.
     - arg0: The first argument to send.
     - arg1: The second argument to send. (optional)
-
-:class(i) -> Invoke
-  * Types:
-    - ScriptInvoke: Execute a script.
-    - CommandInvoke: Execute a server command.
-^^
-
-
