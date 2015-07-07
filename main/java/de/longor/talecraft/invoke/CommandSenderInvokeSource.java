@@ -21,22 +21,22 @@ public class CommandSenderInvokeSource implements IInvokeSource {
 	}
 	
 	@Override
-	public Scriptable getScriptScope() {
+	public Scriptable getInvokeScriptScope() {
 		return scope;
 	}
 
 	@Override
-	public ICommandSender getCommandSender() {
+	public ICommandSender getInvokeAsCommandSender() {
 		return sender;
 	}
 
 	@Override
-	public BlockPos getPosition() {
+	public BlockPos getInvokePosition() {
 		return sender.getPosition();
 	}
 
 	@Override
-	public World getWorld() {
+	public World getInvokeWorld() {
 		return sender.getEntityWorld();
 	}
 

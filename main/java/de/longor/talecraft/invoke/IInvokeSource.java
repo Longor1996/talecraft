@@ -12,13 +12,13 @@ import net.minecraft.world.World;
 
 public interface IInvokeSource {
 	
-	public Scriptable getScriptScope();
+	public Scriptable getInvokeScriptScope();
 	
-	public ICommandSender getCommandSender();
+	public ICommandSender getInvokeAsCommandSender();
 	
-	public BlockPos getPosition();
+	public BlockPos getInvokePosition();
 	
-	public World getWorld();
+	public World getInvokeWorld();
 	
 	public void getInvokes(List<IInvoke> invokes);
 	

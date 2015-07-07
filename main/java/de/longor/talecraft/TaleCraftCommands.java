@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.longor.talecraft.commands.ButcherCommand;
 import de.longor.talecraft.commands.MountCommand;
+import de.longor.talecraft.commands.RegionTriggerCommand;
 import de.longor.talecraft.commands.ScriptCommand;
 import de.longor.talecraft.commands.SwitchShaderCommand;
 import de.longor.talecraft.commands.TriggerCommand;
@@ -23,6 +24,7 @@ public class TaleCraftCommands {
 		commands.add(new WandCommand());
 		commands.add(new MountCommand());
 		commands.add(new TriggerCommand());
+		commands.add(new RegionTriggerCommand());
 		commands.add(new VelocityCommand());
 		// commands.add(new SwitchShaderCommand());
 		commands.add(new VoxelBrushCommand());

@@ -46,15 +46,15 @@ public class Invoke {
 		
 		if(invoke instanceof IScriptInvoke) {
 			String script = ((IScriptInvoke) invoke).getScript();
-			Scriptable scope = source.getScriptScope();
+			Scriptable scope = source.getInvokeScriptScope();
 			
 			TaleCraft.globalScriptManager.interpret(script, source.toString(), scope);
 			
-			if(source.getWorld().getGameRules().getGameRuleBooleanValue("visualEventDebugging")) {
+			if(source.getInvokeWorld().getGameRules().getGameRuleBooleanValue("visualEventDebugging")) {
 				// This could possibly create a crapton of lag if many events are fired.
 				NBTTagCompound pktdata = new NBTTagCompound();
 				pktdata.setString("type", "pos-marker");
-				pktdata.setIntArray("pos", new int[]{source.getPosition().getX(),source.getPosition().getY(),source.getPosition().getZ()});
+				pktdata.setIntArray("pos", new int[]{source.getInvokePosition().getX(),source.getInvokePosition().getY(),source.getInvokePosition().getZ()});
 				pktdata.setInteger("color", 0xFF0000);
 				TaleCraft.simpleNetworkWrapper.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
 			}
@@ -64,15 +64,15 @@ public class Invoke {
 		if(invoke instanceof CommandInvoke) {
 			MinecraftServer server = MinecraftServer.getServer();
 			ICommandManager commandManager = server.getCommandManager();
-			ICommandSender sender = source.getCommandSender();
+			ICommandSender sender = source.getInvokeAsCommandSender();
 			String command = ((CommandInvoke) invoke).getCommand();
 			commandManager.executeCommand(sender, command);
 			
-			if(source.getWorld().getGameRules().getGameRuleBooleanValue("visualEventDebugging")) {
+			if(source.getInvokeWorld().getGameRules().getGameRuleBooleanValue("visualEventDebugging")) {
 				// This could possibly create a crapton of lag if many events are fired.
 				NBTTagCompound pktdata = new NBTTagCompound();
 				pktdata.setString("type", "pos-marker");
-				pktdata.setIntArray("pos", new int[]{source.getPosition().getX(),source.getPosition().getY(),source.getPosition().getZ()});
+				pktdata.setIntArray("pos", new int[]{source.getInvokePosition().getX(),source.getInvokePosition().getY(),source.getInvokePosition().getZ()});
 				pktdata.setInteger("color", 0x0099FF);
 				TaleCraft.simpleNetworkWrapper.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
 			}
@@ -85,7 +85,7 @@ public class Invoke {
 			int data = ((BlockTriggerInvoke) invoke).getTriggerData();
 			
 			if(bounds == null || bounds.length != 6) {
-				TaleCraft.logger.error("Invalid bounds @ BlockRegionTrigger @ " + source.getPosition());
+				TaleCraft.logger.error("Invalid bounds @ BlockRegionTrigger @ " + source.getInvokePosition());
 				return;
 			}
 			
@@ -109,17 +109,17 @@ public class Invoke {
 		// Logging this is a bad idea if a lot of these is executed very fast (ClockBlock, anyone?)
 		// TaleCraft.logger.info("--> [" + ix + ","+ iy + ","+ iz + ","+ ax + ","+ ay + ","+ az + "]");
 		
-		if(source.getWorld().getGameRules().getGameRuleBooleanValue("visualEventDebugging")) {
+		final World world = source.getInvokeWorld();
+		
+		if(world.getGameRules().getGameRuleBooleanValue("visualEventDebugging")) {
 			// Send a packet to all players that a BlockRegionTrigger just happened.
 			// This could possibly create a crapton of lag if many events are fired.
 			NBTTagCompound pktdata = new NBTTagCompound();
 			pktdata.setString("type", "line-to-box");
-			pktdata.setIntArray("src", new int[]{source.getPosition().getX(),source.getPosition().getY(),source.getPosition().getZ()});
+			pktdata.setIntArray("src", new int[]{source.getInvokePosition().getX(),source.getInvokePosition().getY(),source.getInvokePosition().getZ()});
 			pktdata.setIntArray("box", new int[]{ix,iy,iz,ax,ay,az});
 			TaleCraft.simpleNetworkWrapper.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
 		}
-		
-		final World world = source.getWorld();
 		
 		// Since we dont have lambda's, lets do things the old (ugly) way.
 		WorldHelper.foreach(world, ix, iy, iz, ax, ay, az, new BlockRegionIterator() {

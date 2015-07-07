@@ -68,9 +68,9 @@ public class GuiClockBlock extends QADGuiScreen {
 		final QADTextField fieldRepeat = QADFACTORY.createNumberTextField(tileEntity.set_repeat, column1x+2, row1y+2, column1w-4, 1000000, 0);
 		final QADTextField fieldSpeed = QADFACTORY.createNumberTextField(tileEntity.set_speed, column1x+2, row2y+2, column1w-4, 20*60, 1);
 		final QADTextField fieldTime = QADFACTORY.createNumberTextField(tileEntity.set_time, column1x+2, row3y+2, column1w-4, 20*60*1, 1);
-		fieldRepeat.tooltip = Lists.newArrayList("The amount of times this clock will 'tick'.");
-		fieldSpeed.tooltip = Lists.newArrayList("How fast this clock will count down.");
-		fieldTime.tooltip = Lists.newArrayList("The number the countdown starts at.");
+		fieldRepeat.setTooltip("The amount of times this clock will 'tick'.");
+		fieldSpeed.setTooltip("How fast this clock will count down.");
+		fieldTime.setTooltip("The number the countdown starts at.");
 		components.add(fieldRepeat);
 		components.add(fieldSpeed);
 		components.add(fieldTime);

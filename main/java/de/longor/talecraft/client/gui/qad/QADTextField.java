@@ -30,7 +30,6 @@ public class QADTextField extends QADComponent {
 //  private GuiPageButtonList.GuiResponder field_175210_x;
     
     public TextChangeListener textChangedListener;
-    public List<String> tooltip = null;
     public int xPosition;
     public int yPosition;
     public int width;

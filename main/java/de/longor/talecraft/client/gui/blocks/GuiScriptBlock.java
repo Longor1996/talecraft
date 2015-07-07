@@ -42,7 +42,7 @@ public class GuiScriptBlock extends QADGuiScreen {
 		components.add(new QADLabel("Script-File", 4, 22+6));
 		
 		final QADTextField scriptName = QADFACTORY.createTextField(tileEntity.getScriptName(), 4+60+2, 22+2, 120-4);
-		scriptName.tooltip = Lists.newArrayList("The file-name of the script to execute.");
+		scriptName.setTooltip("The file-name of the script to execute.");
 		components.add(scriptName);
 		
 		QADButton buttonApply = QADFACTORY.createButton("Apply", 4+60+120+2, 22, 40, null);

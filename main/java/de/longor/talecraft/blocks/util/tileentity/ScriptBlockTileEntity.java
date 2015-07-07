@@ -66,7 +66,7 @@ public class ScriptBlockTileEntity extends TCTileEntity {
 	
 	@Override
 	public String toString() {
-		return "ScriptBlockTileEntity:{"+scriptInvoke+", "+getScriptScope()+"}";
+		return "ScriptBlockTileEntity:{"+scriptInvoke+", "+getInvokeScriptScope()+"}";
 	}
 	
 	@Override

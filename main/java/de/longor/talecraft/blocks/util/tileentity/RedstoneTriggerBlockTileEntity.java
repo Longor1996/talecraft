@@ -35,7 +35,7 @@ public class RedstoneTriggerBlockTileEntity extends TCTileEntity {
 	public RedstoneTriggerBlockTileEntity() {
 		triggerInvoke = NullInvoke.instance;
 	}
-
+	
 	@Override
 	public void init() {
 		// don't do anything
@@ -54,6 +54,11 @@ public class RedstoneTriggerBlockTileEntity extends TCTileEntity {
 			return;
 		
 		Invoke.invoke(triggerInvoke, this);
+	}
+	
+	@Override
+	public World getInvokeWorld() {
+		return this.worldObj;
 	}
 	
 	@Override

@@ -60,7 +60,7 @@ public abstract class TCTileEntity extends TileEntity implements IInvokeSource, 
 	}
 	
 	@Override
-	public final Scriptable getScriptScope() {
+	public final Scriptable getInvokeScriptScope() {
 		return nativeObject;
 	}
 	
@@ -80,6 +80,11 @@ public abstract class TCTileEntity extends TileEntity implements IInvokeSource, 
 	}
 	
 	@Override
+	public BlockPos getInvokePosition() {
+		return this.pos;
+	}
+	
+	@Override
 	public BlockPos getPosition() {
 		return this.pos;
 	}
@@ -87,6 +92,11 @@ public abstract class TCTileEntity extends TileEntity implements IInvokeSource, 
 	@Override
 	public Vec3 getPositionVector() {
 		return new Vec3(this.pos.getX(),this.pos.getY(),this.pos.getZ());
+	}
+	
+	@Override
+	public World getInvokeWorld() {
+		return this.worldObj;
 	}
 	
 	@Override
@@ -110,7 +120,7 @@ public abstract class TCTileEntity extends TileEntity implements IInvokeSource, 
 	}
 	
 	@Override
-	public ICommandSender getCommandSender() {
+	public ICommandSender getInvokeAsCommandSender() {
 		return this;
 	}
     

@@ -155,7 +155,7 @@ public class QADGuiScreen extends GuiScreen {
 				List<String> text = component.getTooltip(mouseX, mouseY);
 				
 				if(text != null) {
-					this.drawHoveringText(text, mouseX + 1, mouseY + 1);
+					this.drawHoveringText(text, mouseX, mouseY);
 					break;
 				}
 			}

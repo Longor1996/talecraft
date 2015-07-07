@@ -43,12 +43,11 @@ public class GlobalScriptManager {
 		Context cx = Context.enter();
 		try {
 			ScriptRuntime.initStandardObjects(cx, globalScope, true);
-			String loadMe = "RegExp; getClass; java; Packages; JavaAdapter;";
-			cx.evaluateString(globalScope , loadMe, "lazyLoad", 0, null);
+			// String loadMe = "RegExp; getClass; java; Packages; JavaAdapter;";
+			// cx.evaluateString(globalScope , loadMe, "lazyLoad", 0, null);
 			ScriptableObject.putProperty(globalScope, "out", Context.javaToJS(new ConsoleOutput(), globalScope));
 			ScriptableObject.putProperty(globalScope, "system", Context.javaToJS(new GlobalScriptObject(this), globalScope));
 			TaleCraft.logger.info("Script Test: " + cx.evaluateString(globalScope, "msg = \"Rhino Time!\"; msg;", "<cmd>", 0, null));
-			globalScope.sealObject();
 		} finally {
 			cx.exit();
 		}
