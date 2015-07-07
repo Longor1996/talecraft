@@ -74,6 +74,10 @@ public class ScriptBlockTileEntity extends TCTileEntity {
 		invokes.add(scriptInvoke);
 	}
     
+	public IScriptInvoke getInvoke() {
+		return scriptInvoke;
+	}
+	
     public void readFromNBT_do(NBTTagCompound compound) {
     	scriptInvoke = (IScriptInvoke) IInvoke.Serializer.readSI(compound.getCompoundTag("scriptInvoke"));
     	scriptInvoke.reloadScript();

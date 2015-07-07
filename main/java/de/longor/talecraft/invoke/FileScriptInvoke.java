@@ -14,6 +14,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 
 public class FileScriptInvoke implements IInvoke, IScriptInvoke {
+	public static final String TYPE = "FileScriptInvoke";
 	String fileName;
 	String bufferedScript;
 	
@@ -59,17 +60,17 @@ public class FileScriptInvoke implements IInvoke, IScriptInvoke {
 
 	@Override
 	public String getType() {
-		return "FileScriptInvoke";
+		return TYPE;
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
-		compound.setString("scriptFileName", fileName);
+		compound.setString("scriptFileName", fileName.trim());
 	}
 	
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		fileName = compound.getString("scriptFileName");
+		fileName = compound.getString("scriptFileName").trim();
 	}
 	
 }

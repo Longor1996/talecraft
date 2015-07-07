@@ -55,6 +55,15 @@ public class RedstoneTriggerBlockTileEntity extends TCTileEntity {
 		
 		Invoke.invoke(triggerInvoke, this);
 	}
+    
+	@Override
+	public void commandReceived(String command, NBTTagCompound data) {
+		super.commandReceived(command, data);
+		
+		if(command.equals("trigger")) {
+			Invoke.invoke(triggerInvoke, this);
+		}
+	}
 	
 	@Override
 	public World getInvokeWorld() {
@@ -74,6 +83,10 @@ public class RedstoneTriggerBlockTileEntity extends TCTileEntity {
 	@Override
 	public void getInvokes(List<IInvoke> invokes) {
 		invokes.add(triggerInvoke);
+	}
+	
+	public IInvoke getInvoke() {
+		return triggerInvoke;
 	}
 
 //	@Override

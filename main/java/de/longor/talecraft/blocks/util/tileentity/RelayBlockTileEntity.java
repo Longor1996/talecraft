@@ -3,9 +3,13 @@ package de.longor.talecraft.blocks.util.tileentity;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
+
+import com.google.common.collect.Maps;
 
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.TCTileEntity;
@@ -13,9 +17,11 @@ import de.longor.talecraft.invoke.BlockTriggerInvoke;
 import de.longor.talecraft.invoke.IInvoke;
 import de.longor.talecraft.invoke.IInvokeSource;
 import de.longor.talecraft.invoke.Invoke;
+import de.longor.talecraft.invoke.NullInvoke;
 import net.minecraft.command.CommandResultStats.Type;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -26,10 +32,10 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class RelayBlockTileEntity extends TCTileEntity {
-	private List<IInvoke> invokes;
+	private Map<String, IInvoke> invokes;
 	
 	public RelayBlockTileEntity() {
-		invokes = new ArrayList(1);
+		invokes = Maps.newHashMap();
 	}
 
 	@Override
@@ -49,32 +55,56 @@ public class RelayBlockTileEntity extends TCTileEntity {
 	
 	@Override
 	public void getInvokes(List<IInvoke> invokes) {
-		invokes.addAll(this.invokes);
+		invokes.addAll(this.invokes.values());
 	}
 	
 	public void triggerRelayInvoke() {
-		for (IInvoke invoke : invokes) {
+		for (IInvoke invoke : invokes.values()) {
 			Invoke.invoke(invoke, this);
 		}
 	}
-
+    
 	@Override
-	public void readFromNBT_do(NBTTagCompound comp) {
-		NBTTagList list = comp.getTagList("relayInvokes", comp.getId());
+	public void commandReceived(String command, NBTTagCompound data) {
+		super.commandReceived(command, data);
 		
-		for(int i = 0; i < list.tagCount(); i++) {
-			NBTTagCompound sub = list.getCompoundTagAt(i);
-			IInvoke invoke = IInvoke.Serializer.read(sub);
-			invokes.add(invoke);
+		if(command.equals("invoke_add")) {
+			invokes.put("rix"+System.currentTimeMillis(), new BlockTriggerInvoke());
+            worldObj.markBlockForUpdate(this.pos);
+		}
+		
+		if(command.equals("invoke_remove")) {
+			invokes.remove(data.getString("invokeToRemove"));
+			worldObj.markBlockForUpdate(this.pos);
 		}
 	}
-
+	
+	@Override
+	public void readFromNBT_do(NBTTagCompound comp) {
+		invokes.clear();
+		
+		for(Object obj : comp.getKeySet()) {
+			String key = (String) obj;
+			
+			if(key.startsWith("rix")) {
+				NBTTagCompound rawinvoke = comp.getCompoundTag(key);
+				IInvoke invoke = IInvoke.Serializer.read(rawinvoke);
+				invokes.put(key, invoke);
+			}
+		}
+	}
+	
 	@Override
 	public void writeToNBT_do(NBTTagCompound comp) {
-		NBTTagList list = new NBTTagList();
-		for(IInvoke invoke : invokes) {
-			list.appendTag(IInvoke.Serializer.write(invoke));
+		int ID = 0;
+		for(Entry<String, IInvoke> entry : invokes.entrySet()) {
+			comp.setTag(entry.getKey(),IInvoke.Serializer.write(entry.getValue()));
+			ID++;
 		}
+	}
+	
+	public Map<String, IInvoke> getInvokes() {
+		return invokes;
 	}
 	
 }

@@ -3,6 +3,7 @@ package de.longor.talecraft.invoke;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class NullInvoke implements IInvoke {
+	public static final String TYPE = "NullInvoke";
 	public static final NullInvoke instance = new NullInvoke();
 	
 	private NullInvoke() {
@@ -11,7 +12,7 @@ public class NullInvoke implements IInvoke {
 	
 	@Override
 	public String getType() {
-		return "NullInvoke";
+		return TYPE;
 	}
 	
 	@Override

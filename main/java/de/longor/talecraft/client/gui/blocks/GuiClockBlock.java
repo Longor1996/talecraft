@@ -13,6 +13,8 @@ import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.util.tileentity.ClockBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.RedstoneTriggerBlockTileEntity;
 import de.longor.talecraft.client.gui.TCGuiScreen;
+import de.longor.talecraft.client.gui.invoke.BlockInvokeHolder;
+import de.longor.talecraft.client.gui.invoke.InvokePanelBuilder;
 import de.longor.talecraft.client.gui.qad.QADButton;
 import de.longor.talecraft.client.gui.qad.QADComponent;
 import de.longor.talecraft.client.gui.qad.QADFACTORY;
@@ -48,6 +50,7 @@ public class GuiClockBlock extends QADGuiScreen {
 		int row5y = 22*6;
 		int row6y = 22*7;
 		int row7y = 22*8;
+		int row8y = 22*9;
 		
 		{
 			StringBuilder b = new StringBuilder(64);
@@ -57,17 +60,23 @@ public class GuiClockBlock extends QADGuiScreen {
 			b.append(", speed: "+tileEntity.speed);
 			b.append(", time: "+tileEntity.time);
 			
-			components.add(new QADLabel(b.toString(), column0x, row6y+6));
+			components.add(new QADLabel(b.toString(), column0x, row7y+6));
 		}
 		
-		components.add(new QADLabel(EnumChatFormatting.YELLOW + "Region", column0x, row0y+6));
-		components.add(new QADLabel("Repeats", column0x, row1y+6));
-		components.add(new QADLabel("Speed", column0x, row2y+6));
-		components.add(new QADLabel("Time", column0x, row3y+6));
+		components.add(new QADLabel(EnumChatFormatting.YELLOW + "Tick", column0x, row0y+6));
+		InvokePanelBuilder.build(this, components, column1x, row0y, tileEntity.getTickInvoke(), new BlockInvokeHolder(position, "clockInvoke"), InvokePanelBuilder.INVOKE_TYPE_EDIT_ALLOWALL);
+		components.add(new QADLabel(EnumChatFormatting.YELLOW + "Start", column0x, row1y+6));
+		InvokePanelBuilder.build(this, components, column1x, row1y, tileEntity.getStartInvoke(), new BlockInvokeHolder(position, "clockStartInvoke"), InvokePanelBuilder.INVOKE_TYPE_EDIT_ALLOWALL);
+		components.add(new QADLabel(EnumChatFormatting.YELLOW + "Stop", column0x, row2y+6));
+		InvokePanelBuilder.build(this, components, column1x, row2y, tileEntity.getStopInvoke(), new BlockInvokeHolder(position, "clockStopInvoke"), InvokePanelBuilder.INVOKE_TYPE_EDIT_ALLOWALL);
 		
-		final QADTextField fieldRepeat = QADFACTORY.createNumberTextField(tileEntity.set_repeat, column1x+2, row1y+2, column1w-4, 1000000, 0);
-		final QADTextField fieldSpeed = QADFACTORY.createNumberTextField(tileEntity.set_speed, column1x+2, row2y+2, column1w-4, 20*60, 1);
-		final QADTextField fieldTime = QADFACTORY.createNumberTextField(tileEntity.set_time, column1x+2, row3y+2, column1w-4, 20*60*1, 1);
+		components.add(new QADLabel("Repeats", column0x, row3y+6));
+		components.add(new QADLabel("Speed", column0x, row4y+6));
+		components.add(new QADLabel("Time", column0x, row5y+6));
+		
+		final QADTextField fieldRepeat = QADFACTORY.createNumberTextField(tileEntity.set_repeat, column1x+2, row3y+2, column1w-4, 1000000, 0);
+		final QADTextField fieldSpeed = QADFACTORY.createNumberTextField(tileEntity.set_speed, column1x+2, row4y+2, column1w-4, 20*60, 1);
+		final QADTextField fieldTime = QADFACTORY.createNumberTextField(tileEntity.set_time, column1x+2, row5y+2, column1w-4, 20*60*1, 1);
 		fieldRepeat.setTooltip("The amount of times this clock will 'tick'.");
 		fieldSpeed.setTooltip("How fast this clock will count down.");
 		fieldTime.setTooltip("The number the countdown starts at.");
@@ -75,7 +84,7 @@ public class GuiClockBlock extends QADGuiScreen {
 		components.add(fieldSpeed);
 		components.add(fieldTime);
 		
-		QADButton setDataButton = QADFACTORY.createButton("Apply", column1x, row4y, column1w, null);
+		QADButton setDataButton = QADFACTORY.createButton("Apply", column1x, row6y, column1w, null);
 		setDataButton.setAction(new Runnable() {
 			@Override public void run() {
 				String commandString = "blockdatamerge:"+position.getX() + " " + position.getY() + " " + position.getZ();
@@ -93,7 +102,7 @@ public class GuiClockBlock extends QADGuiScreen {
 		setDataButton.setTooltip("There is no auto-save, ", "so don't forget to click this button!");
 		components.add(setDataButton);
 		
-		QADButton buttonStart = QADFACTORY.createButton("Start", column0x, row7y, column0w, null);
+		QADButton buttonStart = QADFACTORY.createButton("Start", column0x, row8y, column0w, null);
 		buttonStart.setAction(new Runnable() {
 			@Override public void run() {
 				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
@@ -106,7 +115,7 @@ public class GuiClockBlock extends QADGuiScreen {
 		buttonStart.setTooltip("Start the clocks countdown.");
 		components.add(buttonStart);
 		
-		QADButton buttonPause = QADFACTORY.createButton("Pause", column1x, row7y, column1w, null);
+		QADButton buttonPause = QADFACTORY.createButton("Pause", column1x, row8y, column1w, null);
 		buttonPause.setAction(new Runnable() {
 			@Override public void run() {
 				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
@@ -119,7 +128,7 @@ public class GuiClockBlock extends QADGuiScreen {
 		buttonPause.setTooltip("This button pauses the clocks countdown.");
 		components.add(buttonPause);
 		
-		QADButton buttonStop = QADFACTORY.createButton("Stop", column2x, row7y, column2w, null);
+		QADButton buttonStop = QADFACTORY.createButton("Stop", column2x, row8y, column2w, null);
 		buttonStop.setAction(new Runnable() {
 			@Override public void run() {
 				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
@@ -131,30 +140,6 @@ public class GuiClockBlock extends QADGuiScreen {
 		});
 		buttonStop.setTooltip("This button stops the clocks countdown.");
 		components.add(buttonStop);
-		
-		QADButton setRegionButton = new QADButton(column1x, row0y, column1w, "Set Region");
-		setRegionButton.setAction(new Runnable() {
-			@Override public void run() {
-				EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-				int[] bounds = WandItem.getBoundsFromPLAYERorNULL(player);
-				
-				if(bounds == null){
-					Minecraft.getMinecraft().ingameGUI.getChatGUI().addToSentMessages(EnumChatFormatting.RED+"Error: "+EnumChatFormatting.RESET+"Wand selection is invalid.");
-					return;
-				}
-				
-				String commandString = "blockdatamerge:"+position.getX() + " " + position.getY() + " " + position.getZ();
-				NBTTagCompound commandData = new NBTTagCompound();
-				NBTTagCompound invokeData = new NBTTagCompound();
-				commandData.setTag("clockInvoke", invokeData);
-				invokeData.setString("type", "BlockTriggerInvoke");
-				invokeData.setIntArray("bounds", bounds);
-				
-				TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandData));
-			}
-		});
-		setRegionButton.setTooltip("Sets the region the clock triggers when it 'ticks'.");
-		components.add(setRegionButton);
 		
 	}
 	

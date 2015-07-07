@@ -4,11 +4,19 @@ import java.awt.Button;
 
 import de.longor.talecraft.client.gui.qad.QADTextField.TextChangeListener;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
 
 public class QADFACTORY {
 	
 	public static final QADLabel createLabel(String text, int x, int y) {
 		return new QADLabel(text, x, y);
+	}
+	
+	public static final QADButton createButton(ResourceLocation icon, int x, int y, int width, Runnable action) {
+		QADButton button = new QADButton(x, y, width, "");
+		button.setAction(action);
+		button.setIcon(icon);
+		return button;
 	}
 	
 	public static final QADButton createButton(String text, int x, int y, int width, Runnable action) {

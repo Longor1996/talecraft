@@ -7,6 +7,7 @@ import com.mojang.realmsclient.dto.RealmsServer.McoServerComparator;
 
 import de.longor.talecraft.client.gui.vcui.VCUIRenderer;
 import de.longor.talecraft.client.render.renderers.EXTFontRenderer;
+import de.longor.talecraft.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
@@ -17,6 +18,7 @@ import net.minecraft.util.ResourceLocation;
 public class QADButton extends QADComponent {
     protected static final ResourceLocation buttonTextures = new ResourceLocation("minecraft:textures/gui/widgets.png");
     
+    ResourceLocation iconTexture = null;
     Runnable clickRunnable = null;
 	String text = "[button]";
 	int x = 0;
@@ -117,7 +119,18 @@ public class QADButton extends QADComponent {
                 fontColor = 16777120;
             }
             
-            renderer.drawCenteredString(text, x + width / 2, y + (height - 8) / 2, fontColor, true);
+            int bx = this.x;
+            
+            if(iconTexture != null) {
+            	renderer.bindTexture(iconTexture);
+            	renderer.drawModalRectangleWithCustomSizedTexture(bx + 2, y + 2, 0, 0, 16, 16, 16, 16);
+            	
+            	// ! MODIFY X !
+            	bx += 2 + 16;
+            }
+            
+            renderer.drawCenteredString(text, bx + width / 2, y + (height - 8) / 2, fontColor, true);
+            
         }
 	}
 	
@@ -162,6 +175,16 @@ public class QADButton extends QADComponent {
 	
 	public List<String> getTooltip(int mouseX, int mouseY) {
 		return getTooltip();
+	}
+	
+	public QADComponent setIcon(ResourceLocation iconTexture) {
+		this.iconTexture = iconTexture;
+		return this;
+	}
+
+	public QADButton setEnabled(boolean b) {
+		this.enabled = b;
+		return this;
 	}
 	
 }

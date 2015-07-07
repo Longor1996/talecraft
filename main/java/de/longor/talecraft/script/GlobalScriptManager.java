@@ -116,6 +116,10 @@ public class GlobalScriptManager {
 	 * @return The script, or a short block-comment saying that an error ocurred.
 	 **/
 	public String loadScript(World world, String fileName) {
+		if(fileName.isEmpty()) {
+			return "";
+		}
+		
 		File worldDirectory = world.getSaveHandler().getWorldDirectory();
 		
 		File dataDir = worldDirectory;

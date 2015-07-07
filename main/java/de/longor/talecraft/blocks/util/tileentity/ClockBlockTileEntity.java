@@ -17,6 +17,7 @@ import net.minecraft.command.CommandResultStats.Type;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
@@ -31,6 +32,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ClockBlockTileEntity extends TCTileEntity implements IUpdatePlayerListBox {
 	IInvoke clockInvoke;
+	IInvoke clockStartInvoke;
+	IInvoke clockStopInvoke;
 	
 	public int set_repeat;
 	public int set_speed;
@@ -50,6 +53,8 @@ public class ClockBlockTileEntity extends TCTileEntity implements IUpdatePlayerL
 	
 	public ClockBlockTileEntity() {
 		clockInvoke = NullInvoke.instance;
+		clockStartInvoke = NullInvoke.instance;
+		clockStopInvoke = NullInvoke.instance;
 		
 		set_repeat = 10;
 		set_speed = 1;
@@ -79,6 +84,8 @@ public class ClockBlockTileEntity extends TCTileEntity implements IUpdatePlayerL
     	compound.setInteger("init_time", set_time);
     	
     	compound.setTag("clockInvoke", IInvoke.Serializer.write(clockInvoke));
+    	compound.setTag("clockStartInvoke", IInvoke.Serializer.write(clockStartInvoke));
+    	compound.setTag("clockStopInvoke", IInvoke.Serializer.write(clockStopInvoke));
     }
     
     public void readFromNBT_do(NBTTagCompound compound) {
@@ -92,10 +99,12 @@ public class ClockBlockTileEntity extends TCTileEntity implements IUpdatePlayerL
         time = compound.getInteger("time");
         
         clockInvoke = IInvoke.Serializer.read(compound.getCompoundTag("clockInvoke"));
+        clockStartInvoke = IInvoke.Serializer.read(compound.getCompoundTag("clockStartInvoke"));
+        clockStopInvoke = IInvoke.Serializer.read(compound.getCompoundTag("clockStopInvoke"));
 	}
     
     @Override
-    public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.S35PacketUpdateTileEntity pkt)
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
     {
     	NBTTagCompound comp = pkt.getNbtCompound();
     	readFromNBT_do(comp);
@@ -114,6 +123,7 @@ public class ClockBlockTileEntity extends TCTileEntity implements IUpdatePlayerL
 		speed = set_speed;
 		time = set_time;
 		active = true;
+		Invoke.invoke(clockStartInvoke, this);
     }
 	
     public void clockPause() {
@@ -125,6 +135,7 @@ public class ClockBlockTileEntity extends TCTileEntity implements IUpdatePlayerL
 		speed = 0;
 		time = 0;
 		active = false;
+		Invoke.invoke(clockStopInvoke, this);
     }
     
     public void clockTick() {
@@ -165,6 +176,10 @@ public class ClockBlockTileEntity extends TCTileEntity implements IUpdatePlayerL
 	public void commandReceived(String command, NBTTagCompound data) {
 		super.commandReceived(command, data);
 		
+		if("trigger".equals(command)) {
+			Invoke.invoke(clockInvoke, this);
+		}
+		
 		if("start".equals(command)) {
 			clockStart();
 		}
@@ -196,6 +211,20 @@ public class ClockBlockTileEntity extends TCTileEntity implements IUpdatePlayerL
 	@Override
 	public void getInvokes(List<IInvoke> invokes) {
 		invokes.add(clockInvoke);
+		invokes.add(clockStartInvoke);
+		invokes.add(clockStopInvoke);
+	}
+	
+	public IInvoke getTickInvoke() {
+		return clockInvoke;
+	}
+	
+	public IInvoke getStartInvoke() {
+		return clockInvoke;
+	}
+	
+	public IInvoke getStopInvoke() {
+		return clockInvoke;
 	}
 	
 //	@Override

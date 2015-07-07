@@ -13,6 +13,7 @@ import de.longor.talecraft.TaleCraftBlocks;
 import de.longor.talecraft.client.gui.vcui.VCUIComponent;
 import de.longor.talecraft.client.gui.vcui.VCUIRenderer;
 import de.longor.talecraft.proxy.ClientProxy;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.model.IBakedModel;
@@ -46,6 +47,10 @@ public class QADGuiScreen extends GuiScreen {
 	}
 	
 	public void layoutGui() {
+		
+	}
+	
+	public void updateGui() {
 		
 	}
 	
@@ -86,7 +91,11 @@ public class QADGuiScreen extends GuiScreen {
 		Keyboard.enableRepeatEvents(false);
 		
 		if(behindScreen != null) {
-			mc.displayGuiScreen(behindScreen);
+			TaleCraft.proxy.asClient().sheduleClientTickTask(new Runnable() {
+				@Override public void run() {
+					mc.displayGuiScreen(behindScreen);
+				}
+			});
 		}
     }
 	
@@ -126,6 +135,8 @@ public class QADGuiScreen extends GuiScreen {
 	
 	@Override
     public final void updateScreen() {
+		this.updateGui();
+		
 		for(QADComponent component : components) {
 			component.onTickUpdate();
 		}

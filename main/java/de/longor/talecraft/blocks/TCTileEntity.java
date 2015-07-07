@@ -1,8 +1,11 @@
 package de.longor.talecraft.blocks;
 
+import java.util.List;
+
 import org.mozilla.javascript.Scriptable;
 
 import de.longor.talecraft.TaleCraft;
+import de.longor.talecraft.invoke.IInvoke;
 import de.longor.talecraft.invoke.IInvokeSource;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;

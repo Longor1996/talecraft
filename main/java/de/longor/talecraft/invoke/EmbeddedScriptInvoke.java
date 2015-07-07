@@ -3,6 +3,7 @@ package de.longor.talecraft.invoke;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class EmbeddedScriptInvoke implements IInvoke, IScriptInvoke {
+	public static final String TYPE = "EmbeddedScriptInvoke";
 	public String script;
 	
 	public EmbeddedScriptInvoke() {
@@ -15,7 +16,7 @@ public class EmbeddedScriptInvoke implements IInvoke, IScriptInvoke {
 	
 	@Override
 	public String getType() {
-		return "EmbeddedScriptInvoke";
+		return TYPE;
 	}
 	
 	@Override

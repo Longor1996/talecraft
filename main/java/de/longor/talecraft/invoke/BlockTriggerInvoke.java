@@ -4,6 +4,7 @@ import scala.actors.threadpool.Arrays;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class BlockTriggerInvoke implements IInvoke {
+	public static final String TYPE = "BlockTriggerInvoke";
 	int[] bounds;
 	int data;
 	
@@ -17,7 +18,7 @@ public class BlockTriggerInvoke implements IInvoke {
 	
 	@Override
 	public String getType() {
-		return "BlockTriggerInvoke";
+		return TYPE;
 	}
 	
 	@Override
