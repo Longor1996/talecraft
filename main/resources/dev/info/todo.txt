@@ -1,15 +1,10 @@
 ADD
-- Add a GUI to edit invoke's.
-- Add the missing invokes to the ClockBlock and its GUI.
-- Add the missing invokes to the RedstoneTrigger and its GUI.
-- Add the missing invokes to the ScriptBlock and its GUI.
-- Implement the GUI for the RelayBlock.
-
 - Implement the ClipBlock as specified in scratch.txt
 - Implement the StorageBlock as specified in scratch.txt
 - Implement the BlockUpdateTrigger as specified in scratch.txt
 
-- Implement a simple per-player block-region clipboard system.
+- Implement a simple per-player block-region clipboard system,
+  that resides on both CLIENT and SERVER.
 - Implement the RegionMover-item as specified in scratch.txt
 - Implement the RegionCopy-item as specified in scratch.txt
 - Implement the RegionCut-item as specified in scratch.txt

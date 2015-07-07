@@ -16,21 +16,6 @@ block -> Clip:
     - Projectile Blocking: Projectiles can't pass trough.
 ^^
 
-block -> Clock:
-  | The clockblock is able to execute commands at a given speed in a (infinite|limited) loop.
-  * Properties:
-    - ACTIVE: Is the clock active?
-    - REPEAT: How often should the clock tick until deactivating? Use 0 for infinite repeats.
-    - SPEED: How fast the clock runs, in ticks. 1 is fastest, 20 is once per second.
-    - invoke:ONSTART: The command to execute when the clock starts.
-    - invoke:ONTICK: The command to execute when the clock ticks.
-    - invoke:ONSTOP: The command to execute when the clock stops.
-  * (trigger)
-    - arg0=0: START
-    - arg0=1: PAUSE
-    - arg0=2: STOP
-^^
-
 block -> DataStore:
   | This block stores any kind/amount of NBT-Data, permanently.
   * Properties
@@ -93,14 +78,8 @@ item -> BlockRegionPaste:
 item -> VoxelBrush:
   - Note: This tool will not cause block-updates.
   - SHAPES
-    * Box
-    * Sphere
-    * Cylinder
     * NoiseSphere
   - FUNCTIONS
-    * replace     : replace -> DST with ARG
-    * maskreplace : replace -> DST with ARG if DST equals MASK
-    * airreplace  : replace -> DST with ARG if DST equals minecraft:air
     * smooth-average -> Smooths the voxels together over a given area based on a average.
     * smooth-cubic -> Smooths the voxels together over a given area with a cube-kernel.
 ^^
