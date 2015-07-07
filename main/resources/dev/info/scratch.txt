@@ -139,7 +139,7 @@ item -> TerrainBrush:
 
 
 gui -> MapInterface:
-  - A gui that is opened by pressing 'H' on the keyboard without any special keys.
+  - A gui that is opened by pressing 'M' on the keyboard without any special keys.
   - The gui contains tabs that contains GUI's for different tools and utilities.
   - TABS:
     - Clipboard: Manage the contents of the clipboard.
@@ -148,10 +148,3 @@ gui -> MapInterface:
     - Resources: View and browse ALL resources currently loaded in the game. (textures[block, item, entity, *], sounds, music)
 ^^
 
-
-command -> RegionTrigger:
-  | This calls a special 'onTrigger'-method on a region of blocks.
-  * /tc_regiontrigger <dst.{x y z dx dy dz}> <arg0> [arg1]
-    - dst.{x y z dx dy dz}: The region of blocks to trigger, given as a MINMAX-AABB.
-    - arg0: The first argument to send.
-    - arg1: The second argument to send. (optional)
