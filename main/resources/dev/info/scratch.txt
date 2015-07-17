@@ -5,6 +5,66 @@ WARNING:
 This document contains things that are probably going to be implemented sooner or later,
 and things that are implemented but incomplete..
 
+
+
+command -> /TaleCraft_Visualize < ? >
+    /tc_vz
+    
+    ; How to do this?!
+    /tc_vz es <selector>
+    /tc_vz es <selector> <target>
+    
+    ; This is easy!
+    ; How to parse colors?
+    
+    /tc_vz sh bx <color> <half-size>
+    /tc_vz sh bx <color> <half-horizontal> <half-vertical>
+    /tc_vz sh bx <color> <half-x> <half-y> <half-z>
+    
+    /tc_vz sh cy <color> <radius>
+    /tc_vz sh cy <color> d<radius>
+    
+    /tc_vz sh sp <color> <radius>
+    /tc_vz sh sp <color> d<diameter>
+^^
+
+command -> /tc_region < ? >
+    /tc_region
+      Operates on regions selected by the wand and the ones stored in the server clipboard.
+    
+    Notes:
+      * The 'clipboard' is on the server-side.
+        - The clipboard contents are DELETED on server termination.
+        - The clipboard is globally accessible by EVERYBODY ANY TIME.
+        - The clipboard uses the 'prop'-format to store things.
+          This means that entities can be stored in the clipboard.
+      * A single-entry 'clipboard' is on the client-side.
+      * The clipboard of a given player can only be set/modified/cleared by that player.
+      * All players can access any other players clipboard, but cannot modify it.
+      * The name of a players private clipboard is always defined as 'player.<UUID>'.
+      * SELF
+        - SELF means either means 'this players selection' or 'this players clipboard'.
+        - SELF is only available if the sender of the command is a player.
+        - SELF references a players private clipboard named 'player.<UUID>'.
+      * PasteItem
+        - If a PasteItem instance is named the clipboard-entry with
+          that name will be used instead of the players private clipboard.
+    
+    /tc_region cut <name|SELF> <<x0> <y0> <z0> <x1> <y1> <z1>|SELF>
+       Cuts out a piece of the world and creates a new schematic in the clipboard from that.
+    
+    /tc_region copy <name|SELF> <<x0> <y0> <z0> <x1> <y1> <z1>|SELF>
+       Copies a piece of the world and creates a new schematic in the clipboard from that.
+       NOTE: This subcommand is half-way implemented already.
+    
+    /tc_region paste <name|SELF> <x> <y> <z>
+       Copies a specific schematic from the clipboard into the world at a specific position.
+^^
+
+
+
+
+
 block -> Clip:
   | This block is similar to the 'Barrier'-block from vanilla minecraft, except that it can filter specific objects.
   * Types:
@@ -12,7 +72,7 @@ block -> Clip:
     - Boss Blocking: Boss'es can't pass trough.
     - Player Blocking: Players can't pass trough.
     - Monster Blocking: Monsters can't pass trough.
-    - Villager Blocking: Villagers can't pass trough
+    - Villager Blocking: Villagers can't pass trough.
     - Projectile Blocking: Projectiles can't pass trough.
 ^^
 
@@ -35,14 +95,6 @@ block -> Storage:
     - arg0=2: Clear stored data.
 ^^
 
-block -> BlockUpdateTrigger:
-  * Properties
-    - ACTIVE: Is the detector active?
-    - invoke:ONUPDATE: The command to execute when a block next (t,b,n,e,s,w) to the BUD updates.
-  * (trigger)
-    - arg0=0: Toggle ACTIVE
-^^
-
 block -> Trigger:
   - ACTIVE: Is the trigger active?
   - intersectionShape:SHAPE: The shape of the trigger.
@@ -51,38 +103,14 @@ block -> Trigger:
 ^^
 
 
-
-
-
-
-
-
-
-
-item -> BlockRegionMover:
-  - Moves the selected region of blocks in the direction one is looking.
-  - Note: This tool will not cause block-updates.
-
-item -> BlockRegionCopy:
-  - Copies the selected region into the 'clipboard'.
-  - Note: This tool will not cause block-updates.
-
-item -> BlockRegionCut:
-  - Removes the selected region from the world and moves it into the 'clipboard'.
-  - Note: This tool will not cause block-updates.
-
-item -> BlockRegionPaste:
-  - Places whatever is in the 'clipboard' into the world.
-  - Note: This tool will not cause block-updates.
-
-item -> VoxelBrush:
-  - Note: This tool will not cause block-updates.
-  - SHAPES
-    * NoiseSphere
+item -> VoxelBrush: (partially implemented)
   - FUNCTIONS
     * smooth-average -> Smooths the voxels together over a given area based on a average.
     * smooth-cubic -> Smooths the voxels together over a given area with a cube-kernel.
 ^^
+
+
+
 
 item -> TerrainBrush:
   This tool acts upon the worlds heightmap.
@@ -116,14 +144,35 @@ item -> TerrainBrush:
 
 
 
-
+# Not really useful with the features listed below. :/
 gui -> MapInterface:
   - A gui that is opened by pressing 'M' on the keyboard without any special keys.
   - The gui contains tabs that contains GUI's for different tools and utilities.
   - TABS:
     - Clipboard: Manage the contents of the clipboard.
     - Scripts: The current worlds ScriptManager. It is possible to add world-scripts here.
+      # WORLD SCRIPTS ARE A REALLY BAD IDEA! Find better solution.
     - World: Utilities for the world instance you are in. (status info, weather control, gamerules)
+      # Apart from being able to see the gamerules, this isn't really necessary.
     - Resources: View and browse ALL resources currently loaded in the game. (textures[block, item, entity, *], sounds, music)
+      # This is not possible.
 ^^
 
+
+
+system -> CLIPBOARD (!!!)
+  The 'clipboard' is a system that allows players to store something called 'props'.
+  
+  CLIPBOARD
+    - The clipboard is mostly on the server-side of things.
+    - The clipboard solely stores 'props' and nothing else.
+    - There is a so-called 'private clipboard' that is per-player, and exists on the client AND the server. (synchronized!)
+    - Players can look into (and copy!) the private clipboard of other players, but not modify them.
+  
+  PROP
+    - A 'prop' is a collection of objects in a 3D-space.
+    - A prop can store these things: Blocks, Entitties, Metadata.
+    - Props can be saved from the clipboard to a harddrive.
+    - Props can be loaded from a hardrive into the clipboard.
+    
+^^
