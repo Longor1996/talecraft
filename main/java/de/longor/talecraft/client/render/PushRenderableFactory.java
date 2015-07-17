@@ -1,8 +1,15 @@
 package de.longor.talecraft.client.render;
 
+import java.util.Arrays;
+
+import org.apache.commons.lang3.StringUtils;
+
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.client.render.temporables.BlockPosTemporable;
+import de.longor.talecraft.client.render.temporables.BoxTemporable;
 import de.longor.talecraft.client.render.temporables.LineToBoxTemporable;
+import de.longor.talecraft.util.NBTHelper;
+import net.minecraft.command.PlayerSelector;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class PushRenderableFactory {
@@ -48,6 +55,59 @@ public class PushRenderableFactory {
 			
 			// TaleCraft.logger.info("Parsed: " + ren);
 			return ren;
+		}
+		
+		if(type.equals("box")) {
+			int[] box = data.getIntArray("box");
+			
+			if(box.length != 6)
+				return null;
+			
+			BoxTemporable ren = new BoxTemporable();
+			ren.box = box;
+			ren.color = data.hasKey("color") ? data.getInteger("color") : 0xFFFF7F00;
+			
+			TaleCraft.logger.info("Parsed: " + ren);
+			return ren;
+		}
+		
+		if(type.equals("selector")) {
+			String selector = data.getString("selector").trim();
+			
+			// Is this even a selector?
+			if(!selector.startsWith("@")) {
+				return null;
+			}
+			
+			// Get and then cut off the selector operator.
+			char selectorChar = selector.charAt(1);
+			selector = selector.substring(2).trim();
+			
+			// Cut off the [ ] pair.
+			if(selector.charAt(0) == '[')
+				selector = selector.substring(1).trim();
+			if(selector.charAt(selector.length()-1) == ']')
+				selector = selector.substring(0,selector.length()-1).trim();
+			
+			// No selector, stop processing.
+			if(selector.isEmpty()) {
+				TaleCraft.logger.info("Attempted parsing a selector without filters: " + data.getString("selector"));
+				return null;
+			}
+			
+			String[] arguments = null;
+			
+			if(selector.indexOf(',') != -1) {
+				arguments = selector.split(",");
+			} else {
+				arguments = new String[]{selector};
+			}
+			
+			// Splitting the arguments into key/value pairs is easy...
+			// but how am I supposed to get geometric shapes from these?
+			// TODO: Take a look at the PlayerSelector class.
+			
+			TaleCraft.logger.info("Parsed: " + Arrays.toString(arguments));
 		}
 		
 		return null;

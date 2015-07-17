@@ -22,16 +22,16 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TeleporterItem extends TCItem {
 	
-	public TeleporterItem() {
-        this.setCreativeTab(TaleCraftTabs.tab_TaleCraftTab);
-	}
-	
     public boolean onItemUse(
     		ItemStack stack, EntityPlayer playerIn, World worldIn,
     		BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ
     ) {
     	if(worldIn.isRemote)
     		return true;
+    	
+    	if(worldIn.getGameRules().getGameRuleBooleanValue("disableTCTeleporter")) {
+    		return true;
+    	}
     	
         // Get new Position
         double nX = pos.getX() + 0.5;
@@ -68,6 +68,10 @@ public class TeleporterItem extends TCItem {
     	if(worldIn.isRemote)
     		return itemStackIn;
     	
+    	if(worldIn.getGameRules().getGameRuleBooleanValue("disableTCTeleporter")) {
+    		return itemStackIn;
+    	}
+    	
     	float lerp = 1F;
     	float dist = 256;
     	
@@ -92,6 +96,10 @@ public class TeleporterItem extends TCItem {
         	double nX = newPos.getX() + 0.5;
         	double nZ = newPos.getZ() + 0.5;
         	double nY = newPos.getY() + 1;
+        	
+        	if(playerIn.isSneaking()) {
+        		nY = playerIn.posY;
+        	}
         	
         	// Get Old Rotation
         	float rY = playerIn.rotationYaw;
@@ -120,14 +128,21 @@ public class TeleporterItem extends TCItem {
         return itemStackIn;
     }
     
-    public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-    	TaleCraft.logger.info("Mounting: " + target);
+    @Override
+    // Warning: Forge Method
+    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity)
+    {
+    	if(player.worldObj.getGameRules().getGameRuleBooleanValue("disableTCTeleporter")) {
+    		return false;
+    	}
     	
-    	attacker.mountEntity(target);
-    	attacker.velocityChanged = true;
-    	target.velocityChanged = true;
+    	TaleCraft.logger.info("Mounting: " + entity);
+    	player.mountEntity(entity);
+    	player.velocityChanged = true;
+    	entity.velocityChanged = true;
     	
-        return false;
+    	// by returning TRUE, we prevent damaging the entity being hit.
+        return true;
     }
     
 }

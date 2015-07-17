@@ -77,9 +77,16 @@ public class QADGuiScreen extends GuiScreen {
     		
     		try {
     			buildGui(components);
-    		} catch(Exception e) {
+    		} catch(Throwable e) {
     			e.printStackTrace();
     		}
+    	}
+    	
+    	// TODO: Untested. Might lead to crash. Leaving it in for now.
+    	if(this.behindScreen != null) {
+    		this.behindScreen.width = this.width;
+    		this.behindScreen.height = this.height;
+    		this.behindScreen.initGui();
     	}
     	
     	layoutGui();
@@ -181,5 +188,50 @@ public class QADGuiScreen extends GuiScreen {
 	public GuiScreen getBehind() {
 		return behindScreen;
 	}
+	
+	public void displayGuiScreen(GuiScreen guiScreen) {
+		mc.displayGuiScreen(guiScreen);
+	}
+	
+	// FOLLOWING ARE UTILITY METHODS!
+	public static final int parseInt(String string, int original, int min, int max) {
+		try {
+			int i = 0;
+			
+			if(string.startsWith("0x"))
+				i = Integer.parseInt(string.toLowerCase(), 16);
+			if(string.startsWith("0b"))
+				i = Integer.parseInt(string.toLowerCase(), 2);
+			else
+				i = Integer.parseInt(string);
+			
+			if(i < min)
+				throw new NumberFormatException(i+" is smaller than "+min+".");
+			if(i > max)
+				throw new NumberFormatException(i+" is bigger than "+max+".");
+			
+			return i;
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			return original;
+		}
+	}
+	
+	public static final float parseFloat(String string, float original, float min, float max) {
+		try {
+			float f = Float.parseFloat(string);
+			
+			if(f < min)
+				throw new NumberFormatException(f+" is smaller than "+min+".");
+			if(f > max)
+				throw new NumberFormatException(f+" is bigger than "+max+".");
+			
+			return f;
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			return original;
+		}
+	}
+	
 	
 }

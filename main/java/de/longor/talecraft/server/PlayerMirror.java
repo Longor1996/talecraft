@@ -1,25 +1,23 @@
 package de.longor.talecraft.server;
 
+import de.longor.talecraft.util.NBTHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 
 
 public class PlayerMirror {
-	public PlayerClipboard clipboard;
 	public EntityPlayerMP player;
+	public NBTTagCompound settings;
 	
 	public PlayerMirror(EntityPlayerMP player) {
 		this.player = player;
-		this.clipboard = null;
+		this.settings = new NBTTagCompound();
 	}
 	
-	public void setClipboard(PlayerClipboard clipboard) {
-		this.clipboard = clipboard;
-	}
-	
-	public void setClipboard(IBlockState[] region, int w, int h, int l) {
-		this.clipboard = new PlayerClipboard(region,w,h,l);
+	public void construct(NBTTagCompound data) {
+		settings = data.getCompoundTag("settings");
 	}
 	
 }

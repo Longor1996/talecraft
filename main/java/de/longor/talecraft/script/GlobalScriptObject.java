@@ -13,6 +13,7 @@ import de.longor.talecraft.script.wrappers.item.ItemStackObjectWrapper;
 import de.longor.talecraft.script.wrappers.nbt.CompoundTagWrapper;
 import de.longor.talecraft.script.wrappers.potion.PotionEffectObjectWrapper;
 import de.longor.talecraft.script.wrappers.potion.PotionObjectWrapper;
+import de.longor.talecraft.util.GObjectTypeHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -53,7 +54,7 @@ public class GlobalScriptObject implements IObjectWrapper {
 	}
 	
 	public BlockStateObjectWrapper getBlock(String id) {
-		Block block = (Block) Block.blockRegistry.getObject(id);
+		Block block = GObjectTypeHelper.findBlockState(id).getBlock();
 		
 		if(block == null)
 			return null;
@@ -62,7 +63,7 @@ public class GlobalScriptObject implements IObjectWrapper {
 	}
 	
 	public BlockStateObjectWrapper getBlock(String id, int meta) {
-		Block block = (Block) Block.blockRegistry.getObject(id);
+		Block block = GObjectTypeHelper.findBlockState(id).getBlock();
 		
 		if(block == null)
 			return null;
@@ -86,6 +87,8 @@ public class GlobalScriptObject implements IObjectWrapper {
 	public PotionObjectWrapper getPotion(int id) {
 		return new PotionObjectWrapper(Potion.potionTypes[id]);
 	}
+	
+	// TODO: newItemStack(String identifier, ...);
 	
 	public ItemStackObjectWrapper newItemStack(BlockObjectWrapper block) {
 		ItemStack stack = new ItemStack(block.internal(), 1);

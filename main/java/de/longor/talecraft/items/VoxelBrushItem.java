@@ -2,7 +2,9 @@ package de.longor.talecraft.items;
 
 import java.util.List;
 
+import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.voxelbrush.VoxelBrush;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,6 +16,42 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class VoxelBrushItem extends TCItem {
+	
+    public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+    	if(worldIn.isRemote)
+    		return;
+    	
+    	if(worldIn.getGameRules().getGameRuleBooleanValue("disableTCVoxelBrush")) {
+    		return;
+    	}
+    	
+		NBTTagCompound itemStackNbtTagCompound = stack.getTagCompound();
+		
+		if(itemStackNbtTagCompound == null) {
+			itemStackNbtTagCompound = new NBTTagCompound();
+			stack.setTagCompound(itemStackNbtTagCompound);
+		}
+		
+		// Automatic initialization of the VoxelBrush.
+		if(!itemStackNbtTagCompound.hasKey("vbData")) {
+	    	TaleCraft.logger.info("Auto-Initializing VoxelBrush: " + stack);
+	    	
+	    	NBTTagCompound vbData = new NBTTagCompound();
+			itemStackNbtTagCompound.setTag("vbData", vbData);
+			
+			NBTTagCompound shapeTag = new NBTTagCompound();
+			shapeTag.setString("type", "sphere");
+			shapeTag.setDouble("radius", 3.5);
+			vbData.setTag("shape", shapeTag);
+			
+			NBTTagCompound action = new NBTTagCompound();
+			action.setString("type", "replace");
+			action.setString("blockID", "minecraft:stone");
+			action.setString("blockMeta", "0");
+			vbData.setTag("action", action);
+		}
+    	
+    }
 	
     public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
     	if(world.isRemote)

@@ -4,6 +4,7 @@ import de.longor.talecraft.TaleCraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.IWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -38,6 +39,13 @@ public class TCWorldManager {
 		
 		// System.out.println("TICKING WORLD -> @" + event.world);
 		// TaleCraft.proxy.tick(event);
+		
+		GameRules rules = event.world.getGameRules();
+		if(rules.getGameRuleBooleanValue("disableWeather")) {
+			// Clear the weather for 5 seconds.
+			event.world.getWorldInfo().setCleanWeatherTime(20*5);
+		}
+		
 	}
 	
 	public void joinWorld(Entity entity) {

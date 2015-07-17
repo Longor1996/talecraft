@@ -29,6 +29,11 @@ public class StringNBTCommand implements IMessage {
 		command = cmd;
 	}
 	
+	public StringNBTCommand(String cmd) {
+		data = new NBTTagCompound();
+		command = cmd;
+	}
+	
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		int cmdlen = buf.readShort();

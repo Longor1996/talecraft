@@ -23,7 +23,7 @@ public interface IInvoke {
 			IInvoke invoke = read(compoundTag);
 			
 			if(invoke instanceof IScriptInvoke) {
-				TaleCraft.logger.info("Loaded IScriptInvoke : " + invoke.getType() + " : " + ((IScriptInvoke)invoke).getScriptName());
+				// TaleCraft.logger.info("Loaded IScriptInvoke : " + invoke.getType() + " : " + ((IScriptInvoke)invoke).getScriptName());
 				return (IScriptInvoke) invoke;
 			}
 			

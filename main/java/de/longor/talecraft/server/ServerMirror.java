@@ -10,6 +10,7 @@ import net.minecraft.server.MinecraftServer;
 public class ServerMirror {
 	private MinecraftServer server;
 	private PlayerList players;
+	private ServerClipboard clipboard;
 	
 	public MinecraftServer getServer() {
 		return server;
@@ -20,6 +21,7 @@ public class ServerMirror {
 		
 		this.server = server;
 		this.players = new PlayerList();
+		this.clipboard = new ServerClipboard();
 	}
 	
 	public void destroy() {
@@ -29,6 +31,10 @@ public class ServerMirror {
 	
 	public PlayerList playerList() {
 		return players;
+	}
+	
+	public ServerClipboard getClipboard() {
+		return clipboard;
 	}
 	
 }

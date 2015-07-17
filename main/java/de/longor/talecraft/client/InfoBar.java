@@ -20,38 +20,58 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.EnumFacing.Plane;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 public class InfoBar {
 	private StringBuilder builder = new StringBuilder(255);
+	private boolean enabled = true;
 	
 	public void display(Minecraft mc, EntityPlayerSP player, WorldClient theWorld, ClientProxy clientProxy) {
+		if(!clientProxy.settings.getBoolean("client.infobar.enabled")) {
+			return;
+		}
+		
 		// begin building string
         builder.setLength(0);
         writeModVersionInfo();
         
-        if(mc.thePlayer.inventory.getCurrentItem() != null) {
+        if(mc.thePlayer.inventory.getCurrentItem() != null && clientProxy.settings.getBoolean("client.infobar.heldItemInfo")) {
         	writeHeldItemInfo(mc.thePlayer.inventory.getCurrentItem());
         }
         
-        if(mc.objectMouseOver != null) {
+        if(mc.objectMouseOver != null && clientProxy.settings.getBoolean("client.infobar.movingObjectPosition")) {
         	writeMovingObjectPositionInfo(mc, theWorld, mc.objectMouseOver);
         }
         
-        if(clientProxy.getVisualizationmode() != 0) {
+        if(clientProxy.getVisualizationmode() != 0 && clientProxy.settings.getBoolean("client.infobar.visualizationMode")) {
         	writeVisualizationModeInfo(clientProxy.getVisualizationmode());
         }
         
-        builder.append(' ');
-        builder.append(mc.getDebugFPS());
-        builder.append(" FPS");
+        if(clientProxy.settings.getBoolean("client.infobar.showFPS")) {
+        	builder.append(' ');
+        	builder.append(mc.getDebugFPS());
+        	builder.append(" FPS");
+        }
+        
+        if(clientProxy.settings.getBoolean("client.infobar.showRenderables")) {
+            builder.append(" [");
+            builder.append(clientProxy.getStaticCount());
+        	builder.append(", ");
+        	builder.append(clientProxy.getTemporablesCount());
+        	builder.append("]");
+        }
         
         // Finally, draw the whole thing!
 		mc.ingameGUI.drawRect(0, 0, mc.displayWidth, mc.fontRendererObj.FONT_HEIGHT+1, 0xAA000000);
         mc.fontRendererObj.drawString(builder.toString(), 1, 1, 14737632);
         
         //*
-        if(mc.thePlayer != null && mc.thePlayer.getEntityData().hasKey("tcWand")) {
+        if(mc.thePlayer != null && mc.thePlayer.getEntityData().hasKey("tcWand") && clientProxy.settings.getBoolean("client.infobar.showWandInfo")) {
         	NBTTagCompound tcWand = mc.thePlayer.getEntityData().getCompoundTag("tcWand");
         	
         	builder.setLength(0);
@@ -123,8 +143,7 @@ public class InfoBar {
 	}
 
 	private void writeMovingObjectPositionInfo(Minecraft mc, WorldClient theWorld, MovingObjectPosition mop) {
-        if (mop.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && mop.getBlockPos() != null)
-        {
+        if (mop.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && mop.getBlockPos() != null) {
             builder.append(EnumChatFormatting.GREEN);
 			BlockPos lookAt = mc.objectMouseOver.getBlockPos();
 	        builder.append(' ');
@@ -144,7 +163,8 @@ public class InfoBar {
 		        IBlockState state = mc.theWorld.getBlockState(lookAt);
 		        
 		        if(b) {
-			        builder.append(state);
+	        		UniqueIdentifier identifier = GameRegistry.findUniqueIdentifierFor(state.getBlock());
+	        		builder.append(identifier.modId).append(":").append(identifier.name).append("/").append(state.getBlock().getMetaFromState(state));
 		        } else {
 		        	if(state == null) {
 		        		builder.append("NULL-DATA ERROR");
@@ -185,6 +205,53 @@ public class InfoBar {
 	        builder.append(']');
             builder.append(EnumChatFormatting.RESET);
         }
+        
+        // Look Direction
+        if(ClientProxy.proxy.settings.getBoolean("client.infobar.showLookDirectionInfo"))
+        {
+        	EntityPlayer playerIn = mc.thePlayer;
+        	
+        	EnumFacing directionSky = playerIn.getHorizontalFacing();
+        	EnumFacing directionFull = null;
+        	// EnumFacing direction = null;
+    		
+    		if(playerIn.rotationPitch > 45) {
+    			directionFull = EnumFacing.DOWN;
+    		} else if(playerIn.rotationPitch < -45) {
+    			directionFull = EnumFacing.UP;
+    		} else {
+    			directionFull = playerIn.getHorizontalFacing();
+    		}
+    		
+	        builder.append(" [");
+	        
+	        switch(directionFull) {
+				case EAST:	builder.append(EnumChatFormatting.RED).append("+x"); break;
+				case WEST:	builder.append(EnumChatFormatting.DARK_RED).append("-x"); break;
+				case UP:	builder.append(EnumChatFormatting.GREEN).append("+y"); break;
+				case DOWN:	builder.append(EnumChatFormatting.DARK_GREEN).append("-y"); break;
+				case SOUTH:	builder.append(EnumChatFormatting.BLUE).append("+z"); break;
+				case NORTH:	builder.append(EnumChatFormatting.DARK_AQUA).append("-z"); break;
+	        }
+	        
+	        builder.append(EnumChatFormatting.RESET).append(' ');
+	        
+	        switch(directionSky) {
+	        	case EAST:	builder.append("E"); break;
+	        	case WEST:	builder.append("W"); break;
+	        	case SOUTH:	builder.append("S"); break;
+	        	case NORTH:	builder.append("N"); break;
+	        	default: break;
+	        }
+	        
+	        builder.append(',');
+	        builder.append(' ');
+    		builder.append((int)playerIn.rotationPitch);
+    		builder.append(' ');
+	        builder.append((int)MathHelper.wrapAngleTo180_float(playerIn.rotationYaw));
+	        
+	        builder.append(']');
+        }
 	}
 	
 	public boolean canDisplayInfoBar(Minecraft mc, ClientProxy clientProxy) {
@@ -198,5 +265,9 @@ public class InfoBar {
 			return true;
 		
 		return false;
+	}
+	
+	public void setEnabled(boolean boolean1) {
+		enabled = boolean1;
 	}
 }

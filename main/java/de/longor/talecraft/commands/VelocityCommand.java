@@ -33,6 +33,7 @@ public class VelocityCommand extends CommandBase {
             throw new WrongUsageException(getCommandUsage(sender), new Object[0]);
 		}
 		
+		// Parse action
 		int action = 0;
 		
 		if(args[0].equalsIgnoreCase("set"))
@@ -48,6 +49,7 @@ public class VelocityCommand extends CommandBase {
 			throw new CommandException("Invalid action: " + args[0]);
 		}
 		
+		// Parse target argument
 		List<Entity> entities = null;
 		
 		if(args[1].equalsIgnoreCase("this")) {
@@ -125,6 +127,10 @@ public class VelocityCommand extends CommandBase {
     	
     	if(args.length == 2) {
     		return getListOfStringsMatchingLastWord(args, new String[] {"this", "@a", "@p", "@r", "@e"});
+    	}
+    	
+    	if(args.length >= 3) {
+    		return getListOfStringsMatchingLastWord(args, new String[] {"1","0","-1"});
     	}
     	
         return null;

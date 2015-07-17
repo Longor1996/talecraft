@@ -31,10 +31,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class FillerItem extends TCItem {
 	
-	public FillerItem() {
-        this.setCreativeTab(TaleCraftTabs.tab_TaleCraftTab);
-	}
-	
     public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
     	if(worldIn.isRemote)

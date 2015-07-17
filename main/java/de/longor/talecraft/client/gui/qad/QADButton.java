@@ -163,7 +163,9 @@ public class QADButton extends QADComponent {
 	
     public void playPressSound() {
     	SoundHandler soundHandlerIn = Minecraft.getMinecraft().getSoundHandler();
-        soundHandlerIn.playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+    	ResourceLocation pressSound = new ResourceLocation("gui.button.press");
+    	float pitch = enabled ? 1f : 0.5f;
+        soundHandlerIn.playSound(PositionedSoundRecord.create(pressSound, pitch));
     }
     
 	@Override

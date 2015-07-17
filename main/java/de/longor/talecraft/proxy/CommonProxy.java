@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.managers.TCWorldManager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -53,6 +55,14 @@ public abstract class CommonProxy {
 	
 	public void unloadWorld(World world) {
 		
+	}
+	
+	public void loadWorld(World world) {
+		
+	}
+	
+	public NBTTagCompound getSettings(EntityPlayer playerIn) {
+		return new NBTTagCompound();
 	}
 	
 }

@@ -77,6 +77,7 @@ public class InvokePanelBuilder {
 		
 		final QADTextField scriptName = QADFACTORY.createTextField(invoke.getCommand(), ox+1, oy+2, 100-2);
 		scriptName.setTooltip("The command to execute.");
+		scriptName.setMaxStringLength(32700);
 		components.add(scriptName);
 		
 		QADButton buttonApply = QADFACTORY.createButton("Apply", ox+100+2, oy, 40, null);
@@ -109,6 +110,7 @@ public class InvokePanelBuilder {
 		
 		final QADTextField scriptName = QADFACTORY.createTextField(invoke.getScriptName(), ox+1, oy+2, 100-2);
 		scriptName.setTooltip("The file-name of the script to execute.");
+		scriptName.setMaxStringLength(128);
 		components.add(scriptName);
 		
 		QADButton buttonApply = QADFACTORY.createButton("Apply", ox+100+2, oy, 40, null);

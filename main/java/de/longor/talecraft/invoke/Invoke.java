@@ -34,6 +34,11 @@ import net.minecraft.world.World;
 public class Invoke {
 	
 	public static final void invoke(IInvoke invoke, IInvokeSource source) {
+		if(source.getInvokeWorld() != null && source.getInvokeWorld().getGameRules().getGameRuleBooleanValue("disableTCInvokeSystem")) {
+			TaleCraft.logger.info("Tried to execute invoke {"+invoke+"}, but the invoke system is disabled!");
+			return;
+		}
+		
 		if(invoke == null) {
 			TaleCraft.logger.error("NULL was passed to the invoke method! Source: "+source+"!");
 			return;
@@ -76,6 +81,7 @@ public class Invoke {
 				pktdata.setInteger("color", 0x0099FF);
 				TaleCraft.simpleNetworkWrapper.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
 			}
+			return;
 		}
 		
 		if(invoke instanceof BlockTriggerInvoke) {

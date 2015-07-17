@@ -18,6 +18,7 @@ import de.longor.talecraft.script.wrappers.block.BlockStateObjectWrapper;
 import de.longor.talecraft.script.wrappers.entity.EntityObjectWrapper;
 import de.longor.talecraft.script.wrappers.nbt.CompoundTagWrapper;
 import de.longor.talecraft.script.wrappers.scoreboard.ScoreboardObjectWrapper;
+import de.longor.talecraft.util.GObjectTypeHelper;
 import de.longor.talecraft.util.MutableBlockPos;
 import de.longor.talecraft.util.WorldCommandSender;
 import net.minecraft.block.state.IBlockState;
@@ -169,6 +170,10 @@ public class WorldObjectWrapper implements IObjectWrapper {
 		return new BlockObjectWrapper(world.getBlockState(pos).getBlock());
 	}
 	
+	public void setBlock(BlockPos pos, String type) {
+		world.setBlockState(pos, GObjectTypeHelper.findBlockState(type));
+	}
+	
 	public void setBlock(BlockPos pos, IBlockState blockState) {
 		world.setBlockState(pos, blockState);
 	}
@@ -183,6 +188,10 @@ public class WorldObjectWrapper implements IObjectWrapper {
 	
 	public void setBlock(MutableBlockPos pos, BlockStateObjectWrapper blockStateObjectWrapper) {
 		world.setBlockState(pos, blockStateObjectWrapper.internal());
+	}
+	
+	public void setBlock(int x, int y, int z, String type) {
+		world.setBlockState(new MutableBlockPos(x, y, z), GObjectTypeHelper.findBlockState(type));
 	}
 	
 	public void setBlock(int x, int y, int z, IBlockState blockState) {

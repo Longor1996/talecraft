@@ -66,11 +66,6 @@ public class RedstoneTriggerBlockTileEntity extends TCTileEntity {
 	}
 	
 	@Override
-	public World getInvokeWorld() {
-		return this.worldObj;
-	}
-	
-	@Override
 	public String getName() {
 		return "RedstoneTrigger@"+pos;
 	}
@@ -93,5 +88,12 @@ public class RedstoneTriggerBlockTileEntity extends TCTileEntity {
 //	public void getInvokesAsDataCompounds(List<NBTTagCompound> invokes) {
 //		invokes.add(triggerInvoke);
 //	}
+
+	@Override
+	public void getInvokeColor(float[] color) {
+		color[0] = 0.75f;
+		color[1] = 0.0f;
+		color[2] = 0.0f;
+	}
 	
 }

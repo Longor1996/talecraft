@@ -15,5 +15,13 @@ public class NBTHelper {
 			return compound;
 		}
 	}
+
+	public static NBTTagCompound getOrNull(NBTTagCompound parent, String name) {
+		if(parent.hasKey(name, parent.getId())) {
+			return parent.getCompoundTag(name);
+		} else {
+			return null;
+		}
+	}
 	
 }

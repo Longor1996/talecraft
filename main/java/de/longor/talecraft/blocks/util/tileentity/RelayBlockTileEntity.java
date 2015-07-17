@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.lwjgl.Sys;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 
@@ -69,7 +70,16 @@ public class RelayBlockTileEntity extends TCTileEntity {
 		super.commandReceived(command, data);
 		
 		if(command.equals("invoke_add")) {
-			invokes.put("rix"+System.currentTimeMillis(), new BlockTriggerInvoke());
+			String keyString = null;
+			
+			// Generate a unique ID between 0 and 1000.
+			// Yes, this is inefficient as fuck.
+			// No, I don't care about that.
+			do {
+				keyString = "rix" + (System.currentTimeMillis() % 1000);
+			} while(invokes.containsKey(keyString));
+			
+			invokes.put(keyString, NullInvoke.instance);
             worldObj.markBlockForUpdate(this.pos);
 		}
 		
@@ -105,6 +115,13 @@ public class RelayBlockTileEntity extends TCTileEntity {
 	
 	public Map<String, IInvoke> getInvokes() {
 		return invokes;
+	}
+	
+	@Override
+	public void getInvokeColor(float[] color) {
+		color[0] = 0.5f;
+		color[1] = 0.8f;
+		color[2] = 0.0f;
 	}
 	
 }

@@ -8,6 +8,7 @@ import de.longor.talecraft.client.gui.qad.QADComponent;
 import de.longor.talecraft.client.gui.qad.QADGuiScreen;
 import de.longor.talecraft.client.gui.qad.QADLabel;
 import de.longor.talecraft.client.gui.qad.QADScrollPanel;
+import de.longor.talecraft.client.gui.qad.QADTextField;
 
 public class GuiMapControl extends QADGuiScreen {
 	
@@ -15,6 +16,10 @@ public class GuiMapControl extends QADGuiScreen {
 		
 		components.add(new QADLabel("World: " + mc.theWorld.getClass().getSimpleName(), 2, 2));
 		components.add(new QADLabel("Player: " + mc.thePlayer.getName(), 2, 12));
+		
+//		QADTextField field = new QADTextField(fontRendererObj, 32, 32, 120, 20);
+//		field.autoCompleteOptions = new String[]{"This","Is","Text","Great!","abcdefghijklmnopqrstuvwxyz"};
+//		components.add(field);
 		
 		/*
 		QADButtonBox box = new QADButtonBox(

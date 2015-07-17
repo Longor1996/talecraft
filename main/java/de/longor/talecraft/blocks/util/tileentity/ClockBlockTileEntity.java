@@ -220,16 +220,23 @@ public class ClockBlockTileEntity extends TCTileEntity implements IUpdatePlayerL
 	}
 	
 	public IInvoke getStartInvoke() {
-		return clockInvoke;
+		return clockStartInvoke;
 	}
 	
 	public IInvoke getStopInvoke() {
-		return clockInvoke;
+		return clockStopInvoke;
 	}
 	
 //	@Override
 //	public void getInvokesAsDataCompounds(List<NBTTagCompound> invokes) {
 //		invokes.add(clockInvoke);
 //	}
+
+	@Override
+	public void getInvokeColor(float[] color) {
+		color[0] = 0.5f;
+		color[1] = 0.1f;
+		color[2] = 0.5f;
+	}
 	
 }

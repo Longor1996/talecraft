@@ -1,16 +1,115 @@
 package de.longor.talecraft.client.render.renderers;
 
+import org.lwjgl.opengl.GL11;
+
+import com.sun.javafx.geom.Vec3f;
 import com.sun.xml.internal.txw2.TXW;
 
+import de.longor.talecraft.TaleCraft;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.WorldRenderer.State;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 
 public class BoxRenderer {
 	private static final Vec3 UP = new Vec3(0, 1, 0);
+	
+	public static final void renderWireBoxWithPointAndLines(
+			float x0, float y0, float z0, float x1, float y1, float z1,
+			float X, float Y, float Z,
+			float r, float g, float b, float a) {
+		
+		float minX = x0;
+		float minY = y0;
+		float minZ = z0;
+		float maxX = x1;
+		float maxY = y1;
+		float maxZ = z1;
+		float x = X;
+		float y = Y;
+		float z = Z;
+		
+		GL11.glBegin(GL11.GL_LINES);
+		GL11.glColor4f(r*0.5f, g*0.5f, b*0.5f, a);
+		
+		GL11.glVertex3f(minX, minY, minZ);
+		GL11.glVertex3f(maxX, minY, minZ);
+		
+		GL11.glVertex3f(minX, minY, minZ);
+		GL11.glVertex3f(minX, minY, maxZ);
+		
+		GL11.glVertex3f(minX, minY, maxZ);
+		GL11.glVertex3f(maxX, minY, maxZ);
+		
+		GL11.glVertex3f(maxX, minY, minZ);
+		GL11.glVertex3f(maxX, minY, maxZ);
+		
+		GL11.glVertex3f(minX, maxY, minZ);
+		GL11.glVertex3f(maxX, maxY, minZ);
+		
+		GL11.glVertex3f(minX, maxY, minZ);
+		GL11.glVertex3f(minX, maxY, maxZ);
+		
+		GL11.glVertex3f(minX, maxY, maxZ);
+		GL11.glVertex3f(maxX, maxY, maxZ);
+		
+		GL11.glVertex3f(maxX, maxY, minZ);
+		GL11.glVertex3f(maxX, maxY, maxZ);
+		
+		GL11.glVertex3f(minX, minY, minZ);
+		GL11.glVertex3f(minX, maxY, minZ);
+		
+		GL11.glVertex3f(maxX, minY, minZ);
+		GL11.glVertex3f(maxX, maxY, minZ);
+		
+		GL11.glVertex3f(minX, minY, maxZ);
+		GL11.glVertex3f(minX, maxY, maxZ);
+		
+		GL11.glVertex3f(maxX, minY, maxZ);
+		GL11.glVertex3f(maxX, maxY, maxZ);
+		
+		GL11.glColor4f(r, g, b, a);
+		
+		if(y < minY || x < minX || z < minZ) {
+			GL11.glVertex3f(x, y, z);
+			GL11.glVertex3f(minX, minY, minZ);
+		}
+		if(y < minY || x > maxX || z < minZ) {
+			GL11.glVertex3f(x, y, z);
+			GL11.glVertex3f(maxX, minY, minZ);
+		}
+		if(y < minY || x < minX || z > maxZ) {
+			GL11.glVertex3f(x, y, z);
+			GL11.glVertex3f(minX, minY, maxZ);
+		}
+		if(y < minY || x > maxX || z > maxZ) {
+			GL11.glVertex3f(x, y, z);
+			GL11.glVertex3f(maxX, minY, maxZ);
+		}
+		if(y > maxY || x < minX || z < minZ) {
+			GL11.glVertex3f(x, y, z);
+			GL11.glVertex3f(minX, maxY, minZ);
+		}
+		if(y > maxY || x > maxX || z < minZ) {
+			GL11.glVertex3f(x, y, z);
+			GL11.glVertex3f(maxX, maxY, minZ);
+		}
+		if(y > maxY || x < minX || z > maxZ) {
+			GL11.glVertex3f(x, y, z);
+			GL11.glVertex3f(minX, maxY, maxZ);
+		}
+		if(y > maxY || x > maxX || z > maxZ) {
+			GL11.glVertex3f(x, y, z);
+			GL11.glVertex3f(maxX, maxY, maxZ);
+		}
+		GL11.glEnd();
+		
+	}
 	
 	public static final void renderBoxLine(Tessellator tessellator, WorldRenderer worldrenderer,
 			float x0, float y0, float z0, float x1, float y1, float z1,
@@ -32,7 +131,7 @@ public class BoxRenderer {
         worldrenderer.setColorRGBA_F(r, g, b, a);
         worldrenderer.setBrightness(0xFF);
         float minX,minY,minZ,maxX,maxY,maxZ,tx,ty,tz, size = 0.05f;
-		for(float t = 0, step = 1f / 5f; t < length; t += step) {
+		for(float t = TaleCraft.asClient().getLastPartialTicks() / 3f, step = 1f / 3f; t < length; t += step) {
 			tx = x0 + nx*t;
 			ty = y0 + ny*t;
 			tz = z0 + nz*t;
@@ -253,28 +352,28 @@ public class BoxRenderer {
         worldrenderer.addVertexWithUV(minX, minY, maxZ, 0, 1);
         // negative z | north
         worldrenderer.setNormal(0, 0, -1);
-        worldrenderer.addVertexWithUV(minX, maxY, minZ, 0, 0);
-        worldrenderer.addVertexWithUV(maxX, maxY, minZ, 1, 0);
-        worldrenderer.addVertexWithUV(maxX, minY, minZ, 1, 1);
-        worldrenderer.addVertexWithUV(minX, minY, minZ, 0, 1);
+        worldrenderer.addVertexWithUV(minX, maxY, minZ, 1, 0);
+        worldrenderer.addVertexWithUV(maxX, maxY, minZ, 0, 0);
+        worldrenderer.addVertexWithUV(maxX, minY, minZ, 0, 1);
+        worldrenderer.addVertexWithUV(minX, minY, minZ, 1, 1);
         // positive z | south
         worldrenderer.setNormal(0, 0, 1);
-        worldrenderer.addVertexWithUV(maxX, maxY, maxZ, 0, 0);
-        worldrenderer.addVertexWithUV(minX, maxY, maxZ, 1, 0);
-        worldrenderer.addVertexWithUV(minX, minY, maxZ, 1, 1);
-        worldrenderer.addVertexWithUV(maxX, minY, maxZ, 0, 1);
+        worldrenderer.addVertexWithUV(maxX, maxY, maxZ, 1, 0);
+        worldrenderer.addVertexWithUV(minX, maxY, maxZ, 0, 0);
+        worldrenderer.addVertexWithUV(minX, minY, maxZ, 0, 1);
+        worldrenderer.addVertexWithUV(maxX, minY, maxZ, 1, 1);
         // positive x | east
         worldrenderer.setNormal(1, 0, 0);
-        worldrenderer.addVertexWithUV(maxX, maxY, minZ, 0, 0);
-        worldrenderer.addVertexWithUV(maxX, maxY, maxZ, 1, 0);
-        worldrenderer.addVertexWithUV(maxX, minY, maxZ, 1, 1);
-        worldrenderer.addVertexWithUV(maxX, minY, minZ, 0, 1);
+        worldrenderer.addVertexWithUV(maxX, maxY, minZ, 1, 0);
+        worldrenderer.addVertexWithUV(maxX, maxY, maxZ, 0, 0);
+        worldrenderer.addVertexWithUV(maxX, minY, maxZ, 0, 1);
+        worldrenderer.addVertexWithUV(maxX, minY, minZ, 1, 1);
         // negative x | west
         worldrenderer.setNormal(-1, 0, 0);
-        worldrenderer.addVertexWithUV(minX, maxY, maxZ, 0, 0);
-        worldrenderer.addVertexWithUV(minX, maxY, minZ, 1, 0);
-        worldrenderer.addVertexWithUV(minX, minY, minZ, 1, 1);
-        worldrenderer.addVertexWithUV(minX, minY, maxZ, 0, 1);
+        worldrenderer.addVertexWithUV(minX, maxY, maxZ, 1, 0);
+        worldrenderer.addVertexWithUV(minX, maxY, minZ, 0, 0);
+        worldrenderer.addVertexWithUV(minX, minY, minZ, 0, 1);
+        worldrenderer.addVertexWithUV(minX, minY, maxZ, 1, 1);
         
         tessellator.draw();
 	}
@@ -337,47 +436,115 @@ public class BoxRenderer {
 		float U = Math.round(maxX - minX);
 		float V = Math.round(maxY - minY);
 		float W = Math.round(maxZ - minZ);
+		float VOLUME = U*V*W;
+		
+		float SPEED = 10000;
+		float UVW_DIVIDE = 1;
+		
+		if(VOLUME > (128*128*128)) {
+			UVW_DIVIDE = 128f;
+			SPEED = 10000;
+		} else if(VOLUME > (16*16*16)) {
+			UVW_DIVIDE = 16f;
+			SPEED = 7500;
+		} else {
+			UVW_DIVIDE = 1;
+			SPEED = 3000;
+		}
+		
+		// divide
+		U /= UVW_DIVIDE;
+		V /= UVW_DIVIDE;
+		W /= UVW_DIVIDE;
+		
+		float u0 = 0;
+		float u1 = U;
+		float v0 = 0;
+		float v1 = V;
+		float w0 = 0;
+		float w1 = W;
+		
+		{
+			final long speedL = (long) SPEED;
+			final float speedF = SPEED;
+            
+			float f4 = (float)(Minecraft.getSystemTime() % speedL) / speedF;
+            float ADD = f4;
+            
+            u0 += ADD;
+            u1 += ADD;
+            v0 += ADD;
+            v1 += ADD;
+            w0 += ADD;
+            w1 += ADD;
+		}
+		
+		float funkyTime = (Minecraft.getSystemTime() / 1000.0f);
+		float r = 1;
+		float g = 0.5f;
+		float b = 0;
+		
+		if(a == -1) {
+			a = 1;
+			r = 0;
+			g = 0;
+			b = 0;
+		}
+		
+		if(a == -2) {
+			a = 1;
+			r = 0;
+			g = 1;
+			b = 0;
+		}
+		
+		if(a == -3) {
+			a = 1;
+			r = 1;
+			g = 0.25f;
+			b = 0.25f;
+		}
 		
         // top
         worldrenderer.startDrawingQuads();
-        worldrenderer.setColorRGBA_F(1, 1, 1, a);
+        worldrenderer.setColorRGBA_F(r, g, b, a);
         worldrenderer.setBrightness(0xEE);
         
         worldrenderer.setNormal(0, 1, 0);
-        worldrenderer.addVertexWithUV(minX, maxY, maxZ, 0, 0);
-        worldrenderer.addVertexWithUV(maxX, maxY, maxZ, U, 0);
-        worldrenderer.addVertexWithUV(maxX, maxY, minZ, U, W);
-        worldrenderer.addVertexWithUV(minX, maxY, minZ, 0, W);
+        worldrenderer.addVertexWithUV(minX, maxY, maxZ, u0, w0);
+        worldrenderer.addVertexWithUV(maxX, maxY, maxZ, u1, w0);
+        worldrenderer.addVertexWithUV(maxX, maxY, minZ, u1, w1);
+        worldrenderer.addVertexWithUV(minX, maxY, minZ, u0, w1);
         // bottom
         worldrenderer.setNormal(0, -1, 0);
-        worldrenderer.addVertexWithUV(minX, minY, minZ, 0, 0);
-        worldrenderer.addVertexWithUV(maxX, minY, minZ, U, 0);
-        worldrenderer.addVertexWithUV(maxX, minY, maxZ, U, W);
-        worldrenderer.addVertexWithUV(minX, minY, maxZ, 0, W);
+        worldrenderer.addVertexWithUV(minX, minY, minZ, u0, w0);
+        worldrenderer.addVertexWithUV(maxX, minY, minZ, u1, w0);
+        worldrenderer.addVertexWithUV(maxX, minY, maxZ, u1, w1);
+        worldrenderer.addVertexWithUV(minX, minY, maxZ, u0, w1);
         // negative z | north
         worldrenderer.setNormal(0, 0, -1);
-        worldrenderer.addVertexWithUV(minX, maxY, minZ, 0, 0);
-        worldrenderer.addVertexWithUV(maxX, maxY, minZ, U, 0);
-        worldrenderer.addVertexWithUV(maxX, minY, minZ, U, V);
-        worldrenderer.addVertexWithUV(minX, minY, minZ, 0, V);
+        worldrenderer.addVertexWithUV(minX, maxY, minZ, u0, v0);
+        worldrenderer.addVertexWithUV(maxX, maxY, minZ, u1, v0);
+        worldrenderer.addVertexWithUV(maxX, minY, minZ, u1, v1);
+        worldrenderer.addVertexWithUV(minX, minY, minZ, u0, v1);
         // positive z | south
         worldrenderer.setNormal(0, 0, 1);
-        worldrenderer.addVertexWithUV(maxX, maxY, maxZ, 0, 0);
-        worldrenderer.addVertexWithUV(minX, maxY, maxZ, U, 0);
-        worldrenderer.addVertexWithUV(minX, minY, maxZ, U, V);
-        worldrenderer.addVertexWithUV(maxX, minY, maxZ, 0, V);
+        worldrenderer.addVertexWithUV(maxX, maxY, maxZ, u0, v0);
+        worldrenderer.addVertexWithUV(minX, maxY, maxZ, u1, v0);
+        worldrenderer.addVertexWithUV(minX, minY, maxZ, u1, v1);
+        worldrenderer.addVertexWithUV(maxX, minY, maxZ, u0, v1);
         // positive x | east
         worldrenderer.setNormal(1, 0, 0);
-        worldrenderer.addVertexWithUV(maxX, maxY, minZ, 0, 0);
-        worldrenderer.addVertexWithUV(maxX, maxY, maxZ, W, 0);
-        worldrenderer.addVertexWithUV(maxX, minY, maxZ, W, V);
-        worldrenderer.addVertexWithUV(maxX, minY, minZ, 0, V);
+        worldrenderer.addVertexWithUV(maxX, maxY, minZ, w0, v0);
+        worldrenderer.addVertexWithUV(maxX, maxY, maxZ, w1, v0);
+        worldrenderer.addVertexWithUV(maxX, minY, maxZ, w1, v1);
+        worldrenderer.addVertexWithUV(maxX, minY, minZ, w0, v1);
         // negative x | west
         worldrenderer.setNormal(-1, 0, 0);
-        worldrenderer.addVertexWithUV(minX, maxY, maxZ, 0, 0);
-        worldrenderer.addVertexWithUV(minX, maxY, minZ, W, 0);
-        worldrenderer.addVertexWithUV(minX, minY, minZ, W, V);
-        worldrenderer.addVertexWithUV(minX, minY, maxZ, 0, V);
+        worldrenderer.addVertexWithUV(minX, maxY, maxZ, w0, v0);
+        worldrenderer.addVertexWithUV(minX, maxY, minZ, w1, v0);
+        worldrenderer.addVertexWithUV(minX, minY, minZ, w1, v1);
+        worldrenderer.addVertexWithUV(minX, minY, maxZ, w0, v1);
         tessellator.draw();
 	}
 	

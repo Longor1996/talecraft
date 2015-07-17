@@ -13,9 +13,13 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import com.google.common.base.Function;
 
+import de.longor.talecraft.items.CopyItem;
+import de.longor.talecraft.items.CutItem;
 import de.longor.talecraft.items.EraserItem;
 import de.longor.talecraft.items.FillerItem;
 import de.longor.talecraft.items.InstaKillItem;
+import de.longor.talecraft.items.NudgeItem;
+import de.longor.talecraft.items.PasteItem;
 import de.longor.talecraft.items.TeleporterItem;
 import de.longor.talecraft.items.VoxelBrushItem;
 import de.longor.talecraft.items.WandItem;
@@ -27,6 +31,10 @@ public class TaleCraftItems {
 	public static TeleporterItem teleporter;
 	public static InstaKillItem instakill;
 	public static VoxelBrushItem voxelbrush;
+	public static NudgeItem nudger;
+	public static CopyItem copy;
+	public static PasteItem paste;
+	public static CutItem cut;
 	
 	static void init() {
 		wand = new WandItem();
@@ -52,6 +60,22 @@ public class TaleCraftItems {
 		voxelbrush = new VoxelBrushItem();
 		voxelbrush.setUnlocalizedName("voxelbrush");
 		GameRegistry.registerItem(voxelbrush, "voxelbrush", "talecraft");
+		
+		nudger = new NudgeItem();
+		nudger.setUnlocalizedName("nudger");
+		GameRegistry.registerItem(nudger, "nudger", "talecraft");
+		
+		copy = new CopyItem();
+		copy.setUnlocalizedName("copy");
+		GameRegistry.registerItem(copy, "copy", "talecraft");
+		
+		paste = new PasteItem();
+		paste.setUnlocalizedName("paste");
+		GameRegistry.registerItem(paste, "paste", "talecraft");
+		
+		cut = new CutItem();
+		cut.setUnlocalizedName("cut");
+		GameRegistry.registerItem(cut, "cut", "talecraft");
 	}
 	
 }

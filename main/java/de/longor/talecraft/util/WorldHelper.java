@@ -36,6 +36,10 @@ public class WorldHelper {
 		fill(world, bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5], block);
 	}
 	
+	public static final void replace(World world, int[] bounds, IBlockState block, IBlockState mask) {
+		replace(world, bounds[0], bounds[1], bounds[2], bounds[3], bounds[4], bounds[5], block, mask);
+	}
+	
 	/**
 	 * Iterates trough every block and replaces it with the given block.
 	 * WARNING: This method assumes that the bounds given as parameters are already validated!
@@ -54,7 +58,23 @@ public class WorldHelper {
 				}
 			}
 		}
+	}
+	
+	public static final void replace(World world, int ix, int iy, int iz, int ax, int ay, int az, IBlockState block, IBlockState mask) {
+		if(world == null)
+			return;
 		
+		MutableBlockPos pos = new MutableBlockPos(0, 0, 0);
+		
+		for(int y = iy; y <= ay; y++) {
+			for(int z = iz; z <= az; z++) {
+				for(int x = ix; x <= ax; x++) {
+					pos.set(x, y, z);
+					if(world.getBlockState(pos).equals(mask))
+						world.setBlockState(new BlockPos(pos), block);
+				}
+			}
+		}
 	}
 	
 	/**

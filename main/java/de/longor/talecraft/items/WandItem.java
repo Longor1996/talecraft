@@ -26,10 +26,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class WandItem extends TCItem {
 	
-	public WandItem() {
-        this.setCreativeTab(TaleCraftTabs.tab_TaleCraftTab);
-	}
-	
     public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
     	if(worldIn.isRemote)
@@ -117,10 +113,20 @@ public class WandItem extends TCItem {
     	int _ay = Math.max(iy, ay);
     	int _az = Math.max(iz, az);
     	
+    	if(_iy < 0) _iy = 0;
+    	if(_ay > 255) _ay = 255;
+    	
     	wandData.setIntArray("boundsA", new int[]{_ix,_iy,_iz});
     	wandData.setIntArray("boundsB", new int[]{_ax,_ay,_az});
     	
     	TaleCraft.simpleNetworkWrapper.sendTo(new PlayerNBTDataMerge(playerData), (EntityPlayerMP) player);
     }
+    
+	public static long getBoundsVolume(int[] bounds) {
+		int x = Math.abs(bounds[3] - bounds[0]);
+		int y = Math.abs(bounds[4] - bounds[1]);
+		int z = Math.abs(bounds[5] - bounds[2]);
+		return x*y*z;
+	}
 	
 }

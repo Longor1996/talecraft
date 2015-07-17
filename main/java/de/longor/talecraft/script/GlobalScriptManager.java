@@ -141,9 +141,10 @@ public class GlobalScriptManager {
 		
 		try {
 			String script = FileUtils.readFileToString(scriptFile);
-			TaleCraft.logger.info("Script successfully loaded: " + scriptFile + " (~"+script.length()+" chars)");
+			// TaleCraft.logger.info("Script successfully loaded: " + scriptFile + " (~"+script.length()+" chars)");
 			return script;
 		} catch (IOException e) {
+			TaleCraft.logger.error("Failed to load Script: " + scriptFile);
 			e.printStackTrace();
 			return "/*Failed to load script: "+fileName+". Reason: "+e.getMessage()+"*/";
 		}

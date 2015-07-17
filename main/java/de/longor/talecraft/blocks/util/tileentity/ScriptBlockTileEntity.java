@@ -91,5 +91,12 @@ public class ScriptBlockTileEntity extends TCTileEntity {
 		TaleCraft.logger.info("getScriptName() " + scriptInvoke.getScriptName());
 		return scriptInvoke == null ? "" : scriptInvoke.getScriptName();
 	}
+
+	@Override
+	public void getInvokeColor(float[] color) {
+		color[0] = 1.0f;
+		color[1] = 0.5f;
+		color[2] = 0.0f;
+	}
 	
 }

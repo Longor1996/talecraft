@@ -31,6 +31,18 @@ public class QADFACTORY {
 		return textField;
 	}
 	
+	public static final QADTextField createTextField(int number, int x, int y, int width) {
+		QADTextField textField = new QADTextField(Minecraft.getMinecraft().fontRendererObj, x, y, width, 16);
+		textField.setText(Integer.toString(number));
+		return textField;
+	}
+	
+	public static final QADTextField createTextField(float number, int x, int y, int width) {
+		QADTextField textField = new QADTextField(Minecraft.getMinecraft().fontRendererObj, x, y, width, 16);
+		textField.setText(Float.toString(number));
+		return textField;
+	}
+	
 	public static final QADTextField createNumberTextField(int number, int x, int y, int width) {
 		QADTextField textField = new QADTextField(Minecraft.getMinecraft().fontRendererObj, x, y, width, 16);
 		textField.setText(Integer.toString(number));

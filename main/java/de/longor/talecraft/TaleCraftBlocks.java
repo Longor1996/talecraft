@@ -11,16 +11,25 @@ import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import de.longor.talecraft.blocks.BlankBlock;
+import de.longor.talecraft.blocks.util.BlockUpdateDetector;
 import de.longor.talecraft.blocks.util.ClockBlock;
+import de.longor.talecraft.blocks.util.EmitterBlock;
+import de.longor.talecraft.blocks.util.ImageHologramBlock;
 import de.longor.talecraft.blocks.util.KillBlock;
 import de.longor.talecraft.blocks.util.RedstoneActivatorBlock;
 import de.longor.talecraft.blocks.util.RedstoneTriggerBlock;
 import de.longor.talecraft.blocks.util.RelayBlock;
 import de.longor.talecraft.blocks.util.ScriptBlock;
+import de.longor.talecraft.blocks.util.StorageBlock;
+import de.longor.talecraft.blocks.util.tileentity.BlockUpdateDetectorTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.ClockBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.EmitterBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.ImageHologramBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.RedstoneTriggerBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.RelayBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.ScriptBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.StorageBlockTileEntity;
 
 public class TaleCraftBlocks
 {
@@ -32,6 +41,11 @@ public class TaleCraftBlocks
 	public static RedstoneActivatorBlock redstoneActivator;
 	public static RelayBlock relayBlock;
 	public static ScriptBlock scriptBlock;
+	public static BlockUpdateDetector updateDetectorBlock;
+	public static BlankBlock blankBlock;
+	public static StorageBlock storageBlock;
+	public static EmitterBlock emitterBlock;
+	public static ImageHologramBlock imageHologramBlock;
 	
 	static void init()
 	{
@@ -57,6 +71,24 @@ public class TaleCraftBlocks
 		
 		scriptBlock = register("scriptblock", new ScriptBlock());
 		GameRegistry.registerTileEntity(ScriptBlockTileEntity.class, "tc_scriptblock");
+		
+		updateDetectorBlock = register("updatedetectorblock", new BlockUpdateDetector());
+		GameRegistry.registerTileEntity(BlockUpdateDetectorTileEntity.class, "tc_updatedetectorblock");
+		
+		blankBlock = register("blankblock", new BlankBlock(), new BlockRegisterFunc() {
+			@Override public void call(Block block, String name) {
+				GameRegistry.registerBlock(block, ItemBlockBlankBlock.class, name);
+			}
+		});
+		
+		storageBlock = register("storageblock", new StorageBlock());
+		GameRegistry.registerTileEntity(StorageBlockTileEntity.class, "tc_storageblock");
+		
+		emitterBlock = register("emitterblock", new EmitterBlock());
+		GameRegistry.registerTileEntity(EmitterBlockTileEntity.class, "tc_emitterblock");
+		
+		imageHologramBlock = register("imagehologramblock", new ImageHologramBlock());
+		GameRegistry.registerTileEntity(ImageHologramBlockTileEntity.class, "tc_imagehologramblock");
 		
 	}
 	
@@ -88,6 +120,29 @@ public class TaleCraftBlocks
 					"player",
 					"monster",
 					"xor_player"
+			});
+		}
+	}
+	
+	public static class ItemBlockBlankBlock extends ItemMultiTexture {
+		public ItemBlockBlankBlock(Block block) {
+			super(block, block, new String[]{
+					"0",
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12",
+					"13",
+					"14",
+					"15"
 			});
 		}
 	}

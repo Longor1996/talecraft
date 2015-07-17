@@ -12,10 +12,12 @@ public abstract class TCBlock extends Block {
 	
 	protected TCBlock() {
 		super(TCAdminiumMaterial.instance);
+		setDefaultState(getBlockState().getBaseState());
+        setResistance(6000001.0F);
 		setBlockUnbreakable();
-		setCreativeTab(TaleCraftTabs.tab_TaleCraftTab);
-		setStepSound(Block.soundTypeStone);
 		setTickRandomly(false);
+		setStepSound(Block.soundTypeStone);
+		setCreativeTab(TaleCraftTabs.tab_TaleCraftTab);
 	}
 	
     public int getRenderType()

@@ -41,7 +41,7 @@ public class LineToBoxTemporable implements ITemporaryRenderable {
 		float r = 1;
 		float g = 1;
 		float b = 0;
-		float a = .5f;
+		float a = 0.5f;
 		
 		float midX = (minX + maxX) / 2f;
 		float midY = (minY + maxY) / 2f;
@@ -55,12 +55,14 @@ public class LineToBoxTemporable implements ITemporaryRenderable {
 		float z1 = midZ;
 		
 		GlStateManager.enableBlend();
-		GlStateManager.color(1f, 1f, 1f, 0.5f);
+		GlStateManager.color(1f, 1f, 1f, 1f);
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
 		Minecraft.getMinecraft().renderEngine.bindTexture(ClientProxy.colorReslocOrange);
+//		BoxRenderer.renderBox(tessellator, worldrenderer, minX, minY, minZ, maxX, maxY, maxZ, r, g, b, a);
+		
 		BoxRenderer.renderBoxLine(tessellator, worldrenderer, x0, y0, z0, x1, y1, z1, r, g, b, a);
-		BoxRenderer.renderBox(tessellator, worldrenderer, minX, minY, minZ, maxX, maxY, maxZ, r, g, b, a);
+		BoxRenderer.renderWireBoxWithPointAndLines(minX, minY, minZ, maxX, maxY, maxZ, x0, y0, z0, r, g, b, a);
 	}
 
 }

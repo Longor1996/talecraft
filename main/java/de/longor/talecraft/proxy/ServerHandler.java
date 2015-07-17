@@ -43,6 +43,12 @@ public class ServerHandler {
 			return;
 		}
 		
+		if(commandPacket.command.equals("join acknowledged")) {
+			TaleCraft.logger.info("join acknowledged : " + commandPacket.data);
+			getServerMirror(null).playerList().getPlayer(player).construct(commandPacket.data);
+			return;
+		}
+		
 		if(commandPacket.command.startsWith("blockdatamerge:")) {
 			if(!PlayerHelper.isOp(player)) {
 				player.addChatMessage(new ChatComponentText("Error: 'blockdatamerge' is a operator only command."));

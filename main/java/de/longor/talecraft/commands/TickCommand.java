@@ -1,9 +1,11 @@
 package de.longor.talecraft.commands;
 
+import java.util.Arrays;
 import java.util.List;
 
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.invoke.Invoke;
+import de.longor.talecraft.util.CommandArgumentParser;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandBase;
@@ -30,12 +32,9 @@ public class TickCommand extends CommandBase {
 			throw new CommandException("Wrong number of parameters: " + args.length + " given, 3 needed.");
 		}
 		
-		BlockPos originPos = sender.getPosition();
-		
-		CoordinateArg posX = this.func_175770_a(originPos.getX(), args[0], false);
-		CoordinateArg posY = this.func_175770_a(originPos.getY(), args[1], false);
-		CoordinateArg posZ = this.func_175770_a(originPos.getZ(), args[2], false);
-		BlockPos triggerPos = new BlockPos(posX.func_179628_a(), posY.func_179628_a(), posZ.func_179628_a());
+		CommandArgumentParser parser = new CommandArgumentParser(args);
+		parser.commandSenderPosition = sender.getPositionVector();
+		BlockPos triggerPos = parser.consume_blockpos("Failed to parse block position: " + Arrays.toString(args));
 		
 		World world = sender.getEntityWorld();
 		IBlockState state = world.getBlockState(triggerPos);

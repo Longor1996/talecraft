@@ -7,6 +7,7 @@ import de.longor.talecraft.client.render.renderers.BoxRenderer;
 import de.longor.talecraft.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -41,10 +42,10 @@ public class PointEntityRenderer extends Render {
         bindTexture(ClientProxy.colorReslocWhite);
 		
         RenderHelper.disableStandardItemLighting();
+        GlStateManager.disableLighting();
 		GlStateManager.enableBlend();
 		
-		// if(Boolean.TRUE.booleanValue())
-		{
+		if(ClientProxy.settings.getBoolean("client.render.entity.point.fancy")) {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y+yeoffset, z);
 	    	GL11.glRotatef(entity.rotationYaw, 0, 1, 0);
@@ -53,15 +54,24 @@ public class PointEntityRenderer extends Render {
 	    	GL11.glPolygonMode(GL11.GL_FRONT, GL11.GL_POINTS);
 			GL11.glPolygonMode(GL11.GL_BACK, GL11.GL_LINE);
 			
-			for(int i = 0; i < 4; i++) {
+			for(int i = 0; i < 2; i++) {
 				float E = (i + 1) / 16f;
 				GlStateManager.blendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO);
 				BoxRenderer.renderBox(tessellator, worldrenderer, -E, -E, -E, +E, +E, +E, 1, 1, 1, a);
 				
 				E *= 0.3f;
-				GlStateManager.blendFunc(GL11.GL_DST_COLOR, GL11.GL_DST_ALPHA);
+				GlStateManager.blendFunc(GL11.GL_DST_COLOR, GL11.GL_SRC_ALPHA);
 				BoxRenderer.renderBox(tessellator, worldrenderer, -E, -E, -E, +E, +E, +E, 0, 0, 0, a);
 			}
+			GL11.glPopMatrix();
+		} else {
+			GL11.glPushMatrix();
+			GL11.glTranslated(x, y+yeoffset, z);
+	    	GL11.glRotatef(entity.rotationYaw, 0, 1, 0);
+	    	GL11.glRotatef(entity.rotationPitch, 1, 0, 0);
+			float E = 1f / 2f;
+			GlStateManager.blendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO);
+			BoxRenderer.renderBox(tessellator, worldrenderer, -E, -E, -E, +E, +E, +E, 0, 0, 0, a);
 			GL11.glPopMatrix();
 		}
 		
@@ -86,8 +96,12 @@ public class PointEntityRenderer extends Render {
         	GL11.glPopMatrix();
         }
 		
-        
         GL11.glPopMatrix();
+        
+        GlStateManager.enableLighting();
+        GlStateManager.enableCull();
+        RenderHelper.enableStandardItemLighting();
+        bindTexture(ClientProxy.colorReslocWhite);
     }
 	
 }

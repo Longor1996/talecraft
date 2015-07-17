@@ -9,7 +9,9 @@ import de.longor.talecraft.commands.RegionTriggerCommand;
 import de.longor.talecraft.commands.ScriptCommand;
 import de.longor.talecraft.commands.SwitchShaderCommand;
 import de.longor.talecraft.commands.TriggerCommand;
+import de.longor.talecraft.commands.ValidateBlockCommand;
 import de.longor.talecraft.commands.VelocityCommand;
+import de.longor.talecraft.commands.VisualizeCommand;
 import de.longor.talecraft.commands.VoxelBrushCommand;
 import de.longor.talecraft.commands.WandCommand;
 import net.minecraft.command.CommandHandler;
@@ -30,7 +32,8 @@ public class TaleCraftCommands {
 		commands.add(new VoxelBrushCommand());
 		commands.add(new ButcherCommand());
 		commands.add(new ScriptCommand());
-		
+		commands.add(new VisualizeCommand());
+		commands.add(new ValidateBlockCommand());
 	}
 	
 	public static void register(CommandHandler registry) {

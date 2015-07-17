@@ -29,6 +29,7 @@ public class QADTextField extends QADComponent {
     private Predicate field_175209_y = Predicates.alwaysTrue();
 //  private GuiPageButtonList.GuiResponder field_175210_x;
     
+    public String[] autoCompleteOptions = null;
     public TextChangeListener textChangedListener;
     public int xPosition;
     public int yPosition;
@@ -36,7 +37,7 @@ public class QADTextField extends QADComponent {
     public int height;
     
     private String text = "";
-    private int maxStringLength = 32;
+    private int maxStringLength = 64;
     private int cursorCounter;
     private boolean enableBackgroundDrawing = true;
     private boolean canLoseFocus = true;
@@ -144,6 +145,34 @@ public class QADTextField extends QADComponent {
             {
                 int l1 = l + this.fontRendererInstance.getStringWidth(s.substring(0, k));
                 this.drawCursorVertical(k1, i1 - 1, l1 - 1, i1 + 1 + this.fontRendererInstance.FONT_HEIGHT);
+            }
+            
+            if(autoCompleteOptions != null && isFocused) {
+            	int lh = (fontRendererInstance.FONT_HEIGHT+2);
+            	int lw = 0;
+            	int h = autoCompleteOptions.length * lh;
+            	int count = 0;
+            	
+            	{
+            		for(String string : autoCompleteOptions)
+            			lw = Math.max(lw, fontRendererInstance.getStringWidth(string));
+            	}
+            	
+            	int yOff = this.yPosition + this.height + 2;
+            	for(String str : autoCompleteOptions) {
+            		renderer.drawRectangle(
+                    		this.xPosition - 1,
+                    		yOff + lh - 1,
+                    		this.xPosition + lw + 1,
+                    		yOff - 1,
+                    		(count % 2) != 0 ? 0x90102010 : 0x90113311
+                    );
+            		
+                    fontRendererInstance.drawString(str, xPosition, yOff+1, 0xFF555555);
+            		yOff += lh;
+            		count++;
+            	}
+            	
             }
         }
 	}

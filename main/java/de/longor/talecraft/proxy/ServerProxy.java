@@ -2,7 +2,9 @@ package de.longor.talecraft.proxy;
 
 import de.longor.talecraft.managers.TCWorldsManager;
 import de.longor.talecraft.managers.TCWorldManager;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.UserListOps;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -29,14 +31,20 @@ public class ServerProxy extends CommonProxy
 		super.postInit(event);
 	}
 	
+	// XXX: THIS METHOD IS NEVER CALLED
 	@Override
 	public void tick(TickEvent event) {
 		super.tick(event);
 	}
 	
+	// XXX: THIS METHOD IS NEVER CALLED
 	@Override
 	public void tickWorld(WorldTickEvent event) {
 		super.tickWorld(event);
+	}
+	
+	public NBTTagCompound getSettings(EntityPlayer playerIn) {
+		return ServerHandler.getServerMirror(null).playerList().getPlayer((EntityPlayerMP) playerIn).settings;
 	}
 	
 }

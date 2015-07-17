@@ -1,6 +1,7 @@
 package de.longor.talecraft.items;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
@@ -11,6 +12,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.TaleCraftTabs;
 
 public class TCItem extends Item {
@@ -23,6 +25,9 @@ public class TCItem extends Item {
     {
     	if(worldIn.isRemote)
     		return true;
+    	
+    	worldIn.markBlockForUpdate(pos);
+    	
     	return true;
     }
     
@@ -30,12 +35,13 @@ public class TCItem extends Item {
     {
     	if(worldIn.isRemote)
     		return itemStackIn;
+    	
         return itemStackIn;
     }
     
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityPlayer playerIn)
     {
-        return stack;
+    	return stack;
     }
     
     public boolean isDamageable()
@@ -45,6 +51,13 @@ public class TCItem extends Item {
     
     public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
         return false;
+    }
+    
+    @Override
+    // Warning: Forge Method
+    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
+    	// by returning TRUE, we prevent damaging the entity being hit.
+        return true;
     }
     
     @SideOnly(Side.CLIENT)
@@ -72,6 +85,7 @@ public class TCItem extends Item {
     
     @Override
     public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, EntityPlayer player) {
+    	player.worldObj.markBlockForUpdate(pos);
         return true;
     }
     

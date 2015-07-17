@@ -8,6 +8,8 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
+import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.client.render.IRenderable;
 import de.longor.talecraft.client.render.renderers.BoxRenderer;
 import de.longor.talecraft.proxy.ClientProxy;
@@ -60,7 +62,16 @@ public class SelectionBoxRenderer implements IRenderable {
 				GlStateManager.disableNormalize();
 				GlStateManager.enableTexture2D();
 				RenderHelper.disableStandardItemLighting();
-				mc.getTextureManager().bindTexture(ClientProxy.textureReslocSelectionBox);
+				
+				ResourceLocation texture = null;
+				
+				if(!TaleCraft.proxy.asClient().settings.getBoolean("client.render.useAlternateSelectionTexture")) {
+					texture = ClientProxy.textureReslocSelectionBox;
+				} else {
+					texture = ClientProxy.textureReslocSelectionBox2;
+				}
+				
+				mc.getTextureManager().bindTexture(texture);
 				
 				// Render primary (with-depth) box
 				BoxRenderer.renderSelectionBox(tessellator, worldrenderer, ix-E, iy-E, iz-E, ax+1+E, ay+1+E, az+1+E, 1);
@@ -68,7 +79,8 @@ public class SelectionBoxRenderer implements IRenderable {
 				// Render secondary (no-depth) box
 				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 				GlStateManager.disableDepth();
-				BoxRenderer.renderSelectionBox(tessellator, worldrenderer, ix-E, iy-E, iz-E, ax+1+E, ay+1+E, az+1+E, 1);
+				mc.getTextureManager().bindTexture(ClientProxy.colorReslocWhite);
+				BoxRenderer.renderSelectionBox(tessellator, worldrenderer, ix-E, iy-E, iz-E, ax+1+E, ay+1+E, az+1+E, -1);
 				GlStateManager.enableDepth();
 				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 			}

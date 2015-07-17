@@ -25,6 +25,8 @@ public class TCWorldsManager {
 		TCWorldManager mng = new TCWorldManager(taleCraft, world);
 		mng.init();
 		worldMap.put(world, mng);
+		
+		taleCraft.proxy.loadWorld(world);
 	}
 	
 	public synchronized void unregisterWorld(World world) {

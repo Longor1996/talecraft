@@ -45,4 +45,11 @@ public class CommandSenderInvokeSource implements IInvokeSource {
 		// nope
 	}
 
+	@Override
+	public void getInvokeColor(float[] color) {
+		color[0] = 1.0f;
+		color[1] = 1.0f;
+		color[2] = 1.0f;
+	}
+
 }

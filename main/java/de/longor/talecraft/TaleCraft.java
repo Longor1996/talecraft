@@ -7,8 +7,10 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.eventbus.Subscribe;
 
 import sun.net.NetworkClient;
+import de.longor.talecraft.client.commands.TaleCraftClientCommands;
 import de.longor.talecraft.managers.TCWorldsManager;
 import de.longor.talecraft.network.StringNBTCommand;
+import de.longor.talecraft.proxy.ClientProxy;
 import de.longor.talecraft.proxy.CommonProxy;
 import de.longor.talecraft.proxy.ServerHandler;
 import de.longor.talecraft.script.GlobalScriptManager;
@@ -20,9 +22,11 @@ import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.NetworkSystem;
 import net.minecraft.server.MinecraftServer;
@@ -51,6 +55,7 @@ import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.LanguageRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, version = Reference.MOD_VERSION)
 public class TaleCraft
@@ -177,4 +182,14 @@ public class TaleCraft
 	{
 		// TaleCraft.logger.info("Server stopped: " + event + " [TCINFO]");
 	}
+	
+	@SideOnly(Side.CLIENT)
+	public static ClientProxy asClient() {
+		return proxy.asClient();
+	}
+	
+	public static NBTTagCompound getSettings(EntityPlayer playerIn) {
+		return proxy.getSettings(playerIn);
+	}
+	
 }

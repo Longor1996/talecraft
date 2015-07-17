@@ -22,4 +22,6 @@ public interface IInvokeSource {
 	
 	public void getInvokes(List<IInvoke> invokes);
 	
+	public void getInvokeColor(float[] color);
+	
 }

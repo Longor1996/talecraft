@@ -2,9 +2,13 @@ package de.longor.talecraft.client.render.renderers;
 
 import org.lwjgl.opengl.GL11;
 
+import de.longor.talecraft.TaleCraft;
+import de.longor.talecraft.clipboard.ClipboardItem;
+import de.longor.talecraft.items.PasteItem;
 import de.longor.talecraft.items.TeleporterItem;
 import de.longor.talecraft.items.VoxelBrushItem;
 import de.longor.talecraft.proxy.ClientProxy;
+import de.longor.talecraft.util.NBTHelper;
 import de.longor.talecraft.voxelbrush.IShape;
 import de.longor.talecraft.voxelbrush.ShapeFactory;
 import de.longor.talecraft.voxelbrush.shapes.CylinderShape;
@@ -35,6 +39,7 @@ public class ItemMetaWorldRenderer {
 	public static Tessellator tessellator;
 	public static WorldRenderer worldrenderer;
 	public static double partialTicks;
+	public static float partialTicksF;
 	// CLIENT.PLAYER
 	public static Vec3 playerPosition;
 	public static EntityPlayerSP player;
@@ -47,6 +52,90 @@ public class ItemMetaWorldRenderer {
 			renderVoxelBrushItem(itemStack);
 		}
 		
+		if(itemType instanceof PasteItem) {
+			renderPasteItem(itemStack);
+		}
+		
+	}
+	
+	private static void renderPasteItem(ItemStack itemStack) {
+    	ClipboardItem clip = TaleCraft.asClient().getClipboard();
+		
+    	if(clip == null)
+    		return;
+    	
+    	float lenMul = ClientProxy.settings.getInteger("item.paste.reach");
+    	Vec3 plantPos = player.getLook(partialTicksF);
+    	plantPos = new Vec3(
+    			plantPos.xCoord*lenMul,
+    			plantPos.yCoord*lenMul,
+    			plantPos.zCoord*lenMul
+    	).add(player.getPositionEyes(partialTicksF));
+    	
+    	float dimX = 0;
+    	float dimY = 0;
+    	float dimZ = 0;
+    	
+    	NBTTagCompound blocks = NBTHelper.getOrNull(clip.getData(), "blocks");
+    	NBTTagCompound entity = NBTHelper.getOrNull(clip.getData(), "entity");
+		
+		if(clip.getData().hasKey("offset", clip.getData().getId())) {
+			NBTTagCompound offset = clip.getData().getCompoundTag("offset");
+			plantPos = new Vec3(
+					plantPos.xCoord + offset.getFloat("x"),
+					plantPos.yCoord + offset.getFloat("y"),
+					plantPos.zCoord + offset.getFloat("z")
+			);
+		}
+    	
+		float color = 0;
+		
+    	if(blocks != null) {
+    		color = -2;
+    		
+    		dimX = blocks.getInteger("regionWidth");
+    		dimY = blocks.getInteger("regionHeight");
+    		dimZ = blocks.getInteger("regionLength");
+    		
+    		plantPos = new Vec3(
+    				Math.floor(plantPos.xCoord),
+    				Math.floor(plantPos.yCoord),
+    				Math.floor(plantPos.zCoord)
+    		);
+    	}
+    	
+    	if(entity != null) {
+    		color = -3;
+    		
+    		float width = entity.getFloat("tc_width");
+    		float height = entity.getFloat("tc_height");
+    		
+    		dimX = width;
+    		dimY = height;
+    		dimZ = width;
+    		
+    		float shift = 0.5f;
+    		plantPos = plantPos.subtract(width/2, 0, width/2);
+    	}
+    	
+    	float minX = (float) plantPos.xCoord;
+    	float minY = (float) plantPos.yCoord;
+    	float minZ = (float) plantPos.zCoord;
+    	float maxX = minX + dimX;
+    	float maxY = minY + dimY;
+    	float maxZ = minZ + dimZ;
+    	
+    	float error = 1f / 16f;
+    	minX -= error;
+    	minY -= error;
+    	minZ -= error;
+    	maxX += error;
+    	maxY += error;
+    	maxZ += error;
+    	
+    	clientProxy.mc.renderEngine.bindTexture(ClientProxy.textureReslocSelectionBox2);
+		// BoxRenderer.renderBox(tessellator, worldrenderer, minX, minY, minZ, maxX, maxY, maxZ, 0, 1, 0, 1);
+		BoxRenderer.renderSelectionBox(tessellator, worldrenderer, minX, minY, minZ, maxX, maxY, maxZ, color);
 	}
 	
 	private static void renderVoxelBrushItem(ItemStack stack) {

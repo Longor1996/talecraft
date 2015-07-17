@@ -3,12 +3,17 @@ key.toggleWireframe=Toggle Rendermode
 key.mapSettings=Open Map Settings
 
 itemGroup.talecraftTab=TaleCraft [Main]
+itemGroup.talecraftDecoTab=TaleCraft [Decoration]
 
 entity.talecraft.tc_point.name=Point Entity
 
 item.wand.name=Wand
 item.filler.name=Filler
 item.eraser.name=Eraser
+item.nudger.name=Nudger
+item.paste.name=Paste
+item.copy.name=Copy
+item.cut.name=Cut
 item.teleporter.name=Teleporter
 item.instakill.name=Instakill
 item.voxelbrush.name=Voxel-Brush
@@ -19,6 +24,10 @@ tile.talecraft:redstone_trigger.name=Redstone Trigger Block
 tile.talecraft:redstone_activator.name=Redstone Activator Block
 tile.talecraft:relayblock.name=Relay Block
 tile.talecraft:scriptblock.name=Script Block
+tile.talecraft:updatedetectorblock.name=Update Detector Block
+tile.talecraft:storageblock.name=Storage Block
+tile.talecraft:emitterblock.name=Emitter Block
+tile.talecraft:imagehologramblock.name=Hologram Block (I)
 
 tile.talecraft:killblock.name=Killblock
 tile.talecraft:killblock.all.name=Killblock (ALL)
@@ -28,3 +37,21 @@ tile.talecraft:killblock.living.name=Killblock (Living)
 tile.talecraft:killblock.player.name=Killblock (Players)
 tile.talecraft:killblock.monster.name=Killblock (Monsters)
 tile.talecraft:killblock.xor_player.name=Killblock (Not Player)
+
+tile.talecraft:blankblock.name=Blank Block
+tile.talecraft:blankblock.0.name=Blank Block 0
+tile.talecraft:blankblock.1.name=Blank Block 1
+tile.talecraft:blankblock.2.name=Blank Block 2
+tile.talecraft:blankblock.3.name=Blank Block 3
+tile.talecraft:blankblock.4.name=Blank Block 4
+tile.talecraft:blankblock.5.name=Blank Block 5
+tile.talecraft:blankblock.6.name=Blank Block 6
+tile.talecraft:blankblock.7.name=Blank Block 7
+tile.talecraft:blankblock.8.name=Blank Block 8
+tile.talecraft:blankblock.9.name=Blank Block 9
+tile.talecraft:blankblock.10.name=Blank Block 10
+tile.talecraft:blankblock.11.name=Blank Block 11
+tile.talecraft:blankblock.12.name=Blank Block 12
+tile.talecraft:blankblock.13.name=Blank Block 13
+tile.talecraft:blankblock.14.name=Blank Block 14
+tile.talecraft:blankblock.15.name=Blank Block 15

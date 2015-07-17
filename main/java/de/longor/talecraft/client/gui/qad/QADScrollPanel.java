@@ -19,6 +19,7 @@ public class QADScrollPanel extends QADComponent {
 	
 	public boolean enabled;
 	public boolean visible;
+	public boolean allowLeftMouseButtonScrolling;
 	
 	public QADScrollPanel() {
 		components = Lists.newArrayList();
@@ -47,6 +48,11 @@ public class QADScrollPanel extends QADComponent {
 	@Override
 	public void setY(int y) {
 		this.y = y;
+	}
+	
+	public void setViewportHeight(int height) {
+		this.viewH = height;
+		this.viewY = 0;
 	}
 
 	public void setPosition(int x, int y) {
@@ -137,7 +143,16 @@ public class QADScrollPanel extends QADComponent {
 	public void onMouseClickMove(int localMouseX, int localMouseY, int clickedMouseButton, long timeSinceLastClick) {
 		if(!enabled) return;
 		
-		if(clickedMouseButton != 0 && isPointInside(localMouseX+x, localMouseY+y)) {
+		boolean mouseButtonValid = false;
+		
+		if(allowLeftMouseButtonScrolling)
+			mouseButtonValid = true;
+		else if(clickedMouseButton != 0)
+			mouseButtonValid = true;
+		else
+			mouseButtonValid = false;
+		
+		if(mouseButtonValid && isPointInside(localMouseX+x, localMouseY+y)) {
 			float normalized = ((float)localMouseY / (float)height); // 0..1
 			float scaled = (normalized * viewH);
 			
