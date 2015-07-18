@@ -1,7 +1,5 @@
 ADD
 
-- Add the missing tooltips to the ImageHologramBlock's GUI.
-
 - Implement the ClipBlock as specified in scratch.txt
 - Implement the TerrainBrush-item.
 
@@ -10,12 +8,6 @@ ADD
 - Create all the wrappers necessary for scripting in minecraft. (This will take a LOT of time!)
   - Wrappers are necessary because of the class obfuscation and because of security concerns.
   - Completion: ~30%. Basics are covered.
-
-- Refactor the 'settings' out into a separate class on both client and server side.
-  - ClientSettings
-  - ServerPlayerSettings
-  - sendSettingsToServer()
-  - applySettingsFromClient()
 
 - MAKE GOD DAMN SURE THAT NO CLIENT CODE IS ON THE SERVER SIDE!
 
