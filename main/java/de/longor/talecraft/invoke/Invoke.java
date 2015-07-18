@@ -4,7 +4,6 @@ import java.util.Random;
 
 import org.mozilla.javascript.Scriptable;
 
-import scala.tools.nsc.settings.Final;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.TCITriggerableBlock;
 import de.longor.talecraft.network.StringNBTCommand;

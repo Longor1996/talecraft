@@ -4,6 +4,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import de.longor.talecraft.voxelbrush.shapes.BoxShape;
 import de.longor.talecraft.voxelbrush.shapes.CylinderShape;
+import de.longor.talecraft.voxelbrush.shapes.HollowCylinderShape;
+import de.longor.talecraft.voxelbrush.shapes.HollowSphereShape;
 import de.longor.talecraft.voxelbrush.shapes.SphereShape;
 
 public class ShapeFactory {
@@ -32,8 +34,16 @@ public class ShapeFactory {
 			return new CylinderShape(cx, cy, cz, comp.getDouble("radius"), comp.getInteger("height"));
 		}
 		
+		if("hollowcylinder".equals(shapeName)) {
+			return new HollowCylinderShape(cx, cy, cz, comp.getDouble("radius"), comp.getDouble("hollow"), comp.getInteger("height"));
+		}
+		
 		if("sphere".equals(shapeName)) {
 			return new SphereShape(cx, cy, cz, comp.getDouble("radius"));
+		}
+		
+		if("hollowsphere".equals(shapeName)) {
+			return new HollowSphereShape(cx, cy, cz, comp.getDouble("radius"), comp.getDouble("hollow"));
 		}
 		
 		return null;

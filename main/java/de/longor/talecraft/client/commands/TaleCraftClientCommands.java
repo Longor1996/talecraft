@@ -160,7 +160,7 @@ public class TaleCraftClientCommands {
 				
 				int reach = this.parseInt(args[0], 1, 64);
 				ClientProxy.settings.setInteger("item.paste.reach", reach);
-				TaleCraft.asClient().handleClientCommand("acknowledge join", new NBTTagCompound());
+				ClientProxy.settings.send();
 			}
 		});
 		

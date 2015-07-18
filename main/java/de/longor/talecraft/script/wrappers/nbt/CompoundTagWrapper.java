@@ -3,7 +3,6 @@ package de.longor.talecraft.script.wrappers.nbt;
 import java.util.List;
 import java.util.Set;
 
-import scala.swing.event.ComponentAdded;
 import net.minecraft.nbt.NBTTagCompound;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.script.wrappers.IObjectWrapper;

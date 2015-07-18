@@ -48,6 +48,12 @@ public class TeleporterItem extends TCItem {
     		
 			if(playerIn.ridingEntity == null) {
 				((EntityPlayerMP) playerIn).playerNetServerHandler.setPlayerLocation(nX,nY,nZ, rY, rP);
+				
+				if(playerIn.isSprinting()) {
+					playerIn.motionX *= 5;
+					playerIn.motionZ *= 5;
+				}
+				
 				playerIn.velocityChanged = true;
 			} else {
 				Entity riding = playerIn.ridingEntity;
@@ -111,6 +117,12 @@ public class TeleporterItem extends TCItem {
         		
 				if(playerIn.ridingEntity == null) {
 					((EntityPlayerMP) playerIn).playerNetServerHandler.setPlayerLocation(nX,nY,nZ, rY, rP);
+					
+					if(playerIn.isSprinting()) {
+						playerIn.motionX *= 5;
+						playerIn.motionZ *= 5;
+					}
+					
 					playerIn.velocityChanged = true;
 				} else {
 					Entity riding = playerIn.ridingEntity;

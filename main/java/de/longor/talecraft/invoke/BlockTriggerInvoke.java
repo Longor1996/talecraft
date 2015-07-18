@@ -1,6 +1,7 @@
 package de.longor.talecraft.invoke;
 
-import scala.actors.threadpool.Arrays;
+import java.util.Arrays;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 public class BlockTriggerInvoke implements IInvoke {

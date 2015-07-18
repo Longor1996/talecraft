@@ -17,7 +17,11 @@ public class PlayerMirror {
 	}
 	
 	public void construct(NBTTagCompound data) {
-		settings = data.getCompoundTag("settings");
+		
+	}
+	
+	public void updateSettings(NBTTagCompound data) {
+		settings.merge(data);
 	}
 	
 }

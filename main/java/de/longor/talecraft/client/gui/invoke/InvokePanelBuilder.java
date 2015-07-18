@@ -2,7 +2,6 @@ package de.longor.talecraft.client.gui.invoke;
 
 import java.util.ArrayList;
 
-import scala.tools.nsc.settings.Final;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;

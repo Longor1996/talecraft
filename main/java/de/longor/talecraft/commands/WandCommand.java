@@ -220,12 +220,12 @@ public class WandCommand extends CommandBase {
 		    		}
 					
 		    		switch(directionFull) {
-		    		case UP: direction = 0; break;
-		    		case DOWN: direction = 1; break;
-		    		case NORTH: direction = 2; break;
-		    		case EAST: direction = 3; break;
-		    		case SOUTH: direction = 4; break;
-		    		case WEST: direction = 5; break;
+		    		case UP:    direction = 0; break; // +y
+		    		case DOWN:  direction = 1; break; // -y
+		    		case NORTH: direction = 2; break; // -z
+		    		case EAST:  direction = 3; break; // +x
+		    		case SOUTH: direction = 4; break; // +z
+		    		case WEST:  direction = 5; break; // -x
 		    		default: throw new WrongUsageException("WHAT THE FUCK?!");
 		    		}
 				}
@@ -389,6 +389,69 @@ public class WandCommand extends CommandBase {
 					}
 				}
 				
+				if(args[1].equals("room")) {
+					if(args.length == 4) {
+						IBlockState replace = GObjectTypeHelper.findBlockState(args[3]);
+						
+						if(replace == null) {
+							throw new CommandException("Could not find block type: " + args[3]);
+						}
+						
+						boolean f_up = false;
+						boolean f_down = false;
+						boolean f_north = false;
+						boolean f_east = false;
+						boolean f_south = false;
+						boolean f_west = false;
+						
+						String flagsStr = args[2];
+						
+						if(containsCharIgnoreCase(flagsStr, 'U')) f_up = true;
+						if(containsCharIgnoreCase(flagsStr, 'D')) f_down = true;
+						if(containsCharIgnoreCase(flagsStr, 'N')) f_north = true;
+						if(containsCharIgnoreCase(flagsStr, 'E')) f_east = true;
+						if(containsCharIgnoreCase(flagsStr, 'S')) f_south = true;
+						if(containsCharIgnoreCase(flagsStr, 'W')) f_west = true;
+						
+						if(containsCharIgnoreCase(flagsStr, 'B')) {
+							f_north = true;
+							f_east = true;
+							f_south = true;
+							f_west = true;
+						}
+						
+						if(containsCharIgnoreCase(flagsStr, 'A')) {
+							f_up = true;
+							f_down = true;
+							f_north = true;
+							f_east = true;
+							f_south = true;
+							f_west = true;
+						}
+						
+						int[] bounds = WandItem.getBoundsFromPLAYERorNULL(player);
+						
+						int ix = bounds[0];
+						int iy = bounds[1];
+						int iz = bounds[2];
+						int ax = bounds[3];
+						int ay = bounds[4];
+						int az = bounds[5];
+						
+						if(f_down)  WorldHelper.fill(player.worldObj, ix, iy, iz, ax, iy, az, replace);
+						if(f_up)    WorldHelper.fill(player.worldObj, ix, ay, iz, ax, ay, az, replace);
+						if(f_north) WorldHelper.fill(player.worldObj, ix, iy, iz, ax, ay, iz, replace);
+						if(f_east)  WorldHelper.fill(player.worldObj, ax, iy, iz, ax, ay, az, replace);
+						if(f_south) WorldHelper.fill(player.worldObj, ix, iy, az, ax, ay, az, replace);
+						if(f_west)  WorldHelper.fill(player.worldObj, ix, iy, iz, ix, ay, az, replace);
+						
+						// WorldHelper.fill(player.worldObj, bounds, replace);
+						return;
+					} else {
+						throw new WrongUsageException("Missing parameters! /tc_wand region room <UDNESW BA> <block>");
+					}
+				}
+				
 			} else {
 				throw new WrongUsageException("Missing parameters! /tc_wand region ...?");
 			}
@@ -396,7 +459,13 @@ public class WandCommand extends CommandBase {
 		
 	}
 	
-    public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
+	private boolean containsCharIgnoreCase(String flagsStr, char c) {
+		char cLow = Character.toLowerCase(c);
+		char cUp  = Character.toUpperCase(c);
+		return flagsStr.indexOf(cUp) != -1 || flagsStr.indexOf(cLow) != -1;
+	}
+	
+	public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
     	if(args.length <= 1) {
     		return getListOfStringsMatchingLastWord(args, new String[] {
     				"region",

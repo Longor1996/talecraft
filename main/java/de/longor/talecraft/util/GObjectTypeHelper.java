@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class GObjectTypeHelper {
 	
@@ -63,13 +64,15 @@ public class GObjectTypeHelper {
 		Block block = (Block) Block.blockRegistry.getObject(location);
 		
 		if(block != null) {
-			if(!block.getUnlocalizedName().contains(typeID)) {
+			if(!GameRegistry.findUniqueIdentifierFor(block).name.contains(typeID)) {
+				System.err.println("Block type mismatch: " + typeString + " | " + typeMod + " " + typeID + " " + typeMeta + " GOT " + block.getUnlocalizedName());
 				return null; // This is the wrong block! D: (Probably minecraft:air)
 			}
 			
 			return new String[]{typeMID,typeMod,typeID,Integer.toString(typeMeta)};
 		}
 		
+		System.err.println("Block type not found: " + typeString + " | " + typeMod + " " + typeID + " " + typeMeta);
 		return null;
 	}
 	

@@ -75,8 +75,8 @@ public class GuiImageHologramBlock extends QADGuiScreen {
 		
 		final QADTextField rotationPitchTextField = QADFACTORY.createTextField(tileEntity.getHologramPitch(), colp[1], rowp[4]+tfc, colw[1]);
 		final QADTextField rotationYawTextField = QADFACTORY.createTextField(tileEntity.getHologramYaw(), colp[2], rowp[4]+tfc, colw[2]);
-		rotationPitchTextField.setTooltip("");
-		rotationYawTextField.setTooltip  ("");
+		rotationPitchTextField.setTooltip("Rotation forward/backward. (Pitch)");
+		rotationYawTextField.setTooltip  ("Rotation left/right. (Yaw)");
 		components.add(rotationPitchTextField);
 		components.add(rotationYawTextField);
 		

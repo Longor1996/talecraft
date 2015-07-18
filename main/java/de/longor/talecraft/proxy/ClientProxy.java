@@ -62,6 +62,7 @@ import de.longor.talecraft.blocks.util.tileentity.RedstoneTriggerBlockTileEntity
 import de.longor.talecraft.blocks.util.tileentity.RelayBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.ScriptBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.StorageBlockTileEntity;
+import de.longor.talecraft.client.ClientSettings;
 import de.longor.talecraft.client.InfoBar;
 import de.longor.talecraft.client.commands.TaleCraftClientCommands;
 import de.longor.talecraft.client.gui.GuiMapControl;
@@ -88,22 +89,22 @@ import de.longor.talecraft.network.StringNBTCommand;
 /**
  * WARNING: God-Class
  **/
-public class ClientProxy extends CommonProxy
-{
+public class ClientProxy extends CommonProxy {
+	// All the singletons!
 	public static final Minecraft mc = Minecraft.getMinecraft();
-	public static final NBTTagCompound settings = new NBTTagCompound();
+	public static final ClientSettings settings = new ClientSettings();
 	public static ClientProxy proxy = (ClientProxy) TaleCraft.proxy;
 	
 	// tc internals
 	private int visualizationMode = 0;
 	private float partialTicks = 0f;
 	private EXTFontRenderer fontRenderer;
-	private InfoBar infoBarInstance = new InfoBar();
 	private ClipboardItem currentClipboardItem;
+	private InfoBar infoBarInstance;
 	// queues
-	private ConcurrentLinkedDeque<Runnable> clientTickQeue = new ConcurrentLinkedDeque<Runnable>();
-	private ConcurrentLinkedDeque<ITemporaryRenderable> clientRenderTemporary = new ConcurrentLinkedDeque<ITemporaryRenderable>();
-	private ConcurrentLinkedDeque<IRenderable> clientRenderStatic = new ConcurrentLinkedDeque<IRenderable>();
+	private final ConcurrentLinkedDeque<Runnable> clientTickQeue = new ConcurrentLinkedDeque<Runnable>();
+	private final ConcurrentLinkedDeque<ITemporaryRenderable> clientRenderTemporary = new ConcurrentLinkedDeque<ITemporaryRenderable>();
+	private final ConcurrentLinkedDeque<IRenderable> clientRenderStatic = new ConcurrentLinkedDeque<IRenderable>();
 	
 	// tc internals (final / constants)
 	private final KeyBinding mapSettingsBinding = new KeyBinding("key.mapSettings", Keyboard.KEY_M, "key.categories.misc");
@@ -153,37 +154,7 @@ public class ClientProxy extends CommonProxy
 	} // init(..){}
 	
 	private void init_loadsettings() {
-		{ // set default settings
-			settings.setInteger("item.paste.reach", 9);
-			settings.setBoolean("client.render.useAlternateSelectionTexture", false);
-			settings.setBoolean("client.render.entity.point.fancy", true);
-			settings.setBoolean("client.render.invokeVisualize", true);
-			settings.setBoolean("client.infobar.enabled", true);
-			settings.setBoolean("client.infobar.heldItemInfo", true);
-			settings.setBoolean("client.infobar.movingObjectPosition", true);
-			settings.setBoolean("client.infobar.visualizationMode", true);
-			settings.setBoolean("client.infobar.showFPS", true);
-			settings.setBoolean("client.infobar.showRenderables", true);
-			settings.setBoolean("client.infobar.showWandInfo", true);
-			settings.setBoolean("client.infobar.showLookDirectionInfo", true);
-		}
-		
-    	File settingsFile = new File(mc.mcDataDir, "talecraft-client-settings.dat");
-    	
-    	if(!settingsFile.exists()) {
-    		try {
-				CompressedStreamTools.write(settings, settingsFile);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-    	}
-    	
-    	try {
-			NBTTagCompound comp = CompressedStreamTools.read(settingsFile);
-			settings.merge(comp);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		settings.init();
 	}
 	
 	private void init_logic_keybindings() {
@@ -273,19 +244,9 @@ public class ClientProxy extends CommonProxy
 			
 			String tccommand = "join acknowledged";
 			NBTTagCompound tcdata = new NBTTagCompound();
-			NBTTagCompound settingsForServer = new NBTTagCompound();
-			tcdata.setTag("settings", settingsForServer);
-			
-			for(Object keyObj : settings.getKeySet()) {
-				String key = (String)keyObj;
-				if(!key.startsWith("client.")) {
-					settingsForServer.setTag(key, settings.getTag(key));
-					System.out.println("key " + key);
-				}
-			}
-			
-			// TaleCraft.logger.info("Data: " + tcdata);
 			TaleCraft.simpleNetworkWrapper.sendToServer(new StringNBTCommand(tccommand, tcdata));
+			
+			settings.send();
 			return;
 		}
 		
@@ -341,6 +302,9 @@ public class ClientProxy extends CommonProxy
 		
 		// Create the singleton instance of the EXTFontRenderer
 		fontRenderer = new EXTFontRenderer(mc.fontRendererObj);
+		
+		// Create the InfoBar Instance
+		infoBarInstance = new InfoBar();
 		
 		clientRenderStatic.offer(new SelectionBoxRenderer());
 	}
@@ -480,14 +444,9 @@ public class ClientProxy extends CommonProxy
 			visualizationMode = 0;
 			clientRenderTemporary.clear();
 			
-			// This is tupid but,
+			// This is stupid but,
 			// Save the TaleCraft settings on World unload.
-    		try {
-    	    	File settingsFile = new File(mc.mcDataDir, "talecraft-client-settings.dat");
-				CompressedStreamTools.write(settings, settingsFile);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			settings.save();
 		}
 	}
 	
@@ -646,6 +605,10 @@ public class ClientProxy extends CommonProxy
 	}
 	
 	public NBTTagCompound getSettings(EntityPlayer playerIn) {
+		return getSettings().getNBT();
+	}
+	
+	public ClientSettings getSettings() {
 		return settings;
 	}
 	

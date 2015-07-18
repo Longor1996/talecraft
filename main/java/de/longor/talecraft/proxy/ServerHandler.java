@@ -49,6 +49,12 @@ public class ServerHandler {
 			return;
 		}
 		
+		if(commandPacket.command.equals("update settings")) {
+			TaleCraft.logger.info("updating settings " + commandPacket.data);
+			getServerMirror(null).playerList().getPlayer(player).updateSettings(commandPacket.data);
+			return;
+		}
+		
 		if(commandPacket.command.startsWith("blockdatamerge:")) {
 			if(!PlayerHelper.isOp(player)) {
 				player.addChatMessage(new ChatComponentText("Error: 'blockdatamerge' is a operator only command."));
@@ -93,6 +99,8 @@ public class ServerHandler {
 				return;
 			}
 		}
+		
+		TaleCraft.logger.error("Received unknown StringNBTCommand from client: "+commandPacket.command+" : "+commandPacket.data);
 	}
 	
 	/** Merges the given {@link NBTTagCompound} into the given {@link TileEntity} data. **/

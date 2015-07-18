@@ -199,6 +199,32 @@ public class VoxelBrushCommand extends CommandBase {
 			}
 		}//"cylinder"
 		
+		if(args[1].equals("hollowcylinder")) {
+			shapeTag.setString("type", "hollowcylinder");
+			shapeTag.setDouble("hollow", 1);
+			
+			// TODO: Option to change cylinder caps on/off
+			
+			if(args.length >= 4) {
+				int ey = this.parseInt(args[2], 0, 64);
+				shapeTag.setInteger("height", ey);
+				
+				String str = args[3];
+				
+				if(str.startsWith("d")) {
+					str = str.substring(1);
+					shapeTag.setDouble("radius", this.parseDouble(str, 1, 128) / 2d);
+				} else {
+					shapeTag.setDouble("radius", this.parseDouble(str, .5, 64));
+				}
+				
+				if(args.length > 5) {
+					String hstr = args[4];
+					shapeTag.setDouble("hollow", this.parseDouble(hstr, 1, 3));
+				}
+			}
+		}//"cylinder"
+		
 		if(args[1].equals("sphere")) {
 			shapeTag.setString("type", "sphere");
 			
@@ -213,6 +239,27 @@ public class VoxelBrushCommand extends CommandBase {
 				}
 			}
 		}//"sphere"
+		
+		if(args[1].equals("hollowsphere")) {
+			shapeTag.setString("type", "hollowsphere");
+			shapeTag.setDouble("hollow", 1);
+			
+			if(args.length > 2) {
+				String str = args[2];
+				
+				if(str.startsWith("d")) {
+					str = str.substring(1);
+					shapeTag.setDouble("radius", this.parseDouble(str, 1, 128) / 2d);
+				} else {
+					shapeTag.setDouble("radius", this.parseDouble(str, .5, 64));
+				}
+				
+				if(args.length > 3) {
+					String hstr = args[3];
+					shapeTag.setDouble("hollow", this.parseDouble(hstr, 1, 3));
+				}
+			}
+		}//"hollowsphere"
 	}
 
 	public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
