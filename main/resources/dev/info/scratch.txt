@@ -50,15 +50,16 @@ command -> /tc_region < ? >
         - If a PasteItem instance is named the clipboard-entry with
           that name will be used instead of the players private clipboard.
     
-    /tc_region cut <name|SELF> <<x0> <y0> <z0> <x1> <y1> <z1>|SELF>
+    /tc_region cut <name|SELF> <<x0> <y0> <z0> <x1> <y1> <z1>|SELF|>
        Cuts out a piece of the world and creates a new schematic in the clipboard from that.
     
-    /tc_region copy <name|SELF> <<x0> <y0> <z0> <x1> <y1> <z1>|SELF>
+    /tc_region copy <name|SELF> <<x0> <y0> <z0> <x1> <y1> <z1>|SELF|>
        Copies a piece of the world and creates a new schematic in the clipboard from that.
-       NOTE: This subcommand is half-way implemented already.
+       Partially implemented.
     
-    /tc_region paste <name|SELF> <x> <y> <z>
+    /tc_region paste <name|SELF> <<x> <y> <z>|SELF|>
        Copies a specific schematic from the clipboard into the world at a specific position.
+       Partially implemented.
 ^^
 
 

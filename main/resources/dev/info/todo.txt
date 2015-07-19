@@ -1,7 +1,11 @@
-ADD
+- MAKE GOD DAMN SURE THAT NO CLIENT CODE IS ON THE SERVER SIDE!
 
+ADD
 - Implement the ClipBlock as specified in scratch.txt
+  CURRENTLY NOT POSSIBLE BECAUSE OF RENDERING PROBLEMS.
+  
 - Implement the TerrainBrush-item.
+  CURRENTLY NOT POSSIBLE BECAUSE OF MISSING KNOWLEDGE.
 
 - Create a ingame editor for FileScriptInvoke.
 - Create a ingame editor for EmbeddedScriptInvoke.
@@ -9,7 +13,7 @@ ADD
   - Wrappers are necessary because of the class obfuscation and because of security concerns.
   - Completion: ~30%. Basics are covered.
 
-- MAKE GOD DAMN SURE THAT NO CLIENT CODE IS ON THE SERVER SIDE!
+- Put a class-shutter into Rhino for security reasons.
 
 CHANGE
 
