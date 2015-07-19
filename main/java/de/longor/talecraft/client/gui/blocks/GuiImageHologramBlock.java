@@ -109,7 +109,7 @@ public class GuiImageHologramBlock extends QADGuiScreen {
 				commandComp.setString("command", "set_vars");
 				
 				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
-				TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandComp));
+				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandComp));
 				GuiImageHologramBlock.this.mc.displayGuiScreen(null);
 			}
 		});

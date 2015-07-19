@@ -5,7 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import de.longor.talecraft.managers.TCWorldsManager;
 import de.longor.talecraft.managers.TCWorldManager;
 import de.longor.talecraft.network.StringNBTCommand;
-import de.longor.talecraft.proxy.ServerHandler;
+import de.longor.talecraft.server.ServerHandler;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -56,7 +56,7 @@ public class TaleCraftCommonEventHandler
 	public void playerLoggedIn(PlayerLoggedInEvent event) {
 		if(event.player instanceof EntityPlayerMP) {
 			ServerHandler.getServerMirror(null).playerList().playerJoin((EntityPlayerMP) event.player);
-			TaleCraft.simpleNetworkWrapper.sendTo(new StringNBTCommand("acknowledge join"), (EntityPlayerMP) event.player);
+			TaleCraft.network.sendTo(new StringNBTCommand("acknowledge join"), (EntityPlayerMP) event.player);
 		}
 	}
 	

@@ -3,11 +3,12 @@ package de.longor.talecraft.items;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.clipboard.ClipboardItem;
 import de.longor.talecraft.proxy.ClientProxy;
-import de.longor.talecraft.proxy.ServerHandler;
+import de.longor.talecraft.server.ServerHandler;
 import de.longor.talecraft.server.ServerMirror;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,6 +17,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.util.Constants.NBT;
 
 public class PasteItem extends TCItem {
 	
@@ -56,6 +58,15 @@ public class PasteItem extends TCItem {
     					plantPos.xCoord + offset.getFloat("x"),
     					plantPos.yCoord + offset.getFloat("y"),
     					plantPos.zCoord + offset.getFloat("z")
+    			);
+    		}
+    		
+    		float snap = ServerMirror.instance().playerList().getPlayer((EntityPlayerMP) playerIn).settings.getInteger("item.paste.snap");
+    		if(snap > 1) {
+    			plantPos = new Vec3(
+    					Math.floor(plantPos.xCoord / snap) * snap,
+    					Math.floor(plantPos.yCoord / snap) * snap,
+    					Math.floor(plantPos.zCoord / snap) * snap
     			);
     		}
     		

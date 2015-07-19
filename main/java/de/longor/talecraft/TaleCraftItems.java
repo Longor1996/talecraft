@@ -1,5 +1,7 @@
 package de.longor.talecraft;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockStone;
@@ -12,6 +14,7 @@ import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 import de.longor.talecraft.items.CopyItem;
 import de.longor.talecraft.items.CutItem;
@@ -25,6 +28,8 @@ import de.longor.talecraft.items.VoxelBrushItem;
 import de.longor.talecraft.items.WandItem;
 
 public class TaleCraftItems {
+	public static final List<Item> ALL_TC_ITEMS = Lists.newArrayList();
+	
 	public static WandItem wand;
 	public static FillerItem filler;
 	public static EraserItem eraser;
@@ -37,45 +42,23 @@ public class TaleCraftItems {
 	public static CutItem cut;
 	
 	static void init() {
-		wand = new WandItem();
-		wand.setUnlocalizedName("wand");
-		GameRegistry.registerItem(wand, "wand", "talecraft");
-		
-		filler = new FillerItem();
-		filler.setUnlocalizedName("filler");
-		GameRegistry.registerItem(filler, "filler", "talecraft");
-		
-		eraser = new EraserItem();
-		eraser.setUnlocalizedName("eraser");
-		GameRegistry.registerItem(eraser, "eraser", "talecraft");
-		
-		teleporter = new TeleporterItem();
-		teleporter.setUnlocalizedName("teleporter");
-		GameRegistry.registerItem(teleporter, "teleporter", "talecraft");
-		
-		instakill = new InstaKillItem();
-		instakill.setUnlocalizedName("instakill");
-		GameRegistry.registerItem(instakill, "instakill", "talecraft");
-		
-		voxelbrush = new VoxelBrushItem();
-		voxelbrush.setUnlocalizedName("voxelbrush");
-		GameRegistry.registerItem(voxelbrush, "voxelbrush", "talecraft");
-		
-		nudger = new NudgeItem();
-		nudger.setUnlocalizedName("nudger");
-		GameRegistry.registerItem(nudger, "nudger", "talecraft");
-		
-		copy = new CopyItem();
-		copy.setUnlocalizedName("copy");
-		GameRegistry.registerItem(copy, "copy", "talecraft");
-		
-		paste = new PasteItem();
-		paste.setUnlocalizedName("paste");
-		GameRegistry.registerItem(paste, "paste", "talecraft");
-		
-		cut = new CutItem();
-		cut.setUnlocalizedName("cut");
-		GameRegistry.registerItem(cut, "cut", "talecraft");
+		wand = register(new WandItem(), "wand");
+		filler = register(new FillerItem(), "filler");
+		eraser = register(new EraserItem(), "eraser");
+		teleporter = register(new TeleporterItem(), "teleporter");
+		instakill = register(new InstaKillItem(), "instakill");
+		voxelbrush = register(new VoxelBrushItem(), "voxelbrush");
+		nudger = register(new NudgeItem(), "nudger");
+		copy = register(new CopyItem(), "copy");
+		paste = register(new PasteItem(), "paste");
+		cut = register(new CutItem(), "cut");
+	}
+	
+	private static <T extends Item> T register(T item, String name) {
+		item.setUnlocalizedName(name);
+		GameRegistry.registerItem(item, name, "talecraft");
+		ALL_TC_ITEMS.add(item);
+		return item;
 	}
 	
 }

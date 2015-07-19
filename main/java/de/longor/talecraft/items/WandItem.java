@@ -63,7 +63,7 @@ public class WandItem extends TCItem {
     	
     	// System.out.println("comp = " + tcWand);
     	
-    	TaleCraft.simpleNetworkWrapper.sendTo(new PlayerNBTDataMerge(compound), (EntityPlayerMP) playerIn);
+    	TaleCraft.network.sendTo(new PlayerNBTDataMerge(compound), (EntityPlayerMP) playerIn);
     	
         return true;
     }
@@ -119,7 +119,7 @@ public class WandItem extends TCItem {
     	wandData.setIntArray("boundsA", new int[]{_ix,_iy,_iz});
     	wandData.setIntArray("boundsB", new int[]{_ax,_ay,_az});
     	
-    	TaleCraft.simpleNetworkWrapper.sendTo(new PlayerNBTDataMerge(playerData), (EntityPlayerMP) player);
+    	TaleCraft.network.sendTo(new PlayerNBTDataMerge(playerData), (EntityPlayerMP) player);
     }
     
 	public static long getBoundsVolume(int[] bounds) {

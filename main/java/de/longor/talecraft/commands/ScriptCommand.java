@@ -75,7 +75,7 @@ public class ScriptCommand extends CommandBase {
 				NBTTagCompound nbt = new NBTTagCompound();
 				nbt.setString("scriptname", fileName);
 				nbt.setString("script", fileContent);
-				TaleCraft.simpleNetworkWrapper.sendTo(new StringNBTCommand("script_edit", nbt), player);
+				TaleCraft.network.sendTo(new StringNBTCommand("script_edit", nbt), player);
 			} else {
 				throw new WrongUsageException("Wrong parameter count: /tc_script edit <scriptname>");
 			}

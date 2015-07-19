@@ -36,7 +36,7 @@ public class VisualizeCommand extends CommandBase {
 		
 		// CLEAR ALL TEMPORABLES
 		if(action.equals("clear")) {
-			TaleCraft.simpleNetworkWrapper.sendToAll(new StringNBTCommand("clearRenderable"));
+			TaleCraft.network.sendToAll(new StringNBTCommand("clearRenderable"));
 			return;
 		}
 		
@@ -101,7 +101,7 @@ public class VisualizeCommand extends CommandBase {
 			pktdata.setString("type", "box");
 			pktdata.setIntArray("box", box);
 			pktdata.setInteger("color", parseColor(color));
-			TaleCraft.simpleNetworkWrapper.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
+			TaleCraft.network.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
     	}
     	
 	}
@@ -119,7 +119,7 @@ public class VisualizeCommand extends CommandBase {
 		pktdata.setInteger("positionY", sender.getPosition().getY());
 		pktdata.setInteger("positionZ", sender.getPosition().getZ());
 		pktdata.setInteger("color", parseColor(color));
-		TaleCraft.simpleNetworkWrapper.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
+		TaleCraft.network.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
 	}
     
 	public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {

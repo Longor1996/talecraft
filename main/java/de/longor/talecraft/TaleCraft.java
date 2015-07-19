@@ -12,8 +12,8 @@ import de.longor.talecraft.managers.TCWorldsManager;
 import de.longor.talecraft.network.StringNBTCommand;
 import de.longor.talecraft.proxy.ClientProxy;
 import de.longor.talecraft.proxy.CommonProxy;
-import de.longor.talecraft.proxy.ServerHandler;
 import de.longor.talecraft.script.GlobalScriptManager;
+import de.longor.talecraft.server.ServerHandler;
 import de.longor.talecraft.server.ServerMirror;
 import de.longor.util.TimedExecutor;
 import net.minecraft.block.Block;
@@ -67,7 +67,7 @@ public class TaleCraft
     public static TaleCraftCommonEventHandler fmlEventHandler;
     public static TaleCraftForgeEventHandler forgeEventHandler;
     public static GlobalScriptManager globalScriptManager;
-    public static SimpleNetworkWrapper simpleNetworkWrapper;
+    public static SimpleNetworkWrapper network;
     public static TimedExecutor timedExecutor;
     public static Logger logger;
     public static Random random;
@@ -93,11 +93,11 @@ public class TaleCraft
     	timedExecutor = new TimedExecutor();
     	globalScriptManager = new GlobalScriptManager();
     	globalScriptManager.init(this, proxy);
-    	simpleNetworkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("TaleCraftNet");
+    	network = NetworkRegistry.INSTANCE.newSimpleChannel("TaleCraftNet");
 		
     	// this does NOT belong here!
     	// Register the handler for server-side StringNBT-commands.
-		TaleCraft.instance.simpleNetworkWrapper.registerMessage(new IMessageHandler() {
+		TaleCraft.instance.network.registerMessage(new IMessageHandler() {
 			@Override public IMessage onMessage(IMessage message, MessageContext ctx) {
 				if(message instanceof StringNBTCommand) {
 					StringNBTCommand cmd = (StringNBTCommand) message;
@@ -110,7 +110,7 @@ public class TaleCraft
 		/// print debug information
     	logger.info("TaleCraft CoreManager @" + worldsmanager.hashCode());
     	logger.info("TaleCraft TimedExecutor @" + timedExecutor.hashCode());
-    	logger.info("TaleCraft NET SimpleNetworkWrapper @" + simpleNetworkWrapper.hashCode());
+    	logger.info("TaleCraft NET SimpleNetworkWrapper @" + network.hashCode());
     	
     	// create and register the event handlers for COMMON
     	fmlEventHandler = new TaleCraftCommonEventHandler(this);

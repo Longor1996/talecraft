@@ -18,6 +18,13 @@ public class EmbeddedScriptInvoke implements IInvoke, IScriptInvoke {
 	public String getType() {
 		return TYPE;
 	}
+
+	@Override
+	public void getColor(float[] color_out) {
+		color_out[0] = 1.0f;
+		color_out[1] = 0.0f;
+		color_out[2] = 0.25f;
+	}
 	
 	@Override
 	public void reloadScript() {

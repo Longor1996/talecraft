@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
@@ -64,6 +65,7 @@ import de.longor.talecraft.blocks.util.tileentity.ScriptBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.StorageBlockTileEntity;
 import de.longor.talecraft.client.ClientSettings;
 import de.longor.talecraft.client.InfoBar;
+import de.longor.talecraft.client.InvokeTracker;
 import de.longor.talecraft.client.commands.TaleCraftClientCommands;
 import de.longor.talecraft.client.gui.GuiMapControl;
 import de.longor.talecraft.client.network.PlayerDataMergeMessageHandler;
@@ -101,6 +103,7 @@ public class ClientProxy extends CommonProxy {
 	private EXTFontRenderer fontRenderer;
 	private ClipboardItem currentClipboardItem;
 	private InfoBar infoBarInstance;
+	private InvokeTracker invokeTracker;
 	// queues
 	private final ConcurrentLinkedDeque<Runnable> clientTickQeue = new ConcurrentLinkedDeque<Runnable>();
 	private final ConcurrentLinkedDeque<ITemporaryRenderable> clientRenderTemporary = new ConcurrentLinkedDeque<ITemporaryRenderable>();
@@ -165,7 +168,7 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	private void init_logic_network() {
-		SimpleNetworkWrapper net = TaleCraft.instance.simpleNetworkWrapper;
+		SimpleNetworkWrapper net = TaleCraft.instance.network;
 		net.registerMessage(new StringNBTCommandMessageHandler(), StringNBTCommand.class, 0x01, Side.CLIENT);
 		net.registerMessage(new PlayerDataMergeMessageHandler(), PlayerNBTDataMerge.class, 0x02, Side.CLIENT);
 	}
@@ -218,8 +221,22 @@ public class ClientProxy extends CommonProxy {
 		// killblock (why?!)
 		for(int i = 0; i < 7; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.killBlock), i, new ModelResourceLocation("talecraft:killblock", "inventory"));
 		
-		// blank block
-		for(int i = 0; i < 15; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.blankBlock), i, new ModelResourceLocation("talecraft:blankblock", "inventory"));
+		// decoration blocks
+			// blank block
+			for(int i = 0; i < 16; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.blankBlock), i, new ModelResourceLocation("talecraft:blankblock", "inventory"));
+			
+			// stone block A
+			for(int i = 0; i < 16; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.deco_stone_a), i, new ModelResourceLocation("talecraft:deco_stone/block"+i, "inventory"));
+			ModelBakery.addVariantName(Item.getItemFromBlock(TaleCraftBlocks.deco_stone_a), mkstrlfint("talecraft:deco_stone/block", 0));
+			// stone block B
+			for(int i = 0; i < 16; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.deco_stone_b), i, new ModelResourceLocation("talecraft:deco_stone/block"+(i+16), "inventory"));
+			ModelBakery.addVariantName(Item.getItemFromBlock(TaleCraftBlocks.deco_stone_b), mkstrlfint("talecraft:deco_stone/block", 16));
+			// stone block C
+			for(int i = 0; i < 16; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.deco_stone_c), i, new ModelResourceLocation("talecraft:deco_stone/block"+(i+32), "inventory"));
+			ModelBakery.addVariantName(Item.getItemFromBlock(TaleCraftBlocks.deco_stone_c), mkstrlfint("talecraft:deco_stone/block", 32));
+		
+		// barrier-ext block
+//		for(int i = 0; i < 7; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.barrierEXTBlock), i, new ModelResourceLocation("talecraft:barrierextblock", "inventory"));
 		
 		// blocks
 		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.clockBlock), 0, new ModelResourceLocation("talecraft:clockblock", "inventory"));
@@ -234,6 +251,15 @@ public class ClientProxy extends CommonProxy {
 		
 	}
 	
+	private String[] mkstrlfint(String string, int j) {
+		String[] ary = new String[16];
+		
+		for(int i = 0; i < 16; i++)
+			ary[i] = string + (j+i);
+		
+		return ary;
+	}
+	
 	private void init_render_entity() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityPoint.class, new PointEntityRenderer(mc.getRenderManager()));
 	}
@@ -244,9 +270,14 @@ public class ClientProxy extends CommonProxy {
 			
 			String tccommand = "join acknowledged";
 			NBTTagCompound tcdata = new NBTTagCompound();
-			TaleCraft.simpleNetworkWrapper.sendToServer(new StringNBTCommand(tccommand, tcdata));
+			TaleCraft.network.sendToServer(new StringNBTCommand(tccommand, tcdata));
 			
 			settings.send();
+			return;
+		}
+		
+		if(command.equals("track invoke")) {
+			invokeTracker.trackInvoke(data);
 			return;
 		}
 		
@@ -263,7 +294,7 @@ public class ClientProxy extends CommonProxy {
 		
 		if(command.equals("pushRenderable")) {
 			ITemporaryRenderable renderable = PushRenderableFactory.parsePushRenderableFromNBT(data);
-			if(renderable != null) {
+			if(renderable != null && isBuildMode()) {
 				clientRenderTemporary.offer(renderable);
 			}
 			return;
@@ -295,7 +326,7 @@ public class ClientProxy extends CommonProxy {
 		TaleCraft.logger.info("Received Command -> " + command + ", with data: " + data);
 		// XXX: Implement more Server->Client commands.
 	}
-	
+
 	@Override
 	public void postInit(FMLPostInitializationEvent event) {
 		super.postInit(event);
@@ -305,6 +336,9 @@ public class ClientProxy extends CommonProxy {
 		
 		// Create the InfoBar Instance
 		infoBarInstance = new InfoBar();
+		
+		// Create te invoke tracker instance
+		invokeTracker = new InvokeTracker();
 		
 		clientRenderStatic.offer(new SelectionBoxRenderer());
 	}
@@ -509,8 +543,13 @@ public class ClientProxy extends CommonProxy {
 			
 			// Post-World >> Pre-HUD Render
 			if(revt.phase == Phase.END) {
-				if(mc.ingameGUI != null && mc.theWorld != null && infoBarInstance.canDisplayInfoBar(mc, this) ) {
-					infoBarInstance.display(mc, mc.thePlayer, mc.theWorld, this);
+				if(mc.ingameGUI != null && mc.theWorld != null) {
+					if(infoBarInstance.canDisplayInfoBar(mc, this)) {
+						infoBarInstance.display(mc, mc.thePlayer, mc.theWorld, this);
+						
+						// XXX: Move this to its own IF
+						invokeTracker.display(mc, mc.thePlayer, mc.theWorld, this);
+					}
 				}
 			}
 		}// RenderTickEvent {}
@@ -568,18 +607,22 @@ public class ClientProxy extends CommonProxy {
 		this.clientRenderTemporary.push(renderable);
 	}
 
+	/****/
 	public int getVisualizationmode() {
 		return this.visualizationMode;
 	}
-	
+
+	/****/
 	public int getTemporablesCount() {
 		return clientRenderTemporary.size();
 	}
-	
+
+	/****/
 	public int getStaticCount() {
 		return clientRenderStatic.size();
 	}
-	
+
+	/****/
 	public void setVisualizationMode(int mode) {
 		visualizationMode = mode;
 		
@@ -591,32 +634,46 @@ public class ClientProxy extends CommonProxy {
 			visualizationMode = 0;
 		}
 	}
-	
+
+	/****/
 	public void setClipboard(ClipboardItem item) {
 		currentClipboardItem = item;
 	}
-	
+
+	/****/
 	public ClipboardItem getClipboard() {
 		return currentClipboardItem;
 	}
-	
+
+	/****/
 	public float getLastPartialTicks() {
 		return partialTicks;
 	}
-	
+
+	/****/
 	public NBTTagCompound getSettings(EntityPlayer playerIn) {
 		return getSettings().getNBT();
 	}
-	
+
+	/****/
 	public ClientSettings getSettings() {
 		return settings;
 	}
-	
+
+	/****/
 	public static final boolean isInBuildMode() {
 		if(proxy == null)
 			proxy = TaleCraft.proxy.asClient();
 		
 		return proxy.isBuildMode();
+	}
+
+	public InfoBar getInfoBar() {
+		return infoBarInstance;
+	}
+	
+	public static void shedule(Runnable runnable) {
+		proxy.sheduleClientTickTask(runnable);
 	}
 	
 }

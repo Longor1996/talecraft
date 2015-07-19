@@ -1,4 +1,4 @@
-package de.longor.talecraft.proxy;
+package de.longor.talecraft.server;
 
 import java.util.HashMap;
 
@@ -17,7 +17,6 @@ import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.TCIBlockCommandReceiver;
 import de.longor.talecraft.network.PlayerNBTDataMerge;
 import de.longor.talecraft.network.StringNBTCommand;
-import de.longor.talecraft.server.ServerMirror;
 import de.longor.talecraft.util.PlayerHelper;
 
 public class ServerHandler {
@@ -25,7 +24,7 @@ public class ServerHandler {
 	public static void handleEntityJoin(World world, Entity entity) {
 		// If this is a player, send the player the persistent EntityData.
 		if(entity instanceof EntityPlayerMP) {
-			TaleCraft.simpleNetworkWrapper.sendTo(new PlayerNBTDataMerge(entity.getEntityData()), (EntityPlayerMP) entity);
+			TaleCraft.network.sendTo(new PlayerNBTDataMerge(entity.getEntityData()), (EntityPlayerMP) entity);
 			// PlayerList.playerJoin((EntityPlayerMP)entity);
 		}
 	}

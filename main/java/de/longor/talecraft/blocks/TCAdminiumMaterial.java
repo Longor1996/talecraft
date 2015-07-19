@@ -22,17 +22,17 @@ public class TCAdminiumMaterial extends Material {
 
     public boolean isSolid()
     {
-        return false;
+        return true;
     }
 
     public boolean blocksLight()
     {
-        return false;
+        return true;
     }
 
     public boolean blocksMovement()
     {
-        return false;
+        return true;
     }
 
     public boolean getCanBurn()
@@ -47,7 +47,7 @@ public class TCAdminiumMaterial extends Material {
 
     public boolean isOpaque()
     {
-        return false;
+        return true;
     }
 
     public boolean isToolNotRequired()

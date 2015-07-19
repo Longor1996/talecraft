@@ -81,7 +81,6 @@ public class ClipboardItem {
 			
 			for(int i = 0; i < tes.tagCount(); i++) {
 				NBTTagCompound compound = (NBTTagCompound) tes.getCompoundTagAt(i).copy();
-				System.out.println("TE : " + compound);
 				
 				int newPosX = pos.getX() + compound.getInteger("x");
 				int newPosY = pos.getY() + compound.getInteger("y");

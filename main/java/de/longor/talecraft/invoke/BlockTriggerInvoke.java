@@ -21,6 +21,13 @@ public class BlockTriggerInvoke implements IInvoke {
 	public String getType() {
 		return TYPE;
 	}
+
+	@Override
+	public void getColor(float[] color_out) {
+		color_out[0] = 1.0f;
+		color_out[1] = 0.5f;
+		color_out[2] = 0.0f;
+	}
 	
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {

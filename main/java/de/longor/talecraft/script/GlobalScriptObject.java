@@ -116,7 +116,7 @@ public class GlobalScriptObject implements IObjectWrapper {
 	}
 	
 	public ItemStackObjectWrapper newItemStack(String ID) {
-		Item item = Item.getByNameOrId(ID);
+		Item item = GObjectTypeHelper.findItem(ID);
 		
 		if(item == null)
 			return null;
@@ -125,7 +125,7 @@ public class GlobalScriptObject implements IObjectWrapper {
 	}
 	
 	public ItemStackObjectWrapper newItemStack(String ID, int amount) {
-		Item item = Item.getByNameOrId(ID);
+		Item item = GObjectTypeHelper.findItem(ID);
 		
 		if(item == null)
 			return null;
@@ -134,7 +134,7 @@ public class GlobalScriptObject implements IObjectWrapper {
 	}
 	
 	public ItemStackObjectWrapper newItemStack(String ID, int amount, int damage) {
-		Item item = Item.getByNameOrId(ID);
+		Item item = GObjectTypeHelper.findItem(ID);
 		
 		if(item == null)
 			return null;
@@ -159,7 +159,7 @@ public class GlobalScriptObject implements IObjectWrapper {
 	
 	
 	public PotionEffectObjectWrapper newPotionEffect(String name, int duration) {
-		Potion potion = Potion.getPotionFromResourceLocation(name);
+		Potion potion = GObjectTypeHelper.findPotion(name);
 		
 		if(potion == null)
 			return null;
@@ -168,7 +168,7 @@ public class GlobalScriptObject implements IObjectWrapper {
 	}
 	
 	public PotionEffectObjectWrapper newPotionEffect(String name, int duration, int amplifier) {
-		Potion potion = Potion.getPotionFromResourceLocation(name);
+		Potion potion = GObjectTypeHelper.findPotion(name);
 		
 		if(potion == null)
 			return null;
@@ -177,7 +177,7 @@ public class GlobalScriptObject implements IObjectWrapper {
 	}
 	
 	public PotionEffectObjectWrapper newPotionEffect(String name, int duration, int amplifier, boolean ambient, boolean showParticles) {
-		Potion potion = Potion.getPotionFromResourceLocation(name);
+		Potion potion = GObjectTypeHelper.findPotion(name);
 		
 		if(potion == null)
 			return null;

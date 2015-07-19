@@ -14,6 +14,13 @@ public class NullInvoke implements IInvoke {
 	public String getType() {
 		return TYPE;
 	}
+
+	@Override
+	public void getColor(float[] color_out) {
+		color_out[0] = 0.1f;
+		color_out[1] = 0.1f;
+		color_out[2] = 0.1f;
+	}
 	
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {

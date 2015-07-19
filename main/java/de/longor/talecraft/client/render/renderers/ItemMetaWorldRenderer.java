@@ -8,6 +8,7 @@ import de.longor.talecraft.items.PasteItem;
 import de.longor.talecraft.items.TeleporterItem;
 import de.longor.talecraft.items.VoxelBrushItem;
 import de.longor.talecraft.proxy.ClientProxy;
+import de.longor.talecraft.server.ServerMirror;
 import de.longor.talecraft.util.NBTHelper;
 import de.longor.talecraft.voxelbrush.IShape;
 import de.longor.talecraft.voxelbrush.ShapeFactory;
@@ -22,6 +23,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -87,7 +89,16 @@ public class ItemMetaWorldRenderer {
 					plantPos.zCoord + offset.getFloat("z")
 			);
 		}
-    	
+		
+		float snap = ClientProxy.settings.getInteger("item.paste.snap");
+		if(snap > 1) {
+			plantPos = new Vec3(
+					Math.floor(plantPos.xCoord / snap) * snap,
+					Math.floor(plantPos.yCoord / snap) * snap,
+					Math.floor(plantPos.zCoord / snap) * snap
+			);
+		}
+		
 		float color = 0;
 		
     	if(blocks != null) {
@@ -136,6 +147,41 @@ public class ItemMetaWorldRenderer {
     	clientProxy.mc.renderEngine.bindTexture(ClientProxy.textureReslocSelectionBox2);
 		// BoxRenderer.renderBox(tessellator, worldrenderer, minX, minY, minZ, maxX, maxY, maxZ, 0, 1, 0, 1);
 		BoxRenderer.renderSelectionBox(tessellator, worldrenderer, minX, minY, minZ, maxX, maxY, maxZ, color);
+		
+		if(snap > 1) {
+			final int s = (int) snap;
+			final int r = 1 * s;
+			final float bsi = 0.5f - 0.05f;
+			final float bsa = 0.5f + 0.05f;
+			
+			int midX = (int) Math.floor(minX);
+			int midY = (int) Math.floor(minY);
+			int midZ = (int) Math.floor(minZ);
+			
+			int startX = midX - r;
+			int startY = midY - r;
+			int startZ = midZ - r;
+			
+			int endX = midX + r + 1;
+			int endY = midY + r + 1;
+			int endZ = midZ + r + 1;
+			
+	    	clientProxy.mc.renderEngine.bindTexture(ClientProxy.colorReslocWhite);
+			
+	    	worldrenderer.startDrawingQuads();
+	        worldrenderer.setColorRGBA_F(1, 1, 1, 1);
+	        worldrenderer.setBrightness(0xEE);
+	        
+			for(int y = startY; y <= endY; y++) {
+				for(int z = startZ; z <= endZ; z++) {
+					for(int x = startX; x <= endX; x++) {
+						if(x%snap==0&&y%snap==0&&z%snap==0)
+							BoxRenderer.renderBoxEmb(tessellator, worldrenderer, x+bsi, y+bsi, z+bsi, x+bsa, y+bsa, z+bsa);
+					}
+				}
+			}
+			tessellator.draw();
+		}
 	}
 	
 	private static void renderVoxelBrushItem(ItemStack stack) {

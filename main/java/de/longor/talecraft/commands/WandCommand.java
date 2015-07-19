@@ -4,11 +4,13 @@ import java.util.List;
 
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.TaleCraftItems;
+import de.longor.talecraft.clipboard.ClipboardItem;
 import de.longor.talecraft.invoke.CommandSenderInvokeSource;
 import de.longor.talecraft.invoke.Invoke;
 import de.longor.talecraft.items.CopyItem;
 import de.longor.talecraft.items.WandItem;
 import de.longor.talecraft.network.StringNBTCommand;
+import de.longor.talecraft.server.ServerMirror;
 import de.longor.talecraft.util.GObjectTypeHelper;
 import de.longor.talecraft.util.WorldHelper;
 import net.minecraft.block.Block;
@@ -22,6 +24,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -330,10 +334,55 @@ public class WandCommand extends CommandBase {
 				}
 				
 				if(args[1].equals("copy")) {
-					CopyItem copy = TaleCraftItems.copy;
-					ItemStack stack = new ItemStack(copy);
-					copy.onItemRightClick(stack, player.worldObj, player);
-					TaleCraft.simpleNetworkWrapper.sendTo(new StringNBTCommand("item.copy.trigger"), player);
+					if(args.length > 2) {
+						String name = args[2];
+						
+						int[] bounds = WandItem.getBoundsFromPLAYERorNULL(player);
+						ClipboardItem item = ClipboardItem.copyRegion(bounds, player.worldObj, name, player);
+						
+						if(item != null) {
+							ServerMirror.instance().getClipboard().put(name, item);
+							player.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN+"Copied region to clipboard as '"+name+"'!"));
+						}
+					} else {
+						CopyItem copy = TaleCraftItems.copy;
+						ItemStack stack = new ItemStack(copy);
+						copy.onItemRightClick(stack, player.worldObj, player);
+						TaleCraft.network.sendTo(new StringNBTCommand("item.copy.trigger"), player);
+					}
+					return;
+				}
+				
+				if(args[1].equals("paste")) {
+					if(args.length == 2) {
+						int[] bounds = WandItem.getBoundsFromPLAYERorNULL(player);
+						String name = "player."+player.getGameProfile().getId().toString();
+						ClipboardItem item = ServerMirror.instance().getClipboard().get(name);
+						
+						if(item != null) {
+							ClipboardItem.pasteRegion(item, new BlockPos(bounds[0], bounds[1], bounds[2]), player.worldObj, player);
+							player.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN+"Copied region to world: '"+name+"'."));
+						} else {
+							throw new CommandException("There is no record with the name '"+name+"' in the clipboard.");
+						}
+					}
+					
+					if(args.length > 2) {
+						String name = args[2];
+						int[] bounds = WandItem.getBoundsFromPLAYERorNULL(player);
+						ClipboardItem item = ServerMirror.instance().getClipboard().get(name);
+						
+						if(item != null) {
+							ClipboardItem.pasteRegion(item, new BlockPos(bounds[0], bounds[1], bounds[2]), player.worldObj, player);
+							player.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN+"Copied region to world: '"+name+"'."));
+						} else {
+							throw new CommandException("There is no record with the name '"+name+"' in the clipboard.");
+						}
+						
+					} else {
+						throw new WrongUsageException("Missing parameters! /tc_wand region paste <name>");
+					}
+					
 					return;
 				}
 				

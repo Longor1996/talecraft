@@ -48,7 +48,7 @@ public class SwitchShaderCommand extends CommandBase {
 		StringNBTCommand pkt = new StringNBTCommand("switchShader", nbt);
 		
 		for(EntityPlayerMP entityPlayerMP : players) {
-			TaleCraft.simpleNetworkWrapper.sendTo(pkt, entityPlayerMP);
+			TaleCraft.network.sendTo(pkt, entityPlayerMP);
 		}
 		
 	}

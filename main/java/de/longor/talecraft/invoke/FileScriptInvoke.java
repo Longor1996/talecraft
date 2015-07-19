@@ -64,6 +64,13 @@ public class FileScriptInvoke implements IInvoke, IScriptInvoke {
 	}
 
 	@Override
+	public void getColor(float[] color_out) {
+		color_out[0] = 1.0f;
+		color_out[1] = 0.0f;
+		color_out[2] = 0.0f;
+	}
+
+	@Override
 	public void writeToNBT(NBTTagCompound compound) {
 		compound.setString("scriptFileName", fileName.trim());
 	}

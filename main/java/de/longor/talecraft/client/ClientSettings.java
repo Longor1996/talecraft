@@ -17,6 +17,8 @@ public class ClientSettings {
 	public void init() {
 		{
 			settings.setInteger("item.paste.reach", 9);
+			settings.setInteger("item.paste.snap", 0);
+			settings.setBoolean("invoke.tracker", false); // can cause lag, thus disabled at default
 			settings.setBoolean("client.render.useAlternateSelectionTexture", false);
 			settings.setBoolean("client.render.entity.point.fancy", true);
 			settings.setBoolean("client.render.invokeVisualize", true);
@@ -96,7 +98,7 @@ public class ClientSettings {
 		String tccommand = "update settings";
 		NBTTagCompound settingsForServer = new NBTTagCompound();
 		getSettingsForServer(settingsForServer);
-		TaleCraft.simpleNetworkWrapper.sendToServer(new StringNBTCommand(tccommand, settingsForServer));
+		TaleCraft.network.sendToServer(new StringNBTCommand(tccommand, settingsForServer));
 	}
 	
 }

@@ -52,7 +52,7 @@ public class ActionFactory {
 			return new GrassifyAction();
 		}
 		
-		if(type.equals("eraser")) {
+		if(type.equals("erase")) {
 			return new EraserAction();
 		}
 		

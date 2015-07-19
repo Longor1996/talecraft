@@ -6,6 +6,9 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -31,6 +34,36 @@ public class GObjectTypeHelper {
 				return type;
 		
 		throw new IllegalArgumentException("Given name is not a prtaicle name.");
+	}
+	
+	public static final Item findItem(String fully_qualified_name) {
+		String typeString = fully_qualified_name;
+		int indexOfSlash = typeString.indexOf('/');
+		
+		String typeMID = typeString;
+		
+		// no meta necessary
+		
+		int indexOfDot = typeMID.indexOf(':');
+		
+		String typeMod = null;
+		String typeID = null;
+		
+		if(indexOfDot == -1) {
+			typeMod = "minecraft";
+			typeID = typeMID;
+		} else {
+			typeMod = typeMID.substring(0, indexOfDot);
+			typeID = typeMID.substring(indexOfDot+1);
+		}
+		
+		Item item = (Item) Item.itemRegistry.getObject(typeID);
+		
+		if(item != null) {
+			return item;
+		}
+		
+		return null;
 	}
 	
 	public static final String[] findBlockState_retAStr(String fully_qualified_name) {
@@ -161,6 +194,10 @@ public class GObjectTypeHelper {
 		}
 		
 		return null;
+	}
+	
+	public static final Potion findPotion(String name) {
+		return Potion.getPotionFromResourceLocation(name);
 	}
 	
 }

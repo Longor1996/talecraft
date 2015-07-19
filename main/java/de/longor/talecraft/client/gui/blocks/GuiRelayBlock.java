@@ -54,7 +54,7 @@ public class GuiRelayBlock extends QADGuiScreen {
 				commandData.setString("command", "invoke_add");
 				
 				// Send command
-				TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandData));
+				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));
 				
 				// close whatever gui is open
 				Minecraft.getMinecraft().displayGuiScreen(null);
@@ -79,7 +79,7 @@ public class GuiRelayBlock extends QADGuiScreen {
 					commandData.setString("invokeToRemove", id);
 					
 					// Send command
-					TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandData));
+					TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));
 					
 					// close whatever gui is open
 					Minecraft.getMinecraft().displayGuiScreen(null);

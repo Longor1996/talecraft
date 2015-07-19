@@ -102,8 +102,8 @@ public class VoxelBrushCommand extends CommandBase {
 		}
 		
 		if(args[1].equals("maskreplace")) {
-			if(args.length != 6) {
-				throw new SyntaxErrorException("Wrong amaount of parameters: //maskreplace <block> <blockMeta> <mask> <maskMeta>");
+			if(args.length != 4) {
+				throw new SyntaxErrorException("Wrong amaount of parameters: //maskreplace <block> <mask>");
 			}
 			
 			String[] aR = GObjectTypeHelper.findBlockState_retAStr(args[2]);
@@ -210,17 +210,18 @@ public class VoxelBrushCommand extends CommandBase {
 				shapeTag.setInteger("height", ey);
 				
 				String str = args[3];
+				double rad = 0;
 				
 				if(str.startsWith("d")) {
 					str = str.substring(1);
-					shapeTag.setDouble("radius", this.parseDouble(str, 1, 128) / 2d);
+					shapeTag.setDouble("radius", rad = this.parseDouble(str, 1, 128) / 2d);
 				} else {
-					shapeTag.setDouble("radius", this.parseDouble(str, .5, 64));
+					shapeTag.setDouble("radius", rad = this.parseDouble(str, .5, 64));
 				}
 				
-				if(args.length > 5) {
+				if(args.length >= 5) {
 					String hstr = args[4];
-					shapeTag.setDouble("hollow", this.parseDouble(hstr, 1, 3));
+					shapeTag.setDouble("hollow", this.parseDouble(hstr, 1, rad - 2));
 				}
 			}
 		}//"cylinder"

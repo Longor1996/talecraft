@@ -6,6 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public interface IInvoke {
 	
 	public String getType();
+	public void getColor(float[] color_out);
 	
 	public void writeToNBT(NBTTagCompound compound);
 	public void readFromNBT(NBTTagCompound compound);

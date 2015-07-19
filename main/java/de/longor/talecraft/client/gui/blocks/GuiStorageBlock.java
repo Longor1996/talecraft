@@ -38,7 +38,7 @@ public class GuiStorageBlock extends QADGuiScreen {
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "set");
 				commandData.setIntArray("bounds", bounds);
-				TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandData));
+				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));
 				GuiStorageBlock.this.mc.displayGuiScreen(null);
 			}
 		}));
@@ -49,7 +49,7 @@ public class GuiStorageBlock extends QADGuiScreen {
 				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "store");
-				TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandData));
+				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));
 				GuiStorageBlock.this.mc.displayGuiScreen(null);
 			}
 		}));
@@ -60,7 +60,7 @@ public class GuiStorageBlock extends QADGuiScreen {
 				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "trigger");
-				TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandData));
+				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));
 				GuiStorageBlock.this.mc.displayGuiScreen(null);
 			}
 		}));

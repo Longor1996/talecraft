@@ -21,7 +21,7 @@ public class BlockInvokeHolder implements IInvokeHolder {
 		String commandString = "blockdatamerge:"+blockPosition.getX() + " " + blockPosition.getY() + " " + blockPosition.getZ();
 		NBTTagCompound commandData = new NBTTagCompound();
 		commandData.setTag(invokeName, newInvokeData);
-		TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandData));
+		TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));
 	}
 	
 	@Override
@@ -33,7 +33,7 @@ public class BlockInvokeHolder implements IInvokeHolder {
 		commandData.setString("command", command);
 		
 		// Send command
-		TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandData));
+		TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));
 		
 		// close whatever gui is open
 		Minecraft.getMinecraft().displayGuiScreen(null);
@@ -46,7 +46,7 @@ public class BlockInvokeHolder implements IInvokeHolder {
 		NBTTagCompound invokeData = new NBTTagCompound();
 		invokeData.setString("type", type);
 		commandData.setTag(invokeName, invokeData);
-		TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandData));
+		TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));
 	}
 	
 }

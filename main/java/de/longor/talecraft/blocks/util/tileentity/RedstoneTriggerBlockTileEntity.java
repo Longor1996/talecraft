@@ -8,6 +8,7 @@ import org.mozilla.javascript.Scriptable;
 
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.TCTileEntity;
+import de.longor.talecraft.invoke.FileScriptInvoke;
 import de.longor.talecraft.invoke.IInvoke;
 import de.longor.talecraft.invoke.IInvokeSource;
 import de.longor.talecraft.invoke.Invoke;
@@ -62,7 +63,16 @@ public class RedstoneTriggerBlockTileEntity extends TCTileEntity {
 		
 		if(command.equals("trigger")) {
 			Invoke.invoke(triggerInvoke, this);
+			return;
 		}
+		
+		if(command.equals("reload")) {
+			if(triggerInvoke != null && triggerInvoke instanceof FileScriptInvoke) {
+				((FileScriptInvoke)triggerInvoke).reloadScript();
+			}
+			return;
+		}
+		
 	}
 	
 	@Override

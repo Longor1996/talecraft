@@ -17,12 +17,14 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -71,7 +73,7 @@ public class ScriptItem extends TCItem {
     	NBTTagCompound compound = getNBT(stack);
     	
     	// get invoke
-    	IInvoke invoke = IInvoke.Serializer.read(compound.getCompoundTag("invoke_on_rclick"));
+    	IInvoke invoke = IInvoke.Serializer.read(compound.getCompoundTag("invoke_on_lclick"));
     	
     	// make sure to not waste time
     	if(invoke == null) return false;
@@ -84,12 +86,19 @@ public class ScriptItem extends TCItem {
     }
 	
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-    	
+    	// Should I allow this?
     }
     
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer playerIn, List tooltip, boolean advanced) {
-    	// TODO: Implement?
+    	NBTTagCompound compound = getNBT(stack);
+    	
+    	NBTTagList lore = compound.getTagList("lore", NBT.TAG_STRING);
+    	if(lore.hasNoTags()) return;
+    	
+    	for(int i = 0; i < lore.tagCount(); i++) {
+    		tooltip.add(lore.getStringTagAt(i));
+    	}
     }
 	
     private static final NBTTagCompound getNBT(ItemStack stack) {
@@ -201,8 +210,8 @@ public class ScriptItem extends TCItem {
 
 		@Override
 		public void getInvokeColor(float[] color) {
-			color[0] = 1.0f;
-			color[1] = 1.0f;
+			color[0] = 0.0f;
+			color[1] = 0.0f;
 			color[2] = 1.0f;
 		}
     }

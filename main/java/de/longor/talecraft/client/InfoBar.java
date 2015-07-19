@@ -30,9 +30,11 @@ import net.minecraftforge.fml.common.registry.GameRegistry.UniqueIdentifier;
 public class InfoBar {
 	private StringBuilder builder = new StringBuilder(255);
 	private boolean enabled = true;
+	private int lastHeight = 0;
 	
 	public void display(Minecraft mc, EntityPlayerSP player, WorldClient theWorld, ClientProxy clientProxy) {
 		if(!clientProxy.settings.getBoolean("client.infobar.enabled")) {
+			lastHeight = 0;
 			return;
 		}
 		
@@ -69,6 +71,7 @@ public class InfoBar {
         // Finally, draw the whole thing!
 		mc.ingameGUI.drawRect(0, 0, mc.displayWidth, mc.fontRendererObj.FONT_HEIGHT+1, 0xAA000000);
         mc.fontRendererObj.drawString(builder.toString(), 1, 1, 14737632);
+        lastHeight = mc.fontRendererObj.FONT_HEIGHT+1;
         
         //*
         if(mc.thePlayer != null && mc.thePlayer.getEntityData().hasKey("tcWand") && clientProxy.settings.getBoolean("client.infobar.showWandInfo")) {
@@ -109,6 +112,7 @@ public class InfoBar {
         	
     		mc.ingameGUI.drawRect(0, 10, mc.displayWidth, mc.fontRendererObj.FONT_HEIGHT+11, 0xAA000000);
         	mc.fontRendererObj.drawString(builder.toString(), 1, 11, 14737632);
+        	lastHeight += mc.fontRendererObj.FONT_HEIGHT+1;
         }
         //*/
 	}
@@ -123,7 +127,12 @@ public class InfoBar {
 	private void writeHeldItemInfo(ItemStack item) {
     	builder.append(' ');
         builder.append(EnumChatFormatting.ITALIC);
-    	builder.append(item.getDisplayName());
+        
+        if(Minecraft.getMinecraft().thePlayer.isSneaking())
+        	builder.append(item);
+        else
+        	builder.append(item.getDisplayName());
+        
         builder.append(EnumChatFormatting.RESET);
 	}
 	
@@ -269,5 +278,9 @@ public class InfoBar {
 	
 	public void setEnabled(boolean boolean1) {
 		enabled = boolean1;
+	}
+	
+	public int getLastMaxY() {
+		return lastHeight;
 	}
 }

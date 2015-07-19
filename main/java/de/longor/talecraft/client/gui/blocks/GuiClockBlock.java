@@ -96,7 +96,7 @@ public class GuiClockBlock extends QADGuiScreen {
 				commandData.setInteger("init_speed", fieldSpeed.asInteger(1));
 				commandData.setInteger("init_time", fieldTime.asInteger(20));
 				
-				TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandData));
+				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));
 			}
 		});
 		setDataButton.setTooltip("There is no auto-save, ", "so don't forget to click this button!");
@@ -108,7 +108,7 @@ public class GuiClockBlock extends QADGuiScreen {
 				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "start");
-				TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandData));
+				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));
 				GuiClockBlock.this.mc.displayGuiScreen(null);
 			}
 		});
@@ -121,7 +121,7 @@ public class GuiClockBlock extends QADGuiScreen {
 				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "pause");
-				TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandData));
+				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));
 				GuiClockBlock.this.mc.displayGuiScreen(null);
 			}
 		});
@@ -134,7 +134,7 @@ public class GuiClockBlock extends QADGuiScreen {
 				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "stop");
-				TaleCraft.instance.simpleNetworkWrapper.sendToServer(new StringNBTCommand(commandString, commandData));
+				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));
 				GuiClockBlock.this.mc.displayGuiScreen(null);
 			}
 		});

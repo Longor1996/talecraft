@@ -1,5 +1,6 @@
 package de.longor.talecraft.server;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +31,10 @@ public class PlayerList {
 	 **/
 	public PlayerMirror getPlayer(EntityPlayerMP player) {
 		return players.get(player);
+	}
+	
+	public Collection<PlayerMirror> getBackingList() {
+		return players.values();
 	}
 	
 }

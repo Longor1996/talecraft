@@ -2,6 +2,7 @@ package de.longor.talecraft.proxy;
 
 import de.longor.talecraft.managers.TCWorldsManager;
 import de.longor.talecraft.managers.TCWorldManager;
+import de.longor.talecraft.server.ServerHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;

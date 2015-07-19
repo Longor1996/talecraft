@@ -4,7 +4,7 @@ import com.google.common.eventbus.Subscribe;
 
 import de.longor.talecraft.managers.TCWorldsManager;
 import de.longor.talecraft.managers.TCWorldManager;
-import de.longor.talecraft.proxy.ServerHandler;
+import de.longor.talecraft.server.ServerHandler;
 import net.minecraft.server.ServerEula;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;

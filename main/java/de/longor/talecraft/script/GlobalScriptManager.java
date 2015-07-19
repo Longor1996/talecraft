@@ -9,6 +9,8 @@ import java.util.List;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
@@ -104,11 +106,14 @@ public class GlobalScriptManager {
 		
 		try {
 			rvalue = cx.evaluateString(scope, script, fileName, 0, null);
-		} catch(Exception e) {
+		} catch(Throwable e) {
 			e.printStackTrace();
+			ChatComponentText text = new ChatComponentText("Script Error: " + e.getMessage());
+			MinecraftServer.getServer().getConfigurationManager().sendChatMsg(text);
 		} finally {
 			cx.exit();
 		}
+		
 		return rvalue;
 	}
 	

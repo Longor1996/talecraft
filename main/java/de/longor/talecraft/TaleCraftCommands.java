@@ -1,6 +1,8 @@
 package de.longor.talecraft;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import de.longor.talecraft.commands.ButcherCommand;
@@ -14,11 +16,12 @@ import de.longor.talecraft.commands.VelocityCommand;
 import de.longor.talecraft.commands.VisualizeCommand;
 import de.longor.talecraft.commands.VoxelBrushCommand;
 import de.longor.talecraft.commands.WandCommand;
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 
 public class TaleCraftCommands {
-	private static final List<ICommand> commands = new ArrayList<ICommand>();
+	private static final List<CommandBase> commands = new ArrayList<CommandBase>();
 	
 	public static void init() {
 		// just add commands here and they automagically get registered!
@@ -41,5 +44,9 @@ public class TaleCraftCommands {
 			registry.registerCommand(cmd);
 		}
 	}
-
+	
+	public static Collection<? extends CommandBase> getCommandList() {
+		return Collections.unmodifiableList(commands);
+	}
+	
 }

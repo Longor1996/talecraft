@@ -7,6 +7,7 @@ import org.mozilla.javascript.Scriptable;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.TCITriggerableBlock;
 import de.longor.talecraft.network.StringNBTCommand;
+import de.longor.talecraft.server.ServerMirror;
 import de.longor.talecraft.util.WorldHelper;
 import de.longor.talecraft.util.WorldHelper.BlockRegionIterator;
 import net.minecraft.block.Block;
@@ -45,6 +46,7 @@ public class Invoke {
 		
 		if(invoke instanceof NullInvoke) {
 			TaleCraft.logger.error("Uh oh, a NULL invoke from "+source+"!");
+			ServerMirror.instance().trackInvoke(source, invoke);
 			return;
 		}
 		
@@ -60,8 +62,10 @@ public class Invoke {
 				pktdata.setString("type", "pos-marker");
 				pktdata.setIntArray("pos", new int[]{source.getInvokePosition().getX(),source.getInvokePosition().getY(),source.getInvokePosition().getZ()});
 				pktdata.setInteger("color", 0xFF0000);
-				TaleCraft.simpleNetworkWrapper.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
+				TaleCraft.network.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
 			}
+			
+			ServerMirror.instance().trackInvoke(source, invoke);
 			return;
 		}
 		
@@ -78,8 +82,10 @@ public class Invoke {
 				pktdata.setString("type", "pos-marker");
 				pktdata.setIntArray("pos", new int[]{source.getInvokePosition().getX(),source.getInvokePosition().getY(),source.getInvokePosition().getZ()});
 				pktdata.setInteger("color", 0x0099FF);
-				TaleCraft.simpleNetworkWrapper.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
+				TaleCraft.network.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
 			}
+			
+			ServerMirror.instance().trackInvoke(source, invoke);
 			return;
 		}
 		
@@ -103,6 +109,7 @@ public class Invoke {
 			
 			trigger(source, ix, iy, iz, ax, ay, az);
 			
+			ServerMirror.instance().trackInvoke(source, invoke);
 			return;
 		}
 		
@@ -123,7 +130,7 @@ public class Invoke {
 			pktdata.setString("type", "line-to-box");
 			pktdata.setIntArray("src", new int[]{source.getInvokePosition().getX(),source.getInvokePosition().getY(),source.getInvokePosition().getZ()});
 			pktdata.setIntArray("box", new int[]{ix,iy,iz,ax,ay,az});
-			TaleCraft.simpleNetworkWrapper.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
+			TaleCraft.network.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
 		}
 		
 		// Since we dont have lambda's, lets do things the old (ugly) way.

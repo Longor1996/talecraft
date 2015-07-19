@@ -21,6 +21,9 @@ public class SelectionBoxRenderer implements IRenderable {
 			Tessellator tessellator, WorldRenderer worldrenderer,
 			double partialTicks) {
 		
+		// Don't show the selection if we are not in BuildMode!
+		if(!ClientProxy.isInBuildMode()) return;
+		
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO);
 		
@@ -37,7 +40,7 @@ public class SelectionBoxRenderer implements IRenderable {
 				GL11.glPolygonMode(GL11.GL_BACK, GL11.GL_FILL);
 				GlStateManager.enableTexture2D();
 				mc.getTextureManager().bindTexture(ClientProxy.colorReslocWhite);
-				BoxRenderer.renderBox(tessellator, worldrenderer, cursor[0]-E, cursor[1]-E, cursor[2]-E, cursor[0]+1+E, cursor[1]+1+E, cursor[2]+1+E, 0f,1f,1f,1f);
+				BoxRenderer.renderBox(tessellator, worldrenderer, cursor[0]-E, cursor[1]-E, cursor[2]-E, cursor[0]+1+E, cursor[1]+1+E, cursor[2]+1+E, 1f,1f,1f,1f);
 				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 			}
 			
@@ -62,6 +65,7 @@ public class SelectionBoxRenderer implements IRenderable {
 				GlStateManager.disableNormalize();
 				GlStateManager.enableTexture2D();
 				RenderHelper.disableStandardItemLighting();
+				GL11.glLineWidth(2.5f);
 				
 				ResourceLocation texture = null;
 				
@@ -83,6 +87,21 @@ public class SelectionBoxRenderer implements IRenderable {
 				BoxRenderer.renderSelectionBox(tessellator, worldrenderer, ix-E, iy-E, iz-E, ax+1+E, ay+1+E, az+1+E, -1);
 				GlStateManager.enableDepth();
 				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+				
+				mc.getTextureManager().bindTexture(ClientProxy.colorReslocWhite);
+				GL11.glBegin(GL11.GL_LINES);
+				GL11.glColor4f(1, 0, 0, 1);
+				GL11.glVertex3f(ix-E, iy-E, iz-E);
+				GL11.glVertex3f(ax+1+E, iy-E, iz-E);
+				GL11.glColor4f(0, 1, 0, 1);
+				GL11.glVertex3f(ix-E, iy-E, iz-E);
+				GL11.glVertex3f(ix-E, ay+1+E, iz-E);
+				GL11.glColor4f(0, 0, 1, 1);
+				GL11.glVertex3f(ix-E, iy-E, iz-E);
+				GL11.glVertex3f(ix-E, iy-E, az+1+E);
+				GL11.glEnd();
+				
+				GL11.glLineWidth(1.0f);
 			}
 		}
 		
