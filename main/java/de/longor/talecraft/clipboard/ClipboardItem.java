@@ -199,9 +199,17 @@ public class ClipboardItem {
 		if(!world.isRemote) {
 			StringBuilder builder = new StringBuilder();
 			builder.append(EnumChatFormatting.GREEN);
-			builder.append("Copied ").append(regionVolume).append(" blocks to the clipboard. ");
-			builder.append("(").append(pallet_list.size()).append(" types)");
+			if(regionVolume == 1) {
+				builder.append("Copied ").append(regionVolume).append(" block to the clipboard. ");
+			} else {
+				builder.append("Copied ").append(regionVolume).append(" blocks to the clipboard. ");
+			}
 			
+			if(pallet_list.size() == 1) {
+				builder.append("(").append(pallet_list.size()).append(" type)");
+			} else {
+				builder.append("(").append(pallet_list.size()).append(" types)");
+			}
 			player.addChatMessage(new ChatComponentText(builder.toString()));
 			player.addChatMessage(new ChatComponentText("Key: " + name));
 		}
@@ -280,7 +288,11 @@ public class ClipboardItem {
 			}
 		}
 		
-		playerIn.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN+"Spawned " + spawnCount + " entities from clipboard."));
+		if(spawnCount == 1) {
+			playerIn.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN+"Spawned " + spawnCount + " entity from clipboard."));
+		} else {
+			playerIn.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN+"Spawned " + spawnCount + " entities from clipboard."));
+		}
 		
 	}
 	
