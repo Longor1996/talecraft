@@ -11,7 +11,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 // XXX: Finish Implementation for ExplosionCommand
-public class ExplosionCommand extends CommandBase {
+public class ExplosionCommand extends TCCommandBase {
 	
 	@Override
 	public String getName() {
@@ -45,10 +45,5 @@ public class ExplosionCommand extends CommandBase {
 			BlockPos triggerPos = new BlockPos(posX.func_179628_a(), posY.func_179628_a(), posZ.func_179628_a());
 		}
 	}
-
-    public int getRequiredPermissionLevel()
-    {
-        return 2;
-    }
 
 }

@@ -5,16 +5,24 @@ import java.util.Arrays;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class BlockTriggerInvoke implements IInvoke {
+	private static final int[] ZEROBOUNDS = new int[6];
+	public static final BlockTriggerInvoke ZEROINSTANCE = new BlockTriggerInvoke();
 	public static final String TYPE = "BlockTriggerInvoke";
+	
 	int[] bounds;
-	int data;
+	EnumTriggerState triggerState;
+	
+	public BlockTriggerInvoke() {
+		bounds = ZEROBOUNDS;
+		triggerState = EnumTriggerState.ON;
+	}
 	
 	public int[] getBounds() {
 		return bounds;
 	}
 	
-	public int getTriggerData() {
-		return data;
+	public EnumTriggerState getOnOff() {
+		return triggerState;
 	}
 	
 	@Override
@@ -32,12 +40,12 @@ public class BlockTriggerInvoke implements IInvoke {
 	@Override
 	public void writeToNBT(NBTTagCompound compound) {
 		compound.setIntArray("bounds", bounds);
-		compound.setInteger("data", data);
+		compound.setInteger("state", triggerState.getIntValue());
 	}
 	
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		data = compound.getInteger("data");
+		triggerState = EnumTriggerState.get(compound.hasKey("state") ? compound.getInteger("state") : 1);
 		bounds = compound.getIntArray("bounds");
 		
 		if(bounds == null)

@@ -42,6 +42,14 @@ public class VoxelBrush {
 		int ay = bounds[4];
 		int az = bounds[5];
 		
+		if(iy < 0) {
+			iy = 0;
+		}
+		
+		if(ay > 255) {
+			ay = 255;
+		}
+		
 		TaleCraft.logger.info("painting -> " + Arrays.toString(bounds) + " " + shapeData + " " + shape);
         
 		MutableBlockPos pos = new MutableBlockPos(0,0,0);

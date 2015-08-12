@@ -3,6 +3,7 @@ package de.longor.talecraft.commands;
 import java.util.Arrays;
 import java.util.List;
 
+import de.longor.talecraft.invoke.EnumTriggerState;
 import de.longor.talecraft.invoke.Invoke;
 import de.longor.talecraft.util.CommandArgumentParser;
 import net.minecraft.block.state.IBlockState;
@@ -12,7 +13,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class TriggerCommand extends CommandBase {
+public class TriggerCommand extends TCCommandBase {
 	
 	@Override
 	public String getName() {
@@ -36,7 +37,7 @@ public class TriggerCommand extends CommandBase {
 		
 		World world = sender.getEntityWorld();
 		IBlockState state = world.getBlockState(triggerPos);
-		Invoke.trigger(world, triggerPos, state, 0);
+		Invoke.trigger(world, triggerPos, state, EnumTriggerState.ON);
 	}
 	
     public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos)
@@ -52,11 +53,6 @@ public class TriggerCommand extends CommandBase {
     	}
     	
     	return null;
-    }
-
-    public int getRequiredPermissionLevel()
-    {
-        return 2;
     }
 
 }

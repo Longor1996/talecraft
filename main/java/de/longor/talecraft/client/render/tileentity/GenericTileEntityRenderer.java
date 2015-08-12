@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 
 import com.google.common.collect.Lists;
 
@@ -18,6 +19,7 @@ import de.longor.talecraft.proxy.ClientProxy;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -48,11 +50,15 @@ public class GenericTileEntityRenderer<T extends TileEntity> extends TileEntityS
 		T tile = (T) p_180535_1_;
         
         // render states
-        net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.disableLighting();
         GlStateManager.color(1, 1, 1, 1);
         GlStateManager.disableBlend();
         GlStateManager.enableCull();
+        GlStateManager.resetColor();
+        
+        GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+        GlStateManager.disableTexture2D();
+        GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
         
         // get tessellator
         Tessellator tessellator = Tessellator.getInstance();
@@ -76,15 +82,15 @@ public class GenericTileEntityRenderer<T extends TileEntity> extends TileEntityS
 	        worldrenderer.startDrawingQuads();
 	        worldrenderer.setBrightness(0xEE);
 	        
-	        worldrenderer.addVertexWithUV(I, A, A, 0, 0);
-	        worldrenderer.addVertexWithUV(A, A, A, 1, 0);
-	        worldrenderer.addVertexWithUV(A, A, I, 1, 1);
-	        worldrenderer.addVertexWithUV(I, A, I, 0, 1);
+	        worldrenderer.addVertexWithUV(I, A, A, 1, 0);
+	        worldrenderer.addVertexWithUV(A, A, A, 0, 0);
+	        worldrenderer.addVertexWithUV(A, A, I, 0, 1);
+	        worldrenderer.addVertexWithUV(I, A, I, 1, 1);
 	        // bottom
-	        worldrenderer.addVertexWithUV(I, I, I, 0, 0);
-	        worldrenderer.addVertexWithUV(A, I, I, 1, 0);
-	        worldrenderer.addVertexWithUV(A, I, A, 1, 1);
-	        worldrenderer.addVertexWithUV(I, I, A, 0, 1);
+	        worldrenderer.addVertexWithUV(I, I, I, 1, 0);
+	        worldrenderer.addVertexWithUV(A, I, I, 0, 0);
+	        worldrenderer.addVertexWithUV(A, I, A, 0, 1);
+	        worldrenderer.addVertexWithUV(I, I, A, 1, 1);
 	        // negative z | north
 	        worldrenderer.addVertexWithUV(I, A, I, 1, 0);
 	        worldrenderer.addVertexWithUV(A, A, I, 0, 0);
@@ -171,6 +177,7 @@ public class GenericTileEntityRenderer<T extends TileEntity> extends TileEntityS
         		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
                 this.bindTexture(ClientProxy.colorReslocWhite);
                 GlStateManager.disableCull();
+                GlStateManager.resetColor();
                 GL11.glShadeModel(GL11.GL_SMOOTH);
                 GL11.glLineWidth(2);
                 
@@ -198,8 +205,11 @@ public class GenericTileEntityRenderer<T extends TileEntity> extends TileEntityS
             				
         					BoxRenderer.renderBox(tessellator, worldrenderer, minX, minY, minZ, maxX, maxY, maxZ, r, g, b, a);
         					
+        					
+        					
         					GL11.glBegin(GL11.GL_LINES);
         					GL11.glColor4f(color[0], color[1], color[2], 1f);
+        					GL11.glTexCoord2f(0, 0);
         					GL11.glVertex3f(x0, y0, z0);
         					{
         						// reuse minX minY minZ
@@ -228,7 +238,6 @@ public class GenericTileEntityRenderer<T extends TileEntity> extends TileEntityS
         
         GlStateManager.enableLighting();
         GlStateManager.enableCull();
-        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
         
 	}
 	

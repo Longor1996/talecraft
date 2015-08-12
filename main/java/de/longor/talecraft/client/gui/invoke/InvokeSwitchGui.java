@@ -24,14 +24,14 @@ public class InvokeSwitchGui extends QADGuiScreen {
 	}
 	
 	@Override
-	public void buildGui(ArrayList<QADComponent> components) {
+	public void buildGui() {
 		int xOff = 2;
 		int yOff = 16;
 		
-		components.add(QADFACTORY.createLabel("Select Invoke Type...", 4, 4));
+		addComponent(QADFACTORY.createLabel("Select Invoke Type...", 4, 4));
 		
 		{
-			components.add(QADFACTORY.createButton(EnumChatFormatting.ITALIC+"Cancel", xOff, yOff, 120, new Runnable() {
+			addComponent(QADFACTORY.createButton(EnumChatFormatting.ITALIC+"Cancel", xOff, yOff, 120, new Runnable() {
 				@Override public void run() {
 					mc.displayGuiScreen(screen);
 				}
@@ -41,7 +41,7 @@ public class InvokeSwitchGui extends QADGuiScreen {
 		}
 		
 		if((invokeTypeFlags & InvokePanelBuilder.INVOKE_TYPE_EDIT_ALLOW_NULL) != 0) {
-			components.add(QADFACTORY.createButton("None", xOff, yOff, 120, new Runnable() {
+			addComponent(QADFACTORY.createButton("None", xOff, yOff, 120, new Runnable() {
 				@Override public void run() {
 					holder.switchInvokeType(NullInvoke.TYPE);
 					mc.displayGuiScreen(null);
@@ -51,7 +51,7 @@ public class InvokeSwitchGui extends QADGuiScreen {
 		}
 		
 		if((invokeTypeFlags & InvokePanelBuilder.INVOKE_TYPE_EDIT_ALLOW_BLOCKTRIGGER) != 0) {
-			components.add(QADFACTORY.createButton("Block Trigger", xOff, yOff, 120, new Runnable() {
+			addComponent(QADFACTORY.createButton("Block Trigger", xOff, yOff, 120, new Runnable() {
 				@Override public void run() {
 					holder.switchInvokeType(BlockTriggerInvoke.TYPE);
 					mc.displayGuiScreen(null);
@@ -61,7 +61,7 @@ public class InvokeSwitchGui extends QADGuiScreen {
 		}
 		
 		if((invokeTypeFlags & InvokePanelBuilder.INVOKE_TYPE_EDIT_ALLOW_COMMAND) != 0) {
-			components.add(QADFACTORY.createButton("Command", xOff, yOff, 120, new Runnable() {
+			addComponent(QADFACTORY.createButton("Command", xOff, yOff, 120, new Runnable() {
 				@Override public void run() {
 					holder.switchInvokeType(CommandInvoke.TYPE);
 					mc.displayGuiScreen(null);
@@ -71,7 +71,7 @@ public class InvokeSwitchGui extends QADGuiScreen {
 		}
 		
 		if((invokeTypeFlags & InvokePanelBuilder.INVOKE_TYPE_EDIT_ALLOW_SCRIPTFILE) != 0) {
-			components.add(QADFACTORY.createButton("Script File", xOff, yOff, 120, new Runnable() {
+			addComponent(QADFACTORY.createButton("Script File", xOff, yOff, 120, new Runnable() {
 				@Override public void run() {
 					holder.switchInvokeType(FileScriptInvoke.TYPE);
 					mc.displayGuiScreen(null);

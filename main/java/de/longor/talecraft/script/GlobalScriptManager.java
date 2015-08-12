@@ -189,4 +189,8 @@ public class GlobalScriptManager {
 		return Lists.newArrayList(props);
 	}
 	
+	public NativeObject getGlobalScope() {
+		return globalScope;
+	}
+	
 }

@@ -42,7 +42,14 @@ public class TCWorldsManager {
 	}
 	
 	public TCWorldManager fetchManager(World world) {
-		return worldMap.get(world);
+		TCWorldManager worldManager = worldMap.get(world);
+		
+		if(worldManager == null) {
+			registerWorld(world);
+			worldManager = worldMap.get(world);
+		}
+		
+		return worldManager;
 	}
 	
 }

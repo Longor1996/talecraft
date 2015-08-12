@@ -14,13 +14,6 @@ command -> /TaleCraft_Visualize < ? >
     /tc_vz es <selector>
     /tc_vz es <selector> <target>
     
-    ; This is easy!
-    ; How to parse colors?
-    
-    /tc_vz sh bx <color> <half-size>
-    /tc_vz sh bx <color> <half-horizontal> <half-vertical>
-    /tc_vz sh bx <color> <half-x> <half-y> <half-z>
-    
     /tc_vz sh cy <color> <radius>
     /tc_vz sh cy <color> d<radius>
     
@@ -28,6 +21,7 @@ command -> /TaleCraft_Visualize < ? >
     /tc_vz sh sp <color> d<diameter>
 ^^
 
+THE FOLLOWING COMMAND IS NOW BEING INTEGRATED INTO /tc_wand!
 command -> /tc_region < ? >
     /tc_region
       Operates on regions selected by the wand and the ones stored in the server clipboard.
@@ -84,25 +78,6 @@ block -> DataStore:
   * (trigger)
     - arg0=-1: Clear/Delete all stored data.
 ^^
-
-block -> Storage:
-  | This block stores a region of blocks, and can put them back into the world when invoked.
-  * Properties
-    - blockstorage:STORAGE: The blocks stored within this block.
-    - invoke:ONPLANT: When the stored region gets put back into the world.
-  * (trigger)
-    - arg0=0: Plant the stored blocks.
-    - arg0=1: Store the selected region.
-    - arg0=2: Clear stored data.
-^^
-
-block -> Trigger:
-  - ACTIVE: Is the trigger active?
-  - intersectionShape:SHAPE: The shape of the trigger.
-  - invoke:ONTRIGGER: The command to execute when the trigger is triggered.
-  - entitySelector:FILTER: A filter that filters what will trigger the trigger.
-^^
-
 
 item -> VoxelBrush: (partially implemented)
   - FUNCTIONS

@@ -15,7 +15,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
-public class VelocityCommand extends CommandBase {
+public class VelocityCommand extends TCCommandBase {
 	
 	@Override
 	public String getName() {
@@ -119,8 +119,7 @@ public class VelocityCommand extends CommandBase {
 		}
 	}
 	
-    public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos)
-    {
+    public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
     	if(args.length == 1) {
     		return getListOfStringsMatchingLastWord(args, new String[] {"set", "add", "multiply", "viewadd"});
     	}
@@ -134,11 +133,6 @@ public class VelocityCommand extends CommandBase {
     	}
     	
         return null;
-    }
-
-    public int getRequiredPermissionLevel()
-    {
-        return 1;
     }
     
 }

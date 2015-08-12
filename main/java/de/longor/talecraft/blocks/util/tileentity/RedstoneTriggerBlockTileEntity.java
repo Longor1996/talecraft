@@ -1,32 +1,30 @@
 package de.longor.talecraft.blocks.util.tileentity;
 
 import java.util.List;
-import java.util.Random;
 
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.TCTileEntity;
+import de.longor.talecraft.invoke.BlockTriggerInvoke;
+import de.longor.talecraft.invoke.EnumTriggerState;
 import de.longor.talecraft.invoke.FileScriptInvoke;
 import de.longor.talecraft.invoke.IInvoke;
 import de.longor.talecraft.invoke.IInvokeSource;
 import de.longor.talecraft.invoke.Invoke;
 import de.longor.talecraft.invoke.NullInvoke;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandResultStats.Type;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -34,7 +32,7 @@ public class RedstoneTriggerBlockTileEntity extends TCTileEntity {
 	IInvoke triggerInvoke;
 	
 	public RedstoneTriggerBlockTileEntity() {
-		triggerInvoke = NullInvoke.instance;
+		triggerInvoke = BlockTriggerInvoke.ZEROINSTANCE;
 	}
 	
 	@Override
@@ -50,19 +48,17 @@ public class RedstoneTriggerBlockTileEntity extends TCTileEntity {
     	compound.setTag("triggerInvoke", IInvoke.Serializer.write(triggerInvoke));
     }
     
-	public void invokeFromUpdateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
-		if(worldIn.isRemote)
+	public void invokeFromUpdateTick(EnumTriggerState triggerState) {
+		if(this.worldObj.isRemote)
 			return;
 		
-		Invoke.invoke(triggerInvoke, this);
+		Invoke.invoke(triggerInvoke, this, null, triggerState);
 	}
     
 	@Override
 	public void commandReceived(String command, NBTTagCompound data) {
-		super.commandReceived(command, data);
-		
 		if(command.equals("trigger")) {
-			Invoke.invoke(triggerInvoke, this);
+			Invoke.invoke(triggerInvoke, this, null, EnumTriggerState.ON);
 			return;
 		}
 		
@@ -73,6 +69,7 @@ public class RedstoneTriggerBlockTileEntity extends TCTileEntity {
 			return;
 		}
 		
+		super.commandReceived(command, data);
 	}
 	
 	@Override

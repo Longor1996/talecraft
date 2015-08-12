@@ -7,6 +7,7 @@ import de.longor.talecraft.blocks.TCITriggerableBlock;
 import de.longor.talecraft.blocks.util.tileentity.RelayBlockTileEntity;
 import de.longor.talecraft.client.gui.blocks.GuiRedstoneTriggerBlock;
 import de.longor.talecraft.client.gui.blocks.GuiRelayBlock;
+import de.longor.talecraft.invoke.EnumTriggerState;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
@@ -51,10 +52,10 @@ public class RelayBlock extends TCBlockContainer implements TCITriggerableBlock 
     }
 	
 	@Override
-	public void trigger(World world, BlockPos position, int data) {
+	public void trigger(World world, BlockPos position, EnumTriggerState triggerState) {
 		RelayBlockTileEntity tEntity = (RelayBlockTileEntity)world.getTileEntity(position);
 		if(tEntity != null) {
-			tEntity.triggerRelayInvoke();
+			tEntity.triggerRelayInvoke(triggerState);
 		}
 	}
 	

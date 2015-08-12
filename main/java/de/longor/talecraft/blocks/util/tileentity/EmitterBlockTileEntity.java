@@ -2,6 +2,8 @@ package de.longor.talecraft.blocks.util.tileentity;
 
 import java.util.List;
 
+import com.sun.accessibility.internal.resources.accessibility;
+
 import akka.actor.FSM.State;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
@@ -79,8 +81,6 @@ public class EmitterBlockTileEntity extends TCTileEntity implements IUpdatePlaye
     
 	@Override
 	public void commandReceived(String command, NBTTagCompound data) {
-		super.commandReceived(command, data);
-		
 		if(command.equals("trigger")) {
 			// toggle state
 			state ^= true;
@@ -100,7 +100,7 @@ public class EmitterBlockTileEntity extends TCTileEntity implements IUpdatePlaye
 			return;
 		}
 		
-		
+		super.commandReceived(command, data);
 	}
 	
 	@Override
@@ -219,6 +219,16 @@ public class EmitterBlockTileEntity extends TCTileEntity implements IUpdatePlaye
 	
 	public String getParticleType() {
 		return emitterData != null ? emitterData.getString("var_type") : EnumParticleTypes.CLOUD.name();
+	}
+
+	public void setActive(boolean onoff) {
+		this.state = onoff;
+		this.worldObj.markBlockForUpdate(pos);
+	}
+
+	public void toggleActive() {
+		this.state ^= true;
+		this.worldObj.markBlockForUpdate(pos);
 	}
 	
 }

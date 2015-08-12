@@ -22,6 +22,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -30,6 +31,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.UniqueIdentifier;
 import net.minecraftforge.fml.relauncher.Side;
+import static de.longor.talecraft.clipboard.ClipboardTagNames.*;
 
 public class ClipboardItem {
 	private NBTTagCompound data;
@@ -41,13 +43,19 @@ public class ClipboardItem {
 	public static void pasteRegion(ClipboardItem item, BlockPos pos, World world, ICommandSender player) {
 		NBTTagCompound tagCompound = item.data;
 		
-		NBTTagCompound blocks = NBTHelper.getOrNull(tagCompound, "blocks");
+		NBTTagCompound blocks = NBTHelper.getOrNull(tagCompound, $REGION);
 		if(blocks != null) {
-			int regionWidth = blocks.getInteger("regionWidth");
-			int regionHeight = blocks.getInteger("regionHeight");
-			int regionLength = blocks.getInteger("regionLength");
+			int regionWidth = blocks.getInteger($REGION_WIDTH);
+			int regionHeight = blocks.getInteger($REGION_HEIGHT);
+			int regionLength = blocks.getInteger($REGION_LENGTH);
 			
-			NBTTagList pallet = blocks.getTagList("pallet", new NBTTagString().getId());
+			if(regionWidth * regionHeight * regionLength <= 0) {
+				TaleCraft.logger.error("Clipboard region volume is <= zero!");
+				return;
+			}
+			
+			// Decode the Pallet
+			NBTTagList pallet = blocks.getTagList($REGION_PALLET, new NBTTagString().getId());
 			IBlockState[] palletRaw = new IBlockState[pallet.tagCount()];
 			
 			for(int i = 0; i < pallet.tagCount(); i++) {
@@ -62,7 +70,8 @@ public class ClipboardItem {
 				
 			}
 			
-			int[] blockData = blocks.getIntArray("tiles");
+			// Place all the blocks...
+			int[] blockData = blocks.getIntArray($REGION_DATA);
 			
 			for(int Yx = 0; Yx < regionHeight; Yx++) {
 				for(int Zx = 0; Zx < regionLength; Zx++) {
@@ -70,14 +79,12 @@ public class ClipboardItem {
 						int index = (Yx*regionWidth*regionLength) + (Zx*regionWidth) + (Xx);
 						int type = blockData[index];
 						IBlockState state = palletRaw[type];
-						
 						world.setBlockState(pos.add(Xx, Yx, Zx), state);
-						// BlockPos pos = new BlockPos(X, Y, Z);
 					}
 				}
 			}
 			
-			NBTTagList tes = blocks.getTagList("tileentities", blocks.getId());
+			NBTTagList tes = blocks.getTagList($REGION_DYNAMIC_DATA, blocks.getId());
 			
 			for(int i = 0; i < tes.tagCount(); i++) {
 				NBTTagCompound compound = (NBTTagCompound) tes.getCompoundTagAt(i).copy();
@@ -95,6 +102,8 @@ public class ClipboardItem {
 				}
 			}
 			
+		}else{
+			TaleCraft.logger.error("No block data in clipboard!");
 		}
 		
 	}
@@ -115,16 +124,16 @@ public class ClipboardItem {
 		
 		// Copy Blocks
 		
-		NBTTagCompound blocksCompound = NBTHelper.getOrCreate(tagCompound, "blocks");
+		NBTTagCompound blocksCompound = NBTHelper.getOrCreate(tagCompound, $REGION);
 		NBTTagList tileentitiesList = new NBTTagList();
 		
 		IBlockState[] blocksRaw = new IBlockState[regionVolume];
 		
-		blocksCompound.setInteger("regionWidth", regionWidth);
-		blocksCompound.setInteger("regionHeight", regionHeight);
-		blocksCompound.setInteger("regionLength", regionLength);
+		blocksCompound.setInteger($REGION_WIDTH, regionWidth);
+		blocksCompound.setInteger($REGION_HEIGHT, regionHeight);
+		blocksCompound.setInteger($REGION_LENGTH, regionLength);
 		
-		NBTTagCompound offsetCompound = NBTHelper.getOrCreate(tagCompound, "offset");
+		NBTTagCompound offsetCompound = NBTHelper.getOrCreate(tagCompound, $OFFSET);
 		offsetCompound.setFloat("x", -regionWidth/2);
 		offsetCompound.setFloat("y", -regionHeight/2);
 		offsetCompound.setFloat("z", -regionLength/2);
@@ -190,16 +199,16 @@ public class ClipboardItem {
 			palletTagList.appendTag(new NBTTagString(string));
 		}
 		
-		blocksCompound.setIntArray("tiles", blocks);
-		blocksCompound.setTag("tileentities", tileentitiesList);
-		blocksCompound.setTag("pallet", palletTagList);
+		blocksCompound.setTag($REGION_DYNAMIC_DATA, tileentitiesList);
+		blocksCompound.setTag($REGION_PALLET, palletTagList);
+		blocksCompound.setIntArray($REGION_DATA, blocks);
 		
 		// System.out.println("BLOCKS = " + blocksCompound);
 		
-		if(!world.isRemote) {
+		if(!world.isRemote && name != null) {
 			StringBuilder builder = new StringBuilder();
 			builder.append(EnumChatFormatting.GREEN);
-			builder.append("Copied ").append(regionVolume).append(" blocks to the clipboard. ");
+			builder.append("Copied ").append(regionVolume).append(regionVolume==1?" block":" blocks").append(" to the clipboard. ");
 			builder.append("(").append(pallet_list.size()).append(" types)");
 			
 			player.addChatMessage(new ChatComponentText(builder.toString()));
@@ -236,21 +245,20 @@ public class ClipboardItem {
         
         ClipboardItem item = new ClipboardItem();
         item.data = new NBTTagCompound();
-        item.data.setTag("entity", tagCompound);
+        item.data.setTag($ENTITY, tagCompound);
         
         System.out.println("Created copy of entity: " + item.data);
         
 		return item;
 	}
-
+	
 	public static void pasteEntity(ClipboardItem item, Vec3 plantPos, World worldIn, EntityPlayer playerIn) {
 		double posX = plantPos.xCoord;
 		double posY = plantPos.yCoord;
 		double posZ = plantPos.zCoord;
 		
-		
 		// Create the entity, merge the existing NBT into it, then spawn the entity.
-		NBTTagCompound entityNBT = item.getData().getCompoundTag("entity");
+		NBTTagCompound entityNBT = item.getData().getCompoundTag($ENTITY);
 		String typeStr = entityNBT.getString("id");
 		Entity entity = EntityList.createEntityFromNBT(entityNBT, worldIn);
 		entity.setLocationAndAngles(posX, posY, posZ, entity.rotationYaw, entity.rotationPitch);
@@ -280,8 +288,21 @@ public class ClipboardItem {
 			}
 		}
 		
-		playerIn.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN+"Spawned " + spawnCount + " entities from clipboard."));
+		if(spawnCount == 1) {
+			chat(playerIn, EnumChatFormatting.GREEN+"Spawned " + spawnCount + " entity from clipboard.");
+		} else {
+			chat(playerIn, EnumChatFormatting.GREEN+"Spawned " + spawnCount + " entities from clipboard.");
+		}
 		
+	}
+	
+	// TODO: Move these two methods into a helper class... ?
+	private static void chat(EntityPlayer player, String message) {
+		chat(player, new ChatComponentText(message));
+	}
+	
+	private static void chat(EntityPlayer player, IChatComponent message) {
+		player.addChatMessage(message);
 	}
 	
 	public static ClipboardItem fromNBT(NBTTagCompound compoundTag) {

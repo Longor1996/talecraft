@@ -8,6 +8,8 @@ import org.mozilla.javascript.Scriptable;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.TaleCraftBlocks;
 import de.longor.talecraft.blocks.TCTileEntity;
+import de.longor.talecraft.invoke.BlockTriggerInvoke;
+import de.longor.talecraft.invoke.EnumTriggerState;
 import de.longor.talecraft.invoke.IInvoke;
 import de.longor.talecraft.invoke.IInvokeSource;
 import de.longor.talecraft.invoke.Invoke;
@@ -52,9 +54,9 @@ public class ClockBlockTileEntity extends TCTileEntity implements IUpdatePlayerL
 	public int time;
 	
 	public ClockBlockTileEntity() {
-		clockInvoke = NullInvoke.instance;
-		clockStartInvoke = NullInvoke.instance;
-		clockStopInvoke = NullInvoke.instance;
+		clockInvoke = BlockTriggerInvoke.ZEROINSTANCE;
+		clockStartInvoke = BlockTriggerInvoke.ZEROINSTANCE;
+		clockStopInvoke = BlockTriggerInvoke.ZEROINSTANCE;
 		
 		set_repeat = 10;
 		set_speed = 1;
@@ -123,7 +125,7 @@ public class ClockBlockTileEntity extends TCTileEntity implements IUpdatePlayerL
 		speed = set_speed;
 		time = set_time;
 		active = true;
-		Invoke.invoke(clockStartInvoke, this);
+		Invoke.invoke(clockStartInvoke, this, null, EnumTriggerState.ON);
     }
 	
     public void clockPause() {
@@ -135,11 +137,11 @@ public class ClockBlockTileEntity extends TCTileEntity implements IUpdatePlayerL
 		speed = 0;
 		time = 0;
 		active = false;
-		Invoke.invoke(clockStopInvoke, this);
+		Invoke.invoke(clockStopInvoke, this, null, EnumTriggerState.OFF);
     }
     
     public void clockTick() {
-		Invoke.invoke(clockInvoke, this);
+		Invoke.invoke(clockInvoke, this, null, EnumTriggerState.IGNORE);
     }
     
     @Override
@@ -174,10 +176,8 @@ public class ClockBlockTileEntity extends TCTileEntity implements IUpdatePlayerL
     
 	@Override
 	public void commandReceived(String command, NBTTagCompound data) {
-		super.commandReceived(command, data);
-		
 		if("trigger".equals(command)) {
-			Invoke.invoke(clockInvoke, this);
+			Invoke.invoke(clockInvoke, this, null, EnumTriggerState.ON);
 		}
 		
 		if("start".equals(command)) {
@@ -193,6 +193,8 @@ public class ClockBlockTileEntity extends TCTileEntity implements IUpdatePlayerL
 		}
 		
         worldObj.markBlockForUpdate(this.pos);
+		
+		super.commandReceived(command, data);
 	}
     
 	public String getStateAsString() {

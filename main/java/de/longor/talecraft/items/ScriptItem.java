@@ -6,6 +6,7 @@ import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 
 import de.longor.talecraft.TaleCraft;
+import de.longor.talecraft.invoke.EnumTriggerState;
 import de.longor.talecraft.invoke.IInvoke;
 import de.longor.talecraft.invoke.IInvokeSource;
 import de.longor.talecraft.invoke.Invoke;
@@ -45,7 +46,7 @@ public class ScriptItem extends TCItem {
     	if(invoke instanceof NullInvoke) return true;
     	
     	// execute invoke
-    	Invoke.invoke(invoke, new TempItemStackInvokeSource(worldIn, new BlockPos(hitX, hitY, hitZ), playerIn));
+    	Invoke.invoke(invoke, new TempItemStackInvokeSource(worldIn, new BlockPos(hitX, hitY, hitZ), playerIn), null, EnumTriggerState.ON);
     	
 		return true;
     }
@@ -64,7 +65,7 @@ public class ScriptItem extends TCItem {
     	if(invoke instanceof NullInvoke) return itemStackIn;
     	
     	// execute invoke
-    	Invoke.invoke(invoke, new TempItemStackInvokeSource(worldIn, playerIn.getPosition(), playerIn));
+    	Invoke.invoke(invoke, new TempItemStackInvokeSource(worldIn, playerIn.getPosition(), playerIn), null, EnumTriggerState.ON);
     	
     	return itemStackIn;
     }
@@ -80,7 +81,7 @@ public class ScriptItem extends TCItem {
     	if(invoke instanceof NullInvoke) return false;
     	
     	// execute invoke
-    	Invoke.invoke(invoke, new TempItemStackInvokeSource(player.worldObj, player.getPosition(), player));
+    	Invoke.invoke(invoke, new TempItemStackInvokeSource(player.worldObj, player.getPosition(), player), null, EnumTriggerState.ON);
     	
     	return false;
     }

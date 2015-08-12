@@ -2,6 +2,7 @@ package de.longor.talecraft.items;
 
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.TaleCraftTabs;
+import de.longor.talecraft.entities.EntityPoint;
 import net.minecraft.block.Block;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
@@ -57,6 +58,11 @@ public class TeleporterItem extends TCItem {
 				playerIn.velocityChanged = true;
 			} else {
 				Entity riding = playerIn.ridingEntity;
+				
+				if(riding instanceof EntityPoint) {
+					return true;
+				}
+				
 				riding.setPositionAndUpdate(nX, nY+0.01f, nZ);
 				riding.velocityChanged = true;
 			}
@@ -126,6 +132,11 @@ public class TeleporterItem extends TCItem {
 					playerIn.velocityChanged = true;
 				} else {
 					Entity riding = playerIn.ridingEntity;
+					
+					if(riding instanceof EntityPoint) {
+						return itemStackIn;
+					}
+					
 					riding.setPositionAndUpdate(nX, nY+0.01f, nZ);
 					riding.velocityChanged = true;
 				}

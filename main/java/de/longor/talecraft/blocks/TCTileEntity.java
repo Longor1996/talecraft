@@ -37,8 +37,10 @@ public abstract class TCTileEntity extends TileEntity implements IInvokeSource, 
 		}
 	}
 	
-	public abstract void init();
-
+	public void init() {
+		
+	}
+	
     public void readFromNBT(NBTTagCompound compound) {
     	super.readFromNBT(compound);
     	readFromNBT_do(compound);
@@ -59,7 +61,10 @@ public abstract class TCTileEntity extends TileEntity implements IInvokeSource, 
 		if(command.equals("re_init")) {
 			isTileEntityInitialized = false;
 			setPos(pos);
+			return;
 		}
+		
+		TaleCraft.logger.info("Unknown block command '" + command + "' @ " + getPos());
 	}
 	
 	@Override

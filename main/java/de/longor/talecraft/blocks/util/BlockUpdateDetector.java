@@ -18,6 +18,7 @@ import de.longor.talecraft.blocks.util.tileentity.ClockBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.RelayBlockTileEntity;
 import de.longor.talecraft.client.gui.blocks.GuiClockBlock;
 import de.longor.talecraft.client.gui.blocks.GuiUpdateDetectorBlock;
+import de.longor.talecraft.invoke.EnumTriggerState;
 
 public class BlockUpdateDetector extends TCBlockContainer implements TCITriggerableBlock {
 	
@@ -45,7 +46,7 @@ public class BlockUpdateDetector extends TCBlockContainer implements TCITriggera
     public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
     	BlockUpdateDetectorTileEntity tEntity = (BlockUpdateDetectorTileEntity)worldIn.getTileEntity(pos);
 		if(tEntity != null) {
-			tEntity.triggerUpdateInvoke();
+			tEntity.triggerUpdateInvoke(EnumTriggerState.ON);
 		}
     }
 	
@@ -55,10 +56,10 @@ public class BlockUpdateDetector extends TCBlockContainer implements TCITriggera
 	}
 	
 	@Override
-	public void trigger(World world, BlockPos position, int data) {
+	public void trigger(World world, BlockPos position, EnumTriggerState triggerState){
     	BlockUpdateDetectorTileEntity tEntity = (BlockUpdateDetectorTileEntity)world.getTileEntity(position);
 		if(tEntity != null) {
-			tEntity.triggerUpdateInvoke();
+			tEntity.triggerUpdateInvoke(triggerState);
 		}
 	}
 	

@@ -27,6 +27,7 @@ public class TaleCraftClientCommands {
 		register(new InvokeTrackerCommand());
 		register(new InvokeVisualizationCommand());
 		register(new FULLDEBUGPRINTCommand());
+		register(new RightClickCommand());
 	}
 	
 	private static void register(CommandBase command) {

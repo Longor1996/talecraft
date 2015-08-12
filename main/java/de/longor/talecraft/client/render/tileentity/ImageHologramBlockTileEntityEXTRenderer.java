@@ -50,7 +50,22 @@ public class ImageHologramBlockTileEntityEXTRenderer implements
 		float w = tileentity.getHologramWidth() / 2f;
 		float h = tileentity.getHologramHeight() / 2f;
 		
+		float u = 1;
+		if(w < 0) {
+			u = (w = w*-1) * 2f;
+		}
+		
+		float v = 1;
+		if(h < 0) {
+			v = (h = h*-1) * 2f;
+		}
+		
 		float t = 0;
+		
+		float r = 1;
+		float g = 1;
+		float b = 1;
+		float a = 1;
 		
 		GL11.glPushMatrix();
 		
@@ -61,7 +76,30 @@ public class ImageHologramBlockTileEntityEXTRenderer implements
 		
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-		BoxRenderer.renderBox(tessellator, worldrenderer, -w, -h, -t, +w, +h, +t, 1, 1, 1, 1);
+		
+		if(Boolean.FALSE.booleanValue()) {
+			BoxRenderer.renderBox(tessellator, worldrenderer, -w, -h, -t, +w, +h, +t, r, g, b, a);
+		} else {
+			// setup
+	        GlStateManager.color(r, g, b, a);
+	        worldrenderer.startDrawingQuads();
+	        worldrenderer.setTranslation(0, 0, 0);
+	        worldrenderer.setColorRGBA_F(r, g, b, a);
+	        // negative z | north
+	        worldrenderer.setNormal(0, 0, -1);
+	        worldrenderer.addVertexWithUV(-w, +h, 0, u, 0);
+	        worldrenderer.addVertexWithUV(+w, +h, 0, 0, 0);
+	        worldrenderer.addVertexWithUV(+w, -h, 0, 0, v);
+	        worldrenderer.addVertexWithUV(-w, -h, 0, u, v);
+	        // positive z | south
+	        worldrenderer.setNormal(0, 0, 1);
+	        worldrenderer.addVertexWithUV(+w, +h, 0, u, 0);
+	        worldrenderer.addVertexWithUV(-w, +h, 0, 0, 0);
+	        worldrenderer.addVertexWithUV(-w, -h, 0, 0, v);
+	        worldrenderer.addVertexWithUV(+w, -h, 0, u, v);
+	        // draw
+	        tessellator.draw();
+		}
 		
 		GL11.glPopMatrix();
 		

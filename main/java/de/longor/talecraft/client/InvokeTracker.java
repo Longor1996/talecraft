@@ -1,5 +1,6 @@
 package de.longor.talecraft.client;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -59,7 +60,7 @@ public class InvokeTracker {
 		int he2 = he/2;
 		int incrX = 0;
 		
-		for(TrackedInvoke invoke : Lists.reverse(trackedInvokes)) {
+		for(TrackedInvoke invoke : Lists.reverse(new ArrayList<TrackedInvoke>(trackedInvokes))) {
 			mc.ingameGUI.drawRect(incrX, BAYI+1, incrX+wi, BAYM-he2, invoke.is);
 			mc.ingameGUI.drawRect(incrX, BAYI+1+he2, incrX+wi, BAYM-1, invoke.it);
 			incrX += wi + 1;

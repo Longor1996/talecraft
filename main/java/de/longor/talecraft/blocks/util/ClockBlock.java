@@ -7,6 +7,7 @@ import de.longor.talecraft.blocks.TCITriggerableBlock;
 import de.longor.talecraft.blocks.util.tileentity.ClockBlockTileEntity;
 import de.longor.talecraft.client.gui.TCGuiScreen;
 import de.longor.talecraft.client.gui.blocks.GuiClockBlock;
+import de.longor.talecraft.invoke.EnumTriggerState;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -53,13 +54,14 @@ public class ClockBlock extends TCBlockContainer implements TCITriggerableBlock 
     }
 	
 	@Override
-	public void trigger(World world, BlockPos position, int data) {
+	public void trigger(World world, BlockPos position, EnumTriggerState triggerState) {
 		ClockBlockTileEntity tEntity = (ClockBlockTileEntity)world.getTileEntity(position);
 		if(tEntity != null) {
-			if(tEntity.isClockRunning()) {
-				tEntity.clockStop();
-			}else{
-				tEntity.clockStart();
+			switch(triggerState) {
+			case ON: tEntity.clockStart(); break;
+			case OFF: tEntity.clockStop(); break;
+			case INVERT: tEntity.clockPause(); break;
+			case IGNORE: if(tEntity.isClockRunning()) tEntity.clockStop(); else tEntity.clockStart(); break;
 			}
 		}
 	}

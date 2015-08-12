@@ -8,6 +8,7 @@ import org.mozilla.javascript.Scriptable;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.TCTileEntity;
 import de.longor.talecraft.invoke.EmbeddedScriptInvoke;
+import de.longor.talecraft.invoke.EnumTriggerState;
 import de.longor.talecraft.invoke.FileScriptInvoke;
 import de.longor.talecraft.invoke.IInvoke;
 import de.longor.talecraft.invoke.IInvokeSource;
@@ -37,13 +38,11 @@ public class ScriptBlockTileEntity extends TCTileEntity {
 	}
 	
 	public void triggerInvokeScript() {
-		Invoke.invoke(scriptInvoke, this);
+		Invoke.invoke(scriptInvoke, this, null, EnumTriggerState.IGNORE);
 	}
 	
 	@Override
 	public void commandReceived(String command, NBTTagCompound data) {
-		super.commandReceived(command, data);
-		
 		if(command.equals("reload")) {
 			scriptInvoke.reloadScript();
 		}
@@ -57,6 +56,7 @@ public class ScriptBlockTileEntity extends TCTileEntity {
 			triggerInvokeScript();
 		}
 		
+		super.commandReceived(command, data);
 	}
 	
 	@Override

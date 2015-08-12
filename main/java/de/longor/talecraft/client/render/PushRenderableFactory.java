@@ -105,7 +105,8 @@ public class PushRenderableFactory {
 			
 			// Splitting the arguments into key/value pairs is easy...
 			// but how am I supposed to get geometric shapes from these?
-			// TODO: Take a look at the PlayerSelector class.
+			// Take a look at the PlayerSelector class.
+			// TODO: Implement entity selector parsing for visualization!
 			
 			TaleCraft.logger.info("Parsed: " + Arrays.toString(arguments));
 		}

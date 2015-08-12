@@ -1,11 +1,14 @@
 package de.longor.talecraft.util;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityList;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
@@ -198,6 +201,14 @@ public class GObjectTypeHelper {
 	
 	public static final Potion findPotion(String name) {
 		return Potion.getPotionFromResourceLocation(name);
+	}
+	
+	public static Set<ResourceLocation> getItemNameList() {
+		return Item.itemRegistry.getKeys();
+	}
+	
+	public static Collection<String> getEntityNameList() {
+		return Lists.newArrayList(EntityList.getEntityNameList());
 	}
 	
 }

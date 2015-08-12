@@ -16,6 +16,7 @@ import de.longor.talecraft.blocks.util.tileentity.EmitterBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.ImageHologramBlockTileEntity;
 import de.longor.talecraft.client.gui.blocks.GuiEmitterBlock;
 import de.longor.talecraft.client.gui.blocks.GuiImageHologramBlock;
+import de.longor.talecraft.invoke.EnumTriggerState;
 
 public class ImageHologramBlock extends TCBlockContainer implements TCITriggerableBlock {
 	
@@ -41,14 +42,20 @@ public class ImageHologramBlock extends TCBlockContainer implements TCITriggerab
     }
 	
 	@Override
-	public void trigger(World world, BlockPos position, int data) {
+	public void trigger(World world, BlockPos position, EnumTriggerState triggerState) {
 		if (world.isRemote)
     		return;
     	
         TileEntity tileentity = world.getTileEntity(position);
         
         if (tileentity instanceof ImageHologramBlockTileEntity) {
-        	((ImageHologramBlockTileEntity) tileentity).commandReceived("trigger", null);
+        	switch (triggerState) {
+			case ON: ((ImageHologramBlockTileEntity) tileentity).setActive(true); break;
+			case OFF: ((ImageHologramBlockTileEntity) tileentity).setActive(false); break;
+			case INVERT: ((ImageHologramBlockTileEntity) tileentity).toggleActive(); break;
+			case IGNORE: ((ImageHologramBlockTileEntity) tileentity).setActive(true); break;
+			default: break;
+			}
         }
 	}
 	

@@ -17,6 +17,7 @@ import de.longor.talecraft.blocks.util.tileentity.RedstoneTriggerBlockTileEntity
 import de.longor.talecraft.blocks.util.tileentity.StorageBlockTileEntity;
 import de.longor.talecraft.client.gui.blocks.GuiEmitterBlock;
 import de.longor.talecraft.client.gui.blocks.GuiStorageBlock;
+import de.longor.talecraft.invoke.EnumTriggerState;
 
 public class EmitterBlock extends TCBlockContainer implements TCITriggerableBlock {
 
@@ -42,17 +43,21 @@ public class EmitterBlock extends TCBlockContainer implements TCITriggerableBloc
     }
 
 	@Override
-	public void trigger(World world, BlockPos position, int data) {
+	public void trigger(World world, BlockPos position, EnumTriggerState triggerState) {
 		if (world.isRemote)
     		return;
     	
         TileEntity tileentity = world.getTileEntity(position);
         
         if (tileentity instanceof EmitterBlockTileEntity) {
-        	((EmitterBlockTileEntity) tileentity).commandReceived("trigger", null);
+        	switch (triggerState) {
+			case ON: ((EmitterBlockTileEntity) tileentity).setActive(true); break;
+			case OFF: ((EmitterBlockTileEntity) tileentity).setActive(false); break;
+			case INVERT: ((EmitterBlockTileEntity) tileentity).toggleActive(); break;
+			case IGNORE: ((EmitterBlockTileEntity) tileentity).setActive(true); break;
+			default: break;
+			}
         }
-		
-		
 	}
 
 }

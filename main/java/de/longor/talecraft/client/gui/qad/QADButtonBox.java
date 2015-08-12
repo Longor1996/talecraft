@@ -7,13 +7,13 @@ public class QADButtonBox extends QADScrollPanel {
 		int hb = 20;
 		
 		for(QADButton button : buttons) {
-			components.add(button);
+			addComponent(button);
 			
-			button.y = iy * hb;
-			iy++;
+			button.y = iy;
+			iy += button.height;
 		}
 		
-		this.viewH = buttons.length * hb;
+		this.setViewportHeight(iy);
 	}
 	
 }

@@ -20,7 +20,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class ButcherCommand extends CommandBase {
+public class ButcherCommand extends TCCommandBase {
 	
 	@Override
 	public String getName() {
@@ -71,11 +71,6 @@ public class ButcherCommand extends CommandBase {
 	
     public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
     	return getListOfStringsMatchingLastWord(args, new String[]{"items", "livings"});
-    }
-    
-    public int getRequiredPermissionLevel()
-    {
-        return 2;
     }
 	
 }

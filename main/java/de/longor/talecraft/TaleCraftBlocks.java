@@ -20,22 +20,41 @@ import de.longor.talecraft.blocks.deco.BlankBlock;
 import de.longor.talecraft.blocks.util.BarrierEXTBlock;
 import de.longor.talecraft.blocks.util.BlockUpdateDetector;
 import de.longor.talecraft.blocks.util.ClockBlock;
+import de.longor.talecraft.blocks.util.CollisionTriggerBlock;
+import de.longor.talecraft.blocks.util.DelayBlock;
 import de.longor.talecraft.blocks.util.EmitterBlock;
+import de.longor.talecraft.blocks.util.HiddenBlock;
 import de.longor.talecraft.blocks.util.ImageHologramBlock;
+import de.longor.talecraft.blocks.util.InverterBlock;
 import de.longor.talecraft.blocks.util.KillBlock;
+import de.longor.talecraft.blocks.util.LightBlock;
+import de.longor.talecraft.blocks.util.MemoryBlock;
+import de.longor.talecraft.blocks.util.MessageBlock;
 import de.longor.talecraft.blocks.util.RedstoneActivatorBlock;
 import de.longor.talecraft.blocks.util.RedstoneTriggerBlock;
 import de.longor.talecraft.blocks.util.RelayBlock;
 import de.longor.talecraft.blocks.util.ScriptBlock;
 import de.longor.talecraft.blocks.util.StorageBlock;
+import de.longor.talecraft.blocks.util.SummonBlock;
+import de.longor.talecraft.blocks.util.TriggerFilterBlock;
+import de.longor.talecraft.blocks.util.URLBlock;
 import de.longor.talecraft.blocks.util.tileentity.BlockUpdateDetectorTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.ClockBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.CollisionTriggerBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.DelayBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.EmitterBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.ImageHologramBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.InverterBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.LightBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.MemoryBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.MessageBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.RedstoneTriggerBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.RelayBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.ScriptBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.StorageBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.SummonBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.TriggerFilterBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.URLBlockTileEntity;
 
 public class TaleCraftBlocks
 {
@@ -54,12 +73,28 @@ public class TaleCraftBlocks
 	public static EmitterBlock emitterBlock;
 	public static ImageHologramBlock imageHologramBlock;
 //	public static BarrierEXTBlock barrierEXTBlock;
+	public static CollisionTriggerBlock collisionTriggerBlock;
+	public static LightBlock lightBlock;
+	public static HiddenBlock hiddenBlock;
+	public static MessageBlock messageBlock;
+	public static InverterBlock inverterBlock;
+	public static MemoryBlock memoryBlock;
+	public static TriggerFilterBlock triggerFilterBlock;
+	public static DelayBlock delayBlock;
+	public static URLBlock urlBlock;
+	public static SummonBlock summonBlock;
 	
 	// DECORATION
 	public static BlankBlock blankBlock;
 	public static BlankBlock deco_stone_a;
 	public static BlankBlock deco_stone_b;
 	public static BlankBlock deco_stone_c;
+	public static BlankBlock deco_stone_d;
+	public static BlankBlock deco_stone_e;
+	public static BlankBlock deco_stone_f;
+	public static BlankBlock deco_wood_a;
+	public static BlankBlock deco_glass_a;
+	public static BlankBlock deco_cage_a;
 	
 	static void init()
 	{
@@ -104,6 +139,35 @@ public class TaleCraftBlocks
 		imageHologramBlock = register("imagehologramblock", new ImageHologramBlock());
 		GameRegistry.registerTileEntity(ImageHologramBlockTileEntity.class, "tc_imagehologramblock");
 		
+		collisionTriggerBlock = register("collisiontriggerblock", new CollisionTriggerBlock());
+		GameRegistry.registerTileEntity(CollisionTriggerBlockTileEntity.class, "tc_collisiontriggerblock");
+		
+		lightBlock = register("lightblock", new LightBlock());
+		GameRegistry.registerTileEntity(LightBlockTileEntity.class, "tc_lightblock");
+		
+		hiddenBlock = register("hiddenblock", new HiddenBlock());
+		
+		messageBlock = register("messageblock", new MessageBlock());
+		GameRegistry.registerTileEntity(MessageBlockTileEntity.class, "tc_messageblock");
+		
+		inverterBlock = register("inverterblock", new InverterBlock());
+		GameRegistry.registerTileEntity(InverterBlockTileEntity.class, "tc_inverterblock");
+		
+		memoryBlock = register("memoryblock", new MemoryBlock());
+		GameRegistry.registerTileEntity(MemoryBlockTileEntity.class, "tc_memoryblock");
+		
+		triggerFilterBlock = register("triggerfilterblock", new TriggerFilterBlock());
+		GameRegistry.registerTileEntity(TriggerFilterBlockTileEntity.class, "tc_triggerfilterblock");
+		
+		delayBlock = register("delayblock", new DelayBlock());
+		GameRegistry.registerTileEntity(DelayBlockTileEntity.class, "tc_delayblock");
+		
+		urlBlock = register("urlblock", new URLBlock());
+		GameRegistry.registerTileEntity(URLBlockTileEntity.class, "tc_urlblock");
+		
+		summonBlock = register("summonblock", new SummonBlock());
+		GameRegistry.registerTileEntity(SummonBlockTileEntity.class, "tc_summonblock");
+		
 		// Can't implement because custom renderers are currently only possible with tileentities
 //		barrierEXTBlock = register("barrierextblock", new BarrierEXTBlock(), new BlockRegisterFunc() {
 //			@Override public void call(Block block, String name) {
@@ -113,27 +177,66 @@ public class TaleCraftBlocks
 	}
 
 	private static void init_decoration() {
-		blankBlock = register("blankblock", new BlankBlock(), new BlockRegisterFunc() {
+		blankBlock = register("blankblock", new BlankBlock(Block.soundTypeStone), new BlockRegisterFunc() {
 			@Override public void call(Block block, String name) {
 				GameRegistry.registerBlock(block, ItemBlockBlankBlock.class, name);
 			}
 		});
 		
-		deco_stone_a = register("deco_stone_a", new BlankBlock(), new BlockRegisterFunc() {
+		deco_stone_a = register("deco_stone_a", new BlankBlock(Block.soundTypeStone), new BlockRegisterFunc() {
 			@Override public void call(Block block, String name) {
 				GameRegistry.registerBlock(block, ItemBlockBlankBlock.class, name);
 			}
 		});
-		deco_stone_b = register("deco_stone_b", new BlankBlock(), new BlockRegisterFunc() {
+		deco_stone_b = register("deco_stone_b", new BlankBlock(Block.soundTypeStone), new BlockRegisterFunc() {
 			@Override public void call(Block block, String name) {
 				GameRegistry.registerBlock(block, ItemBlockBlankBlock.class, name);
 			}
 		});
-		deco_stone_c = register("deco_stone_c", new BlankBlock(), new BlockRegisterFunc() {
+		deco_stone_c = register("deco_stone_c", new BlankBlock(Block.soundTypeStone), new BlockRegisterFunc() {
 			@Override public void call(Block block, String name) {
 				GameRegistry.registerBlock(block, ItemBlockBlankBlock.class, name);
 			}
 		});
+		deco_stone_d = register("deco_stone_d", new BlankBlock(Block.soundTypeStone), new BlockRegisterFunc() {
+			@Override public void call(Block block, String name) {
+				GameRegistry.registerBlock(block, ItemBlockBlankBlock.class, name);
+			}
+		});
+		deco_stone_e = register("deco_stone_e", new BlankBlock(Block.soundTypeStone), new BlockRegisterFunc() {
+			@Override public void call(Block block, String name) {
+				GameRegistry.registerBlock(block, ItemBlockBlankBlock.class, name);
+			}
+		});
+		deco_stone_f = register("deco_stone_f", new BlankBlock(Block.soundTypeStone), new BlockRegisterFunc() {
+			@Override public void call(Block block, String name) {
+				GameRegistry.registerBlock(block, ItemBlockBlankBlock.class, name);
+			}
+		});
+		
+		deco_wood_a = register("deco_wood_a", new BlankBlock(Block.soundTypeWood), new BlockRegisterFunc() {
+			@Override public void call(Block block, String name) {
+				GameRegistry.registerBlock(block, ItemBlockBlankBlock.class, name);
+			}
+		});
+		
+		deco_glass_a = register("deco_glass_a", new BlankBlock(Block.soundTypeGlass), new BlockRegisterFunc() {
+			@Override public void call(Block block, String name) {
+				GameRegistry.registerBlock(block, ItemBlockBlankBlock.class, name);
+			}
+		});
+		deco_glass_a.blockLayer = 1; // CUTOUT layer
+		deco_glass_a.ignoreSimilarity = false;
+		deco_glass_a.setLightOpacity(0);
+		
+		deco_cage_a = register("deco_cage_a", new BlankBlock(Block.soundTypeMetal), new BlockRegisterFunc() {
+			@Override public void call(Block block, String name) {
+				GameRegistry.registerBlock(block, ItemBlockBlankBlock.class, name);
+			}
+		});
+		deco_cage_a.blockLayer = 1; // CUTOUT layer
+		deco_cage_a.ignoreSimilarity = true;
+		deco_cage_a.setLightOpacity(0);
 		
 	}
 

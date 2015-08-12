@@ -1,6 +1,7 @@
 package de.longor.talecraft.server;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,6 +55,53 @@ public class ServerHandler {
 			return;
 		}
 		
+		if(commandPacket.command.equals("data.entity.merge")) {
+			if(!PlayerHelper.isOp(player)) {
+				player.addChatMessage(new ChatComponentText("Error: 'data.entity.merge' is a operator only command."));
+				return;
+			}
+			
+			String uuidStr = commandPacket.data.getString("entityUUID");
+			UUID uuid = UUID.fromString(uuidStr);
+			
+			Entity theEntity = null;
+			
+			for(Object entityObject : world.loadedEntityList) {
+				Entity entity = (Entity) entityObject;
+				
+				if(entity.getUniqueID().equals(uuid)) {
+					theEntity = entity;
+					break;
+				}
+			}
+			
+			if(theEntity == null) {
+				player.addChatMessage(new ChatComponentText("Error: Entity not found. (Possibly dead)"));
+				return;
+			}
+			
+			// Clean data
+			NBTTagCompound entityData = new NBTTagCompound();
+			NBTTagCompound mergeData = commandPacket.data.getCompoundTag("entityData");
+			
+			mergeData.removeTag("UUIDMost");
+			mergeData.removeTag("UUIDLeast");
+			mergeData.removeTag("Dimension");
+			mergeData.removeTag("Pos");
+	        
+			theEntity.writeToNBT(entityData);
+			entityData.merge(mergeData);
+			theEntity.readFromNBT(entityData);
+			
+			if(entityData.hasKey("TC_Width")) theEntity.width = entityData.getFloat("TC_Width");
+			if(entityData.hasKey("TC_Height")) theEntity.height = entityData.getFloat("TC_Height");
+			if(entityData.hasKey("TC_StepHeight")) theEntity.stepHeight = entityData.getFloat("TC_StepHeight");
+			if(entityData.hasKey("TC_NoClip")) theEntity.noClip = entityData.getBoolean("TC_NoClip");
+			
+			// Done!
+			return;
+		}
+		
 		if(commandPacket.command.startsWith("blockdatamerge:")) {
 			if(!PlayerHelper.isOp(player)) {
 				player.addChatMessage(new ChatComponentText("Error: 'blockdatamerge' is a operator only command."));
@@ -69,6 +117,7 @@ public class ServerHandler {
 			if(entity != null) {
 				TaleCraft.logger.info("(datamerge) " + position + " -> " + commandPacket.data);
 				mergeTileEntityData(entity, commandPacket.data);
+				return;
 			} else {
 				player.addChatMessage(new ChatComponentText("Error: Failed to merge block data: TileEntity does not exist."));
 				return;
@@ -88,13 +137,14 @@ public class ServerHandler {
 			TileEntity entity = world.getTileEntity(position);
 			
 			if(entity != null) {
-				TaleCraft.logger.info("(block command) " + position + " -> " + commandPacket.data);
+				// TaleCraft.logger.info("(block command) " + position + " -> " + commandPacket.data);
 				
 				if(entity instanceof TCIBlockCommandReceiver) {
 					((TCIBlockCommandReceiver) entity).commandReceived(commandPacket.data.getString("command"), commandPacket.data);
+					return;
 				}
 			} else {
-				player.addChatMessage(new ChatComponentText("Error: Failed to merge block data: TileEntity does not exist."));
+				player.addChatMessage(new ChatComponentText("Error: Failed to run block-command: TileEntity does not exist."));
 				return;
 			}
 		}

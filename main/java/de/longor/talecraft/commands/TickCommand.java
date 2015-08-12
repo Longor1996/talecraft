@@ -14,7 +14,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class TickCommand extends CommandBase {
+public class TickCommand extends TCCommandBase {
 	
 	@Override
 	public String getName() {
@@ -56,11 +56,6 @@ public class TickCommand extends CommandBase {
     	}
     	
     	return null;
-    }
-
-    public int getRequiredPermissionLevel()
-    {
-        return 2;
     }
 	
 }

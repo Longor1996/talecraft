@@ -21,9 +21,9 @@ public class GuiImageHologramBlock extends QADGuiScreen {
 		this.tileEntity = tileEntity;
 	}
 	
-	public void buildGui(ArrayList<QADComponent> components) {
+	public void buildGui() {
 		final BlockPos position = tileEntity.getPos();
-		components.add(new QADLabel("Image Hologram Block @ " + position.getX() + " " + position.getY() + " " + position.getZ(), 2, 2));
+		addComponent(new QADLabel("Image Hologram Block @ " + position.getX() + " " + position.getY() + " " + position.getZ(), 2, 2));
 		
 		int[] colp = new int[4];
 		int[] colw = new int[4];
@@ -49,19 +49,19 @@ public class GuiImageHologramBlock extends QADGuiScreen {
 		rowp[5] = rowp[4] + rowh + 0;
 		rowp[6] = rowp[5] + rowh + 0;
 		
-		components.add(QADFACTORY.createLabel("Texture Path",colp[0], rowp[0]+sro));
+		addComponent(QADFACTORY.createLabel("Texture Path",colp[0], rowp[0]+sro));
 		
-		components.add(QADFACTORY.createLabel("X"       , colp[1] + colw[1]/2, rowp[2]+sro));
-		components.add(QADFACTORY.createLabel("Y"       , colp[2] + colw[2]/2, rowp[2]+sro));
-		components.add(QADFACTORY.createLabel("Z"       , colp[3] + colw[3]/2, rowp[2]+sro));
+		addComponent(QADFACTORY.createLabel("X"       , colp[1] + colw[1]/2, rowp[2]+sro));
+		addComponent(QADFACTORY.createLabel("Y"       , colp[2] + colw[2]/2, rowp[2]+sro));
+		addComponent(QADFACTORY.createLabel("Z"       , colp[3] + colw[3]/2, rowp[2]+sro));
 		
-		components.add(QADFACTORY.createLabel("Offset"  , colp[0], rowp[3]+sro));
-		components.add(QADFACTORY.createLabel("Rotation", colp[0], rowp[4]+sro));
-		components.add(QADFACTORY.createLabel("Size"    , colp[0], rowp[5]+sro));
+		addComponent(QADFACTORY.createLabel("Offset"  , colp[0], rowp[3]+sro));
+		addComponent(QADFACTORY.createLabel("Rotation", colp[0], rowp[4]+sro));
+		addComponent(QADFACTORY.createLabel("Size"    , colp[0], rowp[5]+sro));
 		
 		final QADTextField texturePathTextField = QADFACTORY.createTextField(tileEntity.getTextureLocation(), colp[1], rowp[0]+tfc, colw[1]+colw[2]+colw[3]+6);
 		texturePathTextField.setTooltip("The path of the texture to display.");
-		components.add(texturePathTextField);
+		addComponent(texturePathTextField);
 		
 		final QADTextField offsetXTextField = QADFACTORY.createTextField(tileEntity.getHologramOffsetX(), colp[1], rowp[3]+tfc, colw[1]);
 		final QADTextField offsetYTextField = QADFACTORY.createTextField(tileEntity.getHologramOffsetY(), colp[2], rowp[3]+tfc, colw[2]);
@@ -69,23 +69,23 @@ public class GuiImageHologramBlock extends QADGuiScreen {
 		offsetXTextField.setTooltip("Offset of the hologram from","this block on the X-Axis.");
 		offsetYTextField.setTooltip("Offset of the hologram from","this block on the Y-Axis.");
 		offsetZTextField.setTooltip("Offset of the hologram from","this block on the Z-Axis.");
-		components.add(offsetXTextField);
-		components.add(offsetYTextField);
-		components.add(offsetZTextField);
+		addComponent(offsetXTextField);
+		addComponent(offsetYTextField);
+		addComponent(offsetZTextField);
 		
 		final QADTextField rotationPitchTextField = QADFACTORY.createTextField(tileEntity.getHologramPitch(), colp[1], rowp[4]+tfc, colw[1]);
 		final QADTextField rotationYawTextField = QADFACTORY.createTextField(tileEntity.getHologramYaw(), colp[2], rowp[4]+tfc, colw[2]);
 		rotationPitchTextField.setTooltip("Rotation forward/backward. (Pitch)");
 		rotationYawTextField.setTooltip  ("Rotation left/right. (Yaw)");
-		components.add(rotationPitchTextField);
-		components.add(rotationYawTextField);
+		addComponent(rotationPitchTextField);
+		addComponent(rotationYawTextField);
 		
 		final QADTextField textureWidthTextField = QADFACTORY.createTextField(tileEntity.getHologramWidth(), colp[1], rowp[5]+tfc, colw[1]);
 		final QADTextField textureHeightTextField = QADFACTORY.createTextField(tileEntity.getHologramHeight(), colp[2], rowp[5]+tfc, colw[2]);
 		textureWidthTextField .setTooltip("Width of the hologram.");
 		textureHeightTextField.setTooltip("Height of the hologram.");
-		components.add(textureWidthTextField);
-		components.add(textureHeightTextField);
+		addComponent(textureWidthTextField);
+		addComponent(textureHeightTextField);
 		
 		QADButton applyButton = QADFACTORY.createButton("Apply", colp[1], rowp[6], colw[1], null);
 		applyButton.setEnabled(true);
@@ -102,8 +102,8 @@ public class GuiImageHologramBlock extends QADGuiScreen {
 				commandComp.setFloat("var_pitch", parseFloat(rotationPitchTextField.getText(), tileEntity.getHologramPitch(), -360, +360));
 				commandComp.setFloat("var_yaw", parseFloat(rotationYawTextField.getText(), tileEntity.getHologramYaw(), -360, +360));
 				
-				commandComp.setFloat("var_width", parseFloat(textureWidthTextField.getText(), tileEntity.getHologramWidth(), 0, 1000));
-				commandComp.setFloat("var_height", parseFloat(textureHeightTextField.getText(), tileEntity.getHologramHeight(), 0, 1000));
+				commandComp.setFloat("var_width", parseFloat(textureWidthTextField.getText(), tileEntity.getHologramWidth(), -1000, 1000));
+				commandComp.setFloat("var_height", parseFloat(textureHeightTextField.getText(), tileEntity.getHologramHeight(), -1000, 1000));
 				
 				// Final
 				commandComp.setString("command", "set_vars");
@@ -113,7 +113,7 @@ public class GuiImageHologramBlock extends QADGuiScreen {
 				GuiImageHologramBlock.this.mc.displayGuiScreen(null);
 			}
 		});
-		components.add(applyButton);
+		addComponent(applyButton);
 		
 	}
 	

@@ -20,7 +20,7 @@ public class ServerMirror {
 	}
 	
 	public void create(MinecraftServer server) {
-		TaleCraft.logger.info("!!! Creating Server Mirror: " + server);
+		TaleCraft.logger.info("Creating Server Mirror: " + server);
 		
 		this.server = server;
 		this.players = new PlayerList();
@@ -29,7 +29,7 @@ public class ServerMirror {
 	}
 	
 	public void destroy() {
-		TaleCraft.logger.info("!!! Destroying Server Mirror: " + server);
+		TaleCraft.logger.info("Destroying Server Mirror: " + server);
 		this.players.destroy();
 	}
 	

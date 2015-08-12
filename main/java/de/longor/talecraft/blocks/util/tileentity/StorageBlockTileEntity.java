@@ -46,8 +46,6 @@ public class StorageBlockTileEntity extends TCTileEntity {
     
 	@Override
 	public void commandReceived(String command, NBTTagCompound data) {
-		super.commandReceived(command, data);
-		
 		if(command.equals("set")) {
 			int[] bounds = data.getIntArray("bounds");
 			
@@ -88,6 +86,8 @@ public class StorageBlockTileEntity extends TCTileEntity {
 			}
 			return;
 		}
+		
+		super.commandReceived(command, data);
 	}
 	
 	@Override

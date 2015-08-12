@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.invoke.CommandSenderInvokeSource;
+import de.longor.talecraft.invoke.EnumTriggerState;
 import de.longor.talecraft.invoke.FileScriptInvoke;
 import de.longor.talecraft.invoke.Invoke;
 import de.longor.talecraft.network.StringNBTCommand;
@@ -18,7 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class ScriptCommand extends CommandBase {
+public class ScriptCommand extends TCCommandBase {
 	
 	@Override
 	public String getName() {
@@ -56,7 +57,7 @@ public class ScriptCommand extends CommandBase {
 				String script = args[1];
 				
 				if(script != null && !script.isEmpty()) {
-					Invoke.invoke(new FileScriptInvoke(script), new CommandSenderInvokeSource(sender));
+					Invoke.invoke(new FileScriptInvoke(script), new CommandSenderInvokeSource(sender), null, EnumTriggerState.ON);
 				}
 			} else {
 				throw new WrongUsageException("Wrong parameter count: /tc_script run <scriptname>");
@@ -89,10 +90,6 @@ public class ScriptCommand extends CommandBase {
     	}
     	
     	return null;
-    }
-    
-    public int getRequiredPermissionLevel() {
-        return 2;
     }
 
 }

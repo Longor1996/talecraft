@@ -21,22 +21,20 @@ public class TCItem extends Item {
         this.setCreativeTab(TaleCraftTabs.tab_TaleCraftTab);
 	}
 	
-    public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
-    {
-    	if(worldIn.isRemote)
+    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float X, float Y, float Z) {
+    	if(world.isRemote)
     		return true;
     	
-    	worldIn.markBlockForUpdate(pos);
+    	world.markBlockForUpdate(pos);
     	
     	return true;
     }
     
-    public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn)
-    {
-    	if(worldIn.isRemote)
-    		return itemStackIn;
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+    	if(world.isRemote)
+    		return stack;
     	
-        return itemStackIn;
+        return stack;
     }
     
     public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityPlayer playerIn)

@@ -48,7 +48,7 @@ public class PlayerMirror {
 		tagCompound.setFloat("itr", colorT[0]);
 		tagCompound.setFloat("itg", colorT[1]);
 		tagCompound.setFloat("itb", colorT[2]);
-		TaleCraft.network.sendTo(new StringNBTCommand("track invoke", tagCompound), player);
+		TaleCraft.network.sendTo(new StringNBTCommand("client.debug.track.invoke", tagCompound), player);
 	}
 	
 }

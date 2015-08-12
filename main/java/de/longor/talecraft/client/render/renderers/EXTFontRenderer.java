@@ -42,7 +42,7 @@ public class EXTFontRenderer {
 	 * @param align Horizontal Alignment of the string in the box. 0=left, 1=center, 2=right.
 	 * @param valign  Vertical Alignment of the string in the box. 0=top, 1=center, 2=bottom.
 	 **/
-	public void drawStringInBox(String str, int x, int y, int width, int height, int color, boolean shadow, int align, int valign) {
+	public int drawStringInBox(String str, int x, int y, int width, int height, int color, boolean shadow, int align, int valign) {
 		int str_w = fr.getStringWidth(str);
 		int str_h = fr.FONT_HEIGHT;
 		
@@ -61,43 +61,43 @@ public class EXTFontRenderer {
 		default: case 0: finalY = y; break;
 		}
 		
-		fr.drawString(str, finalX, finalY, color, shadow);
+		return fr.drawString(str, finalX, finalY, color, shadow);
 	}
 	
 	// STR X Y COLOR SHADOW
 	
-	public void drawString(String str, int x, int y, int color, boolean shadow) {
-		fr.drawString(str, x, y, color, shadow);
+	public int drawString(String str, int x, int y, int color, boolean shadow) {
+		return fr.drawString(str, x, y, color, shadow);
 	}
 	
-	public void drawCenteredString(String str, int x, int y, int color, boolean shadow) {
+	public int drawCenteredString(String str, int x, int y, int color, boolean shadow) {
 		int width = fr.getStringWidth(str);
 		x -= width / 2;
-		fr.drawString(str, x, y, color, shadow);
+		return fr.drawString(str, x, y, color, shadow);
 	}
 	
 	// STR X Y COLOR
 	
-	public void drawString(String str, int x, int y, int color) {
-		fr.drawString(str, x, y, color);
+	public int drawString(String str, int x, int y, int color) {
+		return fr.drawString(str, x, y, color);
 	}
 	
-	public void drawCenteredString(String str, int x, int y, int color) {
+	public int drawCenteredString(String str, int x, int y, int color) {
 		int width = fr.getStringWidth(str);
 		x -= width / 2;
-		fr.drawString(str, x, y, color);
+		return fr.drawString(str, x, y, color);
 	}
 	
 	// STR X Y
 	
-	public void drawString(String str, int x, int y) {
-		fr.drawString(str, x, y, 0xFFFFFFFF);
+	public int drawString(String str, int x, int y) {
+		return fr.drawString(str, x, y, 0xFFFFFFFF);
 	}
 	
-	public void drawCenteredString(String str, int x, int y) {
+	public int drawCenteredString(String str, int x, int y) {
 		int width = fr.getStringWidth(str);
 		x -= width / 2;
-		fr.drawString(str, x, y, 0xFFFFFFFF);
+		return fr.drawString(str, x, y, 0xFFFFFFFF);
 	}
 	
 	public int stringWidth(String str) {

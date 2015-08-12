@@ -1,11 +1,15 @@
 package de.longor.talecraft.entities;
 
 import de.longor.talecraft.TaleCraft;
+import de.longor.talecraft.items.TeleporterItem;
+import de.longor.talecraft.items.WandItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemNameTag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
@@ -35,6 +39,13 @@ public class EntityPoint extends Entity {
         this.prevPosX = this.posX;
         this.prevPosY = this.posY;
         this.prevPosZ = this.posZ;
+        
+        if(this.riddenByEntity != null) {
+        	this.riddenByEntity.rotationPitch = this.rotationPitch;
+        	this.riddenByEntity.rotationYaw = this.rotationYaw;
+        	this.riddenByEntity.prevRotationPitch = this.rotationPitch;
+        	this.riddenByEntity.prevRotationYaw = this.rotationYaw;
+        }
     }
 
     public boolean canBeCollidedWith() {
@@ -71,6 +82,21 @@ public class EntityPoint extends Entity {
     		return false;
     	
     	if(source.isCreativePlayer()) {
+    		ItemStack heldItem = ((EntityPlayerMP)source.getEntity()).getHeldItem();
+    		
+    		if(heldItem != null) {
+    			if(heldItem.getItem() instanceof TeleporterItem) {
+        			return false;
+    			}
+    			if(heldItem.getItem() instanceof ItemNameTag) {
+    	    		this.setCustomNameTag(heldItem.getDisplayName());
+        			return false;
+    			}
+    			if(heldItem.getItem() instanceof WandItem) {
+        			return false;
+    			}
+    		}
+    		
     		this.setDead();
         	return true;
     	}
@@ -86,9 +112,27 @@ public class EntityPoint extends Entity {
     	
     	return null;
     }
-
+    
     public float getEyeHeight() {
         return height*0.5f;
+    }
+    
+    public void updateRiderPosition()
+    {
+        if (this.riddenByEntity != null)
+        {
+            this.riddenByEntity.setPositionAndRotation(this.posX, this.posY+(this.height/2)-riddenByEntity.getEyeHeight(), this.posZ, this.rotationYaw, this.rotationPitch);
+        }
+    }
+    
+    public double getYOffset()
+    {
+        return 0.0D;
+    }
+    
+    public double getMountedYOffset()
+    {
+        return 0.0D;
     }
 	
 	@Override

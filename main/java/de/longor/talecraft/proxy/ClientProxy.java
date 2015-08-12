@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Iterator;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiConfirmOpenLink;
+import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemModelMesher;
@@ -48,6 +51,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
+import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
@@ -57,17 +61,28 @@ import de.longor.talecraft.TaleCraftBlocks;
 import de.longor.talecraft.TaleCraftItems;
 import de.longor.talecraft.blocks.util.tileentity.BlockUpdateDetectorTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.ClockBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.CollisionTriggerBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.DelayBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.EmitterBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.ImageHologramBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.InverterBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.LightBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.MemoryBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.MessageBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.RedstoneTriggerBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.RelayBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.ScriptBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.StorageBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.SummonBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.TriggerFilterBlockTileEntity;
+import de.longor.talecraft.blocks.util.tileentity.URLBlockTileEntity;
 import de.longor.talecraft.client.ClientSettings;
 import de.longor.talecraft.client.InfoBar;
 import de.longor.talecraft.client.InvokeTracker;
 import de.longor.talecraft.client.commands.TaleCraftClientCommands;
-import de.longor.talecraft.client.gui.GuiMapControl;
+import de.longor.talecraft.client.gui.misc.GuiEntityEditor;
+import de.longor.talecraft.client.gui.misc.GuiEntityEditor.RemoteEntityDataLink;
+import de.longor.talecraft.client.gui.misc.GuiMapControl;
 import de.longor.talecraft.client.network.PlayerDataMergeMessageHandler;
 import de.longor.talecraft.client.network.StringNBTCommandMessageHandler;
 import de.longor.talecraft.client.render.IRenderable;
@@ -82,6 +97,7 @@ import de.longor.talecraft.client.render.renderers.ItemMetaWorldRenderer;
 import de.longor.talecraft.client.render.tileentity.GenericTileEntityRenderer;
 import de.longor.talecraft.client.render.tileentity.ImageHologramBlockTileEntityEXTRenderer;
 import de.longor.talecraft.client.render.tileentity.StorageBlockTileEntityEXTRenderer;
+import de.longor.talecraft.client.render.tileentity.SummonBlockTileEntityEXTRenderer;
 import de.longor.talecraft.clipboard.ClipboardItem;
 import de.longor.talecraft.entities.EntityPoint;
 import de.longor.talecraft.items.CopyItem;
@@ -200,6 +216,34 @@ public class ClientProxy extends CommonProxy {
 		new GenericTileEntityRenderer<ImageHologramBlockTileEntity>("talecraft:textures/blocks/util/texture.png",
 		new ImageHologramBlockTileEntityEXTRenderer()));
 		
+		ClientRegistry.bindTileEntitySpecialRenderer(CollisionTriggerBlockTileEntity.class,
+		new GenericTileEntityRenderer<CollisionTriggerBlockTileEntity>("talecraft:textures/blocks/util/trigger.png"));
+		
+		ClientRegistry.bindTileEntitySpecialRenderer(LightBlockTileEntity.class,
+		new GenericTileEntityRenderer<LightBlockTileEntity>("talecraft:textures/blocks/util/light.png"));
+		
+		ClientRegistry.bindTileEntitySpecialRenderer(MessageBlockTileEntity.class,
+		new GenericTileEntityRenderer<MessageBlockTileEntity>("talecraft:textures/blocks/util/message.png"));
+		
+		ClientRegistry.bindTileEntitySpecialRenderer(InverterBlockTileEntity.class,
+		new GenericTileEntityRenderer<InverterBlockTileEntity>("talecraft:textures/blocks/util/inverter.png"));
+		
+		ClientRegistry.bindTileEntitySpecialRenderer(MemoryBlockTileEntity.class,
+		new GenericTileEntityRenderer<MemoryBlockTileEntity>("talecraft:textures/blocks/util/memory.png"));
+		
+		ClientRegistry.bindTileEntitySpecialRenderer(TriggerFilterBlockTileEntity.class,
+		new GenericTileEntityRenderer<TriggerFilterBlockTileEntity>("talecraft:textures/blocks/util/filter.png"));
+		
+		ClientRegistry.bindTileEntitySpecialRenderer(DelayBlockTileEntity.class,
+		new GenericTileEntityRenderer<DelayBlockTileEntity>("talecraft:textures/blocks/util/delay.png"));
+		
+		ClientRegistry.bindTileEntitySpecialRenderer(URLBlockTileEntity.class,
+		new GenericTileEntityRenderer<URLBlockTileEntity>("talecraft:textures/blocks/util/url.png"));
+		
+		ClientRegistry.bindTileEntitySpecialRenderer(SummonBlockTileEntity.class,
+		new GenericTileEntityRenderer<SummonBlockTileEntity>("talecraft:textures/blocks/util/spawner.png",
+		new SummonBlockTileEntityEXTRenderer()));
+		
 		//
 	}
 	
@@ -215,6 +259,8 @@ public class ClientProxy extends CommonProxy {
 		mesher.register(TaleCraftItems.copy, 0, new ModelResourceLocation("talecraft:copy", "inventory"));
 		mesher.register(TaleCraftItems.paste, 0, new ModelResourceLocation("talecraft:paste", "inventory"));
 		mesher.register(TaleCraftItems.cut, 0, new ModelResourceLocation("talecraft:cut", "inventory"));
+		mesher.register(TaleCraftItems.metaswapper, 0, new ModelResourceLocation("talecraft:metaswapper", "inventory"));
+		mesher.register(TaleCraftItems.spawnpoint, 0, new ModelResourceLocation("talecraft:spawnpoint", "inventory"));
 	}
 	
 	private void init_render_block(ItemModelMesher mesher) {
@@ -234,6 +280,27 @@ public class ClientProxy extends CommonProxy {
 			// stone block C
 			for(int i = 0; i < 16; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.deco_stone_c), i, new ModelResourceLocation("talecraft:deco_stone/block"+(i+32), "inventory"));
 			ModelBakery.addVariantName(Item.getItemFromBlock(TaleCraftBlocks.deco_stone_c), mkstrlfint("talecraft:deco_stone/block", 32));
+			// stone block D
+			for(int i = 0; i < 16; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.deco_stone_d), i, new ModelResourceLocation("talecraft:deco_stone/block"+(i+48), "inventory"));
+			ModelBakery.addVariantName(Item.getItemFromBlock(TaleCraftBlocks.deco_stone_d), mkstrlfint("talecraft:deco_stone/block", 48));
+			// stone block E
+			for(int i = 0; i < 16; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.deco_stone_e), i, new ModelResourceLocation("talecraft:deco_stone/block"+(i+64), "inventory"));
+			ModelBakery.addVariantName(Item.getItemFromBlock(TaleCraftBlocks.deco_stone_e), mkstrlfint("talecraft:deco_stone/block", 64));
+			// stone block E
+			for(int i = 0; i < 16; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.deco_stone_f), i, new ModelResourceLocation("talecraft:deco_stone/block"+(i+80), "inventory"));
+			ModelBakery.addVariantName(Item.getItemFromBlock(TaleCraftBlocks.deco_stone_f), mkstrlfint("talecraft:deco_stone/block", 80));
+			
+			// wood block A
+			for(int i = 0; i < 16; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.deco_wood_a), i, new ModelResourceLocation("talecraft:deco_wood/block"+i, "inventory"));
+			ModelBakery.addVariantName(Item.getItemFromBlock(TaleCraftBlocks.deco_wood_a), mkstrlfint("talecraft:deco_wood/block", 0));
+			
+			// glass block A
+			for(int i = 0; i < 16; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.deco_glass_a), i, new ModelResourceLocation("talecraft:deco_glass/block"+i, "inventory"));
+			ModelBakery.addVariantName(Item.getItemFromBlock(TaleCraftBlocks.deco_glass_a), mkstrlfint("talecraft:deco_glass/block", 0));
+			
+			// cage block A
+			for(int i = 0; i < 16; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.deco_cage_a), i, new ModelResourceLocation("talecraft:deco_cage/block"+i, "inventory"));
+			ModelBakery.addVariantName(Item.getItemFromBlock(TaleCraftBlocks.deco_cage_a), mkstrlfint("talecraft:deco_cage/block", 0));
 		
 		// barrier-ext block
 //		for(int i = 0; i < 7; i++) mesher.register(Item.getItemFromBlock(TaleCraftBlocks.barrierEXTBlock), i, new ModelResourceLocation("talecraft:barrierextblock", "inventory"));
@@ -248,6 +315,16 @@ public class ClientProxy extends CommonProxy {
 		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.storageBlock), 0, new ModelResourceLocation("talecraft:storageblock", "inventory"));
 		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.emitterBlock), 0, new ModelResourceLocation("talecraft:emitterblock", "inventory"));
 		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.imageHologramBlock), 0, new ModelResourceLocation("talecraft:imagehologramblock", "inventory"));
+		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.collisionTriggerBlock), 0, new ModelResourceLocation("talecraft:collisiontriggerblock", "inventory"));
+		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.lightBlock), 0, new ModelResourceLocation("talecraft:lightblock", "inventory"));
+		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.hiddenBlock), 0, new ModelResourceLocation("talecraft:hiddenblock", "inventory"));
+		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.messageBlock), 0, new ModelResourceLocation("talecraft:messageblock", "inventory"));
+		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.inverterBlock), 0, new ModelResourceLocation("talecraft:inverterblock", "inventory"));
+		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.memoryBlock), 0, new ModelResourceLocation("talecraft:memoryblock", "inventory"));
+		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.triggerFilterBlock), 0, new ModelResourceLocation("talecraft:triggerfilterblock", "inventory"));
+		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.delayBlock), 0, new ModelResourceLocation("talecraft:delayblock", "inventory"));
+		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.urlBlock), 0, new ModelResourceLocation("talecraft:urlblock", "inventory"));
+		mesher.register(Item.getItemFromBlock(TaleCraftBlocks.summonBlock), 0, new ModelResourceLocation("talecraft:summonblock", "inventory"));
 		
 	}
 	
@@ -265,7 +342,7 @@ public class ClientProxy extends CommonProxy {
 	}
 	
 	public void handleClientCommand(String command, NBTTagCompound data) {
-		if(command.equals("acknowledge join")) {
+		if(command.equals("client.network.join")) {
 			TaleCraft.logger.info("Sending TaleCraft data to server...");
 			
 			String tccommand = "join acknowledged";
@@ -276,8 +353,64 @@ public class ClientProxy extends CommonProxy {
 			return;
 		}
 		
-		if(command.equals("track invoke")) {
+		if(command.equals("client.debug.track.invoke")) {
 			invokeTracker.trackInvoke(data);
+			return;
+		}
+		
+		if(command.equals("client.gui.editor.entity")) {
+			final UUID uuid = UUID.fromString(data.getString("entityUUID"));
+			final NBTTagCompound entity = data.getCompoundTag("entityData");
+			
+			// Open the GUI in the next tick.
+			sheduleClientTickTask(new Runnable() {
+				@Override
+				public void run() {
+					RemoteEntityDataLink dataLink = new RemoteEntityDataLink() {
+						UUID entityUUID = uuid;
+						@Override public void updateData(NBTTagCompound entityData) {
+							NBTTagCompound compound = new NBTTagCompound();
+							compound.setString("entityUUID", entityUUID.toString());
+							compound.setTag("entityData", entityData);
+							
+							String cmd = "data.entity.merge";
+							StringNBTCommand command = new StringNBTCommand(cmd, compound);
+							TaleCraft.network.sendToServer(command);
+						}
+					};
+					mc.displayGuiScreen(new GuiEntityEditor(entity, dataLink));
+				}
+			});
+			return;
+		}
+		
+		if(command.equals("client.gui.openurl")) {
+			final String url = data.getString("url");
+			
+			// This is possibly a stupid idea...
+			if(data.getBoolean("force")) {
+                Sys.openURL(url);
+				return;
+			}
+			
+			// Open the GUI in the next tick.
+			sheduleClientTickTask(new Runnable() {
+				@Override
+				public void run() {
+					GuiConfirmOpenLink gui = new GuiConfirmOpenLink(new GuiYesNoCallback() {
+						@Override public void confirmClicked(boolean result, int id) {
+					        if (id == 31102009) {
+					            if (result) {
+					                Sys.openURL(url);
+					            }
+					            mc.displayGuiScreen(null);
+					        }
+						}
+					}, url, 31102009, true);
+					
+					mc.displayGuiScreen(gui);
+				}
+			});
 			return;
 		}
 		
@@ -292,7 +425,7 @@ public class ClientProxy extends CommonProxy {
 			});
 		}
 		
-		if(command.equals("pushRenderable")) {
+		if(command.equals("client.render.renderable.push")) {
 			ITemporaryRenderable renderable = PushRenderableFactory.parsePushRenderableFromNBT(data);
 			if(renderable != null && isBuildMode()) {
 				clientRenderTemporary.offer(renderable);
@@ -300,7 +433,7 @@ public class ClientProxy extends CommonProxy {
 			return;
 		}
 		
-		if(command.equals("clearRenderable")) {
+		if(command.equals("client.render.renderable.clear")) {
 			clientRenderTemporary.clear();
 			return;
 		}

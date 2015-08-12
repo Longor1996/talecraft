@@ -1,12 +1,19 @@
 package de.longor.talecraft.invoke;
 
+import java.util.Map;
 import java.util.Random;
+import java.util.Map.Entry;
 
+import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
 
+import akka.actor.Scope;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.TCITriggerableBlock;
 import de.longor.talecraft.network.StringNBTCommand;
+import de.longor.talecraft.script.wrappers.entity.EntityObjectWrapper;
+import de.longor.talecraft.script.wrappers.world.WorldObjectWrapper;
 import de.longor.talecraft.server.ServerMirror;
 import de.longor.talecraft.util.WorldHelper;
 import de.longor.talecraft.util.WorldHelper.BlockRegionIterator;
@@ -33,7 +40,7 @@ import net.minecraft.world.World;
 
 public class Invoke {
 	
-	public static final void invoke(IInvoke invoke, IInvokeSource source) {
+	public static final void invoke(IInvoke invoke, IInvokeSource source, Map<String,Object> scopeParams, EnumTriggerState triggerStateOverride) {
 		if(source.getInvokeWorld() != null && source.getInvokeWorld().getGameRules().getGameRuleBooleanValue("disableTCInvokeSystem")) {
 			TaleCraft.logger.info("Tried to execute invoke {"+invoke+"}, but the invoke system is disabled!");
 			return;
@@ -54,6 +61,21 @@ public class Invoke {
 			String script = ((IScriptInvoke) invoke).getScript();
 			Scriptable scope = source.getInvokeScriptScope();
 			
+			if(scopeParams != null) {
+				Context ctx = Context.enter();
+				Scriptable scope2 = ctx.newObject(TaleCraft.globalScriptManager.getGlobalScope());
+				scope2.setPrototype(scope);
+				scope2.setParentScope(scope);
+				
+				for(Entry<String, Object> entry : scopeParams.entrySet()) {
+					String NAME = entry.getKey();
+					Object OBJECT = entry.getValue();
+					ScriptableObject.putProperty(scope2, NAME, Context.javaToJS(OBJECT, scope2));
+				}
+				
+				scope = scope2;
+			}
+			
 			TaleCraft.globalScriptManager.interpret(script, source.toString(), scope);
 			
 			if(source.getInvokeWorld().getGameRules().getGameRuleBooleanValue("visualEventDebugging")) {
@@ -62,7 +84,7 @@ public class Invoke {
 				pktdata.setString("type", "pos-marker");
 				pktdata.setIntArray("pos", new int[]{source.getInvokePosition().getX(),source.getInvokePosition().getY(),source.getInvokePosition().getZ()});
 				pktdata.setInteger("color", 0xFF0000);
-				TaleCraft.network.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
+				TaleCraft.network.sendToAll(new StringNBTCommand("client.render.renderable.push", pktdata));
 			}
 			
 			ServerMirror.instance().trackInvoke(source, invoke);
@@ -82,7 +104,7 @@ public class Invoke {
 				pktdata.setString("type", "pos-marker");
 				pktdata.setIntArray("pos", new int[]{source.getInvokePosition().getX(),source.getInvokePosition().getY(),source.getInvokePosition().getZ()});
 				pktdata.setInteger("color", 0x0099FF);
-				TaleCraft.network.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
+				TaleCraft.network.sendToAll(new StringNBTCommand("client.render.renderable.push", pktdata));
 			}
 			
 			ServerMirror.instance().trackInvoke(source, invoke);
@@ -93,7 +115,9 @@ public class Invoke {
 			// TaleCraft.logger.info("--> Executing BlockRegionTrigger from " + source.getPosition());
 			
 			int[] bounds = ((BlockTriggerInvoke) invoke).getBounds();
-			int data = ((BlockTriggerInvoke) invoke).getTriggerData();
+			EnumTriggerState state = ((BlockTriggerInvoke) invoke).getOnOff();
+			
+			state = state.override(triggerStateOverride);
 			
 			if(bounds == null || bounds.length != 6) {
 				TaleCraft.logger.error("Invalid bounds @ BlockRegionTrigger @ " + source.getInvokePosition());
@@ -107,7 +131,7 @@ public class Invoke {
 			int ay = Math.max(bounds[1], bounds[4]);
 			int az = Math.max(bounds[2], bounds[5]);
 			
-			trigger(source, ix, iy, iz, ax, ay, az);
+			trigger(source, ix, iy, iz, ax, ay, az, state);
 			
 			ServerMirror.instance().trackInvoke(source, invoke);
 			return;
@@ -117,11 +141,11 @@ public class Invoke {
 		
 	}
 	
-	public static final void trigger(IInvokeSource source, int ix, int iy, int iz, int ax, int ay, int az) {
+	public static final void trigger(IInvokeSource source, int ix, int iy, int iz, int ax, int ay, int az, final EnumTriggerState triggerStateOverride) {
 		// Logging this is a bad idea if a lot of these is executed very fast (ClockBlock, anyone?)
 		// TaleCraft.logger.info("--> [" + ix + ","+ iy + ","+ iz + ","+ ax + ","+ ay + ","+ az + "]");
 		
-		final World world = source.getInvokeWorld();
+		World world = source.getInvokeWorld();
 		
 		if(world.getGameRules().getGameRuleBooleanValue("visualEventDebugging")) {
 			// Send a packet to all players that a BlockRegionTrigger just happened.
@@ -130,22 +154,22 @@ public class Invoke {
 			pktdata.setString("type", "line-to-box");
 			pktdata.setIntArray("src", new int[]{source.getInvokePosition().getX(),source.getInvokePosition().getY(),source.getInvokePosition().getZ()});
 			pktdata.setIntArray("box", new int[]{ix,iy,iz,ax,ay,az});
-			TaleCraft.network.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
+			TaleCraft.network.sendToAll(new StringNBTCommand("client.render.renderable.push", pktdata));
 		}
 		
 		// Since we dont have lambda's, lets do things the old (ugly) way.
 		WorldHelper.foreach(world, ix, iy, iz, ax, ay, az, new BlockRegionIterator() {
-			@Override public void $(IBlockState state, BlockPos position) {
-				trigger(world, position, state, 0);
+			@Override public void $(World world, IBlockState state, BlockPos position) {
+				trigger(world, position, state, triggerStateOverride);
 			}
 		});
 	}
 	
-	public static final void trigger(World world, BlockPos position, IBlockState state, int flag) {
+	public static final void trigger(World world, BlockPos position, IBlockState state, EnumTriggerState state2) {
 		Block block = state.getBlock();
 		
 		if(block instanceof TCITriggerableBlock){
-			((TCITriggerableBlock) state.getBlock()).trigger(world, position, 0);
+			((TCITriggerableBlock) state.getBlock()).trigger(world, position, state2);
 			return;
 		}
 		

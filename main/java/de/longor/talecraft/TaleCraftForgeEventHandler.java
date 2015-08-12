@@ -6,9 +6,12 @@ import de.longor.talecraft.managers.TCWorldsManager;
 import de.longor.talecraft.managers.TCWorldManager;
 import de.longor.talecraft.server.ServerHandler;
 import net.minecraft.server.ServerEula;
+import net.minecraft.util.DamageSource;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -56,6 +59,51 @@ public class TaleCraftForgeEventHandler
 			taleCraft.worldsmanager.fetchManager(event.world).joinWorld(event.entity);
 		}
 	}
+	
+	@SubscribeEvent
+	public void onLivingAttacked(LivingAttackEvent event) {
+		World world = event.entity.worldObj;
+		
+		if(world.isRemote) return;
+		
+		if(world.getGameRules().getGameRuleBooleanValue("disable.damage.*")) {
+			event.setCanceled(true);
+			return;
+		}
+		
+		if(event.source == DamageSource.fall && world.getGameRules().getGameRuleBooleanValue("disable.damage.fall")) {
+			event.setCanceled(true);
+			return;
+		}
+		
+		if(event.source == DamageSource.drown && world.getGameRules().getGameRuleBooleanValue("disable.damage.drown")) {
+			event.setCanceled(true);
+			return;
+		}
+		
+		if(event.source == DamageSource.lava && world.getGameRules().getGameRuleBooleanValue("disable.damage.lava")) {
+			event.setCanceled(true);
+			return;
+		}
+		
+		if(event.source == DamageSource.magic && world.getGameRules().getGameRuleBooleanValue("disable.damage.magic")) {
+			event.setCanceled(true);
+			return;
+		}
+		
+		if(event.source == DamageSource.inFire && world.getGameRules().getGameRuleBooleanValue("disable.damage.fire")) {
+			event.setCanceled(true);
+			return;
+		}
+		
+		if(event.source == DamageSource.inWall && world.getGameRules().getGameRuleBooleanValue("disable.damage.suffocate")) {
+			event.setCanceled(true);
+			return;
+		}
+		
+	}
+	
+	// CommandEvent
 	
 	/*
 	@SubscribeEvent

@@ -6,6 +6,7 @@ import de.longor.talecraft.blocks.TCITriggerableBlock;
 import de.longor.talecraft.blocks.util.tileentity.ScriptBlockTileEntity;
 import de.longor.talecraft.client.gui.blocks.GuiRelayBlock;
 import de.longor.talecraft.client.gui.blocks.GuiScriptBlock;
+import de.longor.talecraft.invoke.EnumTriggerState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,7 +41,7 @@ public class ScriptBlock extends TCBlockContainer implements TCITriggerableBlock
     }
 	
 	@Override
-	public void trigger(World world, BlockPos position, int data) {
+	public void trigger(World world, BlockPos position, EnumTriggerState triggerState) {
 		ScriptBlockTileEntity tEntity = (ScriptBlockTileEntity)world.getTileEntity(position);
 		if(tEntity != null) {
 			tEntity.triggerInvokeScript();

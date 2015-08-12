@@ -56,7 +56,7 @@ public class TaleCraftCommonEventHandler
 	public void playerLoggedIn(PlayerLoggedInEvent event) {
 		if(event.player instanceof EntityPlayerMP) {
 			ServerHandler.getServerMirror(null).playerList().playerJoin((EntityPlayerMP) event.player);
-			TaleCraft.network.sendTo(new StringNBTCommand("acknowledge join"), (EntityPlayerMP) event.player);
+			TaleCraft.network.sendTo(new StringNBTCommand("client.network.join"), (EntityPlayerMP) event.player);
 		}
 	}
 	

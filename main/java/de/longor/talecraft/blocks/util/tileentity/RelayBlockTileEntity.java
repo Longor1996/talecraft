@@ -15,6 +15,7 @@ import com.google.common.collect.Maps;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.TCTileEntity;
 import de.longor.talecraft.invoke.BlockTriggerInvoke;
+import de.longor.talecraft.invoke.EnumTriggerState;
 import de.longor.talecraft.invoke.IInvoke;
 import de.longor.talecraft.invoke.IInvokeSource;
 import de.longor.talecraft.invoke.Invoke;
@@ -59,16 +60,14 @@ public class RelayBlockTileEntity extends TCTileEntity {
 		invokes.addAll(this.invokes.values());
 	}
 	
-	public void triggerRelayInvoke() {
+	public void triggerRelayInvoke(EnumTriggerState triggerState) {
 		for (IInvoke invoke : invokes.values()) {
-			Invoke.invoke(invoke, this);
+			Invoke.invoke(invoke, this, null, triggerState);
 		}
 	}
     
 	@Override
 	public void commandReceived(String command, NBTTagCompound data) {
-		super.commandReceived(command, data);
-		
 		if(command.equals("invoke_add")) {
 			String keyString = null;
 			
@@ -79,7 +78,7 @@ public class RelayBlockTileEntity extends TCTileEntity {
 				keyString = "rix" + (System.currentTimeMillis() % 1000);
 			} while(invokes.containsKey(keyString));
 			
-			invokes.put(keyString, NullInvoke.instance);
+			invokes.put(keyString, BlockTriggerInvoke.ZEROINSTANCE);
             worldObj.markBlockForUpdate(this.pos);
 		}
 		
@@ -87,6 +86,8 @@ public class RelayBlockTileEntity extends TCTileEntity {
 			invokes.remove(data.getString("invokeToRemove"));
 			worldObj.markBlockForUpdate(this.pos);
 		}
+		
+		super.commandReceived(command, data);
 	}
 	
 	@Override

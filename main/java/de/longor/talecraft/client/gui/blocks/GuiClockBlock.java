@@ -31,10 +31,10 @@ public class GuiClockBlock extends QADGuiScreen {
 		this.tileEntity = tileEntity;
 	}
 	
-	public void buildGui(ArrayList<QADComponent> components) {
+	public void buildGui() {
 		final BlockPos position = tileEntity.getPos();
 		
-		components.add(new QADLabel("Clock Block @ " + position.getX() + " " + position.getY() + " " + position.getZ(), 2, 2));
+		addComponent(new QADLabel("Clock Block @ " + position.getX() + " " + position.getY() + " " + position.getZ(), 2, 2));
 		
 		int column0x = 4;
 		int column0w = 60;
@@ -60,19 +60,19 @@ public class GuiClockBlock extends QADGuiScreen {
 			b.append(", speed: "+tileEntity.speed);
 			b.append(", time: "+tileEntity.time);
 			
-			components.add(new QADLabel(b.toString(), column0x, row7y+6));
+			addComponent(new QADLabel(b.toString(), column0x, row7y+6));
 		}
 		
-		components.add(new QADLabel(EnumChatFormatting.YELLOW + "Tick", column0x, row0y+6));
-		InvokePanelBuilder.build(this, components, column1x, row0y, tileEntity.getTickInvoke(), new BlockInvokeHolder(position, "clockInvoke"), InvokePanelBuilder.INVOKE_TYPE_EDIT_ALLOWALL);
-		components.add(new QADLabel(EnumChatFormatting.YELLOW + "Start", column0x, row1y+6));
-		InvokePanelBuilder.build(this, components, column1x, row1y, tileEntity.getStartInvoke(), new BlockInvokeHolder(position, "clockStartInvoke"), InvokePanelBuilder.INVOKE_TYPE_EDIT_ALLOWALL);
-		components.add(new QADLabel(EnumChatFormatting.YELLOW + "Stop", column0x, row2y+6));
-		InvokePanelBuilder.build(this, components, column1x, row2y, tileEntity.getStopInvoke(), new BlockInvokeHolder(position, "clockStopInvoke"), InvokePanelBuilder.INVOKE_TYPE_EDIT_ALLOWALL);
+		addComponent(new QADLabel(EnumChatFormatting.YELLOW + "Tick", column0x, row0y+6));
+		InvokePanelBuilder.build(this, this, column1x, row0y, tileEntity.getTickInvoke(), new BlockInvokeHolder(position, "clockInvoke"), InvokePanelBuilder.INVOKE_TYPE_EDIT_ALLOWALL);
+		addComponent(new QADLabel(EnumChatFormatting.YELLOW + "Start", column0x, row1y+6));
+		InvokePanelBuilder.build(this, this, column1x, row1y, tileEntity.getStartInvoke(), new BlockInvokeHolder(position, "clockStartInvoke"), InvokePanelBuilder.INVOKE_TYPE_EDIT_ALLOWALL);
+		addComponent(new QADLabel(EnumChatFormatting.YELLOW + "Stop", column0x, row2y+6));
+		InvokePanelBuilder.build(this, this, column1x, row2y, tileEntity.getStopInvoke(), new BlockInvokeHolder(position, "clockStopInvoke"), InvokePanelBuilder.INVOKE_TYPE_EDIT_ALLOWALL);
 		
-		components.add(new QADLabel("Repeats", column0x, row3y+6));
-		components.add(new QADLabel("Speed", column0x, row4y+6));
-		components.add(new QADLabel("Time", column0x, row5y+6));
+		addComponent(new QADLabel("Repeats", column0x, row3y+6));
+		addComponent(new QADLabel("Speed", column0x, row4y+6));
+		addComponent(new QADLabel("Time", column0x, row5y+6));
 		
 		final QADTextField fieldRepeat = QADFACTORY.createNumberTextField(tileEntity.set_repeat, column1x+2, row3y+2, column1w-4, 1000000, 0);
 		final QADTextField fieldSpeed = QADFACTORY.createNumberTextField(tileEntity.set_speed, column1x+2, row4y+2, column1w-4, 20*60, 1);
@@ -80,9 +80,9 @@ public class GuiClockBlock extends QADGuiScreen {
 		fieldRepeat.setTooltip("The amount of times this clock will 'tick'.");
 		fieldSpeed.setTooltip("How fast this clock will count down.");
 		fieldTime.setTooltip("The number the countdown starts at.");
-		components.add(fieldRepeat);
-		components.add(fieldSpeed);
-		components.add(fieldTime);
+		addComponent(fieldRepeat);
+		addComponent(fieldSpeed);
+		addComponent(fieldTime);
 		
 		QADButton setDataButton = QADFACTORY.createButton("Apply", column1x, row6y, column1w, null);
 		setDataButton.setAction(new Runnable() {
@@ -100,7 +100,7 @@ public class GuiClockBlock extends QADGuiScreen {
 			}
 		});
 		setDataButton.setTooltip("There is no auto-save, ", "so don't forget to click this button!");
-		components.add(setDataButton);
+		addComponent(setDataButton);
 		
 		QADButton buttonStart = QADFACTORY.createButton("Start", column0x, row8y, column0w, null);
 		buttonStart.setAction(new Runnable() {
@@ -113,7 +113,7 @@ public class GuiClockBlock extends QADGuiScreen {
 			}
 		});
 		buttonStart.setTooltip("Start the clocks countdown.");
-		components.add(buttonStart);
+		addComponent(buttonStart);
 		
 		QADButton buttonPause = QADFACTORY.createButton("Pause", column1x, row8y, column1w, null);
 		buttonPause.setAction(new Runnable() {
@@ -126,7 +126,7 @@ public class GuiClockBlock extends QADGuiScreen {
 			}
 		});
 		buttonPause.setTooltip("This button pauses the clocks countdown.");
-		components.add(buttonPause);
+		addComponent(buttonPause);
 		
 		QADButton buttonStop = QADFACTORY.createButton("Stop", column2x, row8y, column2w, null);
 		buttonStop.setAction(new Runnable() {
@@ -139,7 +139,7 @@ public class GuiClockBlock extends QADGuiScreen {
 			}
 		});
 		buttonStop.setTooltip("This button stops the clocks countdown.");
-		components.add(buttonStop);
+		addComponent(buttonStop);
 		
 	}
 	

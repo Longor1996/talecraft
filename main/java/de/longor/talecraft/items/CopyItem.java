@@ -10,17 +10,30 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 public class CopyItem extends TCItem {
 	
-    public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn) {
-    	if(worldIn.isRemote)
-    		rightClickClient(itemStackIn, worldIn, playerIn);
-    	else
-    		rightClickServer(itemStackIn, worldIn, playerIn);
+    public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+    	if(worldIn.isRemote) {
+    		rightClickClient(stack, worldIn, playerIn);
+    	} else {
+    		rightClickServer(stack, worldIn, playerIn);
+    		worldIn.markBlockForUpdate(pos);
+    	}
     	
-    	return itemStackIn;
+    	return true;
+    }
+	
+    public ItemStack onItemRightClick(ItemStack stack, World worldIn, EntityPlayer playerIn) {
+    	if(worldIn.isRemote)
+    		rightClickClient(stack, worldIn, playerIn);
+    	else
+    		rightClickServer(stack, worldIn, playerIn);
+    	
+    	return stack;
     }
     
 	public static void rightClickServer(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn) {

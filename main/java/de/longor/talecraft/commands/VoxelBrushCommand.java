@@ -295,9 +295,4 @@ public class VoxelBrushCommand extends CommandBase {
     	return null;
     }
     
-    public int getRequiredPermissionLevel()
-    {
-        return 2;
-    }
-    
 }

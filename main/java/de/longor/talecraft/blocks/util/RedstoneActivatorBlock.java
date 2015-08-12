@@ -4,6 +4,7 @@ import java.util.Random;
 
 import de.longor.talecraft.blocks.TCBlock;
 import de.longor.talecraft.blocks.TCITriggerableBlock;
+import de.longor.talecraft.invoke.EnumTriggerState;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockState;
@@ -35,21 +36,31 @@ public class RedstoneActivatorBlock extends TCBlock implements TCITriggerableBlo
     }
     
 	@Override
-	public void trigger(World world, BlockPos position, int data) {
+	public void trigger(World world, BlockPos position, EnumTriggerState triggerState) {
 		if (world.isRemote)
     		return;
 		
-		if(data != 0) {
-    		world.setBlockState(position, this.getDefaultState().withProperty(POWERED, Boolean.valueOf(false)));
-    		return;
+		switch(triggerState) {
+		case ON:
+			world.setBlockState(position, this.getDefaultState().withProperty(POWERED, Boolean.valueOf(true)));
+		break;
+		case OFF:
+			world.setBlockState(position, this.getDefaultState().withProperty(POWERED, Boolean.valueOf(false)));
+		break;
+		case INVERT:
+			if (((Boolean)world.getBlockState(position).getValue(POWERED)).booleanValue()) {
+				world.setBlockState(position, this.getDefaultState().withProperty(POWERED, Boolean.valueOf(false)));
+			} else {
+				world.setBlockState(position, this.getDefaultState().withProperty(POWERED, Boolean.valueOf(true)));
+			}
+		break;
+		case IGNORE:
+			world.setBlockState(position, this.getDefaultState().withProperty(POWERED, Boolean.valueOf(true)));
+		break;
+		default:
+			world.setBlockState(position, this.getDefaultState().withProperty(POWERED, Boolean.valueOf(true)));
+		break;
 		}
-		
-    	if (((Boolean)world.getBlockState(position).getValue(POWERED)).booleanValue()) {
-    		world.setBlockState(position, this.getDefaultState().withProperty(POWERED, Boolean.valueOf(false)));
-    	} else {
-    		world.setBlockState(position, this.getDefaultState().withProperty(POWERED, Boolean.valueOf(true)));
-    	}
-    	
 	}
     
     public IBlockState getStateFromMeta(int meta)

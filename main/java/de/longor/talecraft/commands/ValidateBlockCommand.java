@@ -16,7 +16,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
-public class ValidateBlockCommand extends CommandBase {
+public class ValidateBlockCommand extends TCCommandBase {
 	
 	@Override
 	public String getName() {
@@ -50,10 +50,5 @@ public class ValidateBlockCommand extends CommandBase {
     	
     	return null;
     }
-
-    public int getRequiredPermissionLevel()
-    {
-        return 2;
-    }
-	
+    
 }

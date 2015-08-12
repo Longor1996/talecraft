@@ -18,7 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class SwitchShaderCommand extends CommandBase {
+public class SwitchShaderCommand extends TCCommandBase {
 	
 	@Override
 	public String getName() {
@@ -53,15 +53,8 @@ public class SwitchShaderCommand extends CommandBase {
 		
 	}
 	
-    public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos)
-    {
-    	
+    public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
     	return null;
-    }
-
-    public int getRequiredPermissionLevel()
-    {
-        return 2;
     }
 	
 }

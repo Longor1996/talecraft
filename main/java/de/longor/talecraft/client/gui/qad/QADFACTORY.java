@@ -8,6 +8,10 @@ import net.minecraft.util.ResourceLocation;
 
 public class QADFACTORY {
 	
+	public static final QADLabel createLabel(Object object, int x, int y) {
+		return new QADLabel(""+object, x, y);
+	}
+	
 	public static final QADLabel createLabel(String text, int x, int y) {
 		return new QADLabel(text, x, y);
 	}
@@ -22,6 +26,11 @@ public class QADFACTORY {
 	public static final QADButton createButton(String text, int x, int y, int width, Runnable action) {
 		QADButton button = new QADButton(x, y, width, text);
 		button.setAction(action);
+		return button;
+	}
+	
+	public static final QADButton createButton(String text, int x, int y, int width) {
+		QADButton button = new QADButton(x, y, width, text);
 		return button;
 	}
 	

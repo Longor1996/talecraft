@@ -85,7 +85,7 @@ public class CustomSkyRenderer extends IRenderHandler {
 		
 		GlStateManager.enableCull();
 		GlStateManager.enableDepth();
-		GlStateManager.pushAttrib();
+		GlStateManager.popAttrib();
 	}
 
 	public void setDebugSky(boolean b) {

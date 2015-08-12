@@ -15,6 +15,7 @@ import de.longor.talecraft.blocks.TCITriggerableBlock;
 import de.longor.talecraft.blocks.util.tileentity.RedstoneTriggerBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.StorageBlockTileEntity;
 import de.longor.talecraft.client.gui.blocks.GuiStorageBlock;
+import de.longor.talecraft.invoke.EnumTriggerState;
 
 public class StorageBlock extends TCBlockContainer implements TCITriggerableBlock {
 	
@@ -40,7 +41,7 @@ public class StorageBlock extends TCBlockContainer implements TCITriggerableBloc
     }
 
 	@Override
-	public void trigger(World world, BlockPos position, int data) {
+	public void trigger(World world, BlockPos position, EnumTriggerState triggerState) {
 		if (world.isRemote)
     		return;
     	

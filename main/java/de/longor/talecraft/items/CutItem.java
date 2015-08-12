@@ -12,9 +12,22 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 public class CutItem extends TCItem {
+	
+    public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+    	if(worldIn.isRemote) {
+    		rightClickClient(stack, worldIn, playerIn);
+    	} else {
+    		rightClickServer(stack, worldIn, playerIn);
+    		worldIn.markBlockForUpdate(pos);
+    	}
+    	
+    	return true;
+    }
 	
     public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn) {
     	if(worldIn.isRemote)

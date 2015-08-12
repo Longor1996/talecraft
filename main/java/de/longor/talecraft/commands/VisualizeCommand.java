@@ -10,13 +10,14 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.network.StringNBTCommand;
 import de.longor.talecraft.util.CommandArgumentParser;
 
-public class VisualizeCommand extends CommandBase {
+public class VisualizeCommand extends TCCommandBase {
 	
 	@Override
 	public String getName() {
@@ -36,7 +37,7 @@ public class VisualizeCommand extends CommandBase {
 		
 		// CLEAR ALL TEMPORABLES
 		if(action.equals("clear")) {
-			TaleCraft.network.sendToAll(new StringNBTCommand("clearRenderable"));
+			TaleCraft.network.sendToAll(new StringNBTCommand("client.render.renderable.clear"));
 			return;
 		}
 		
@@ -61,6 +62,32 @@ public class VisualizeCommand extends CommandBase {
     	
     	// Everything starting with 'c_' means 'centered on command-sender'.
     	// Everything else is normal.
+    	
+    	if(shape.equals("chunk")) {
+    		BlockPos pos = sender.getPosition();
+    		int chunkX = MathHelper.floor_float((float)pos.getX() / 16f);
+    		int chunkZ = MathHelper.floor_float((float)pos.getZ() / 16f);
+    		chunkX *= 16;
+    		chunkZ *= 16;
+    		
+    		for(int i = 0; i < 16; i++)
+    		{
+    			int chunkY = i * 16;
+        		int[] box = new int[]{
+        				chunkX, chunkY, chunkZ,
+        				chunkX+16, chunkY+16, chunkZ+16
+        		};
+        		
+    			NBTTagCompound pktdata = new NBTTagCompound();
+    			pktdata.setString("type", "box");
+    			pktdata.setIntArray("box", box);
+    			pktdata.setInteger("color", parseColor(color));
+    			TaleCraft.network.sendToAll(new StringNBTCommand("client.render.renderable.push", pktdata));
+    		}
+    		
+    		
+    		return;
+    	}
     	
     	if(shape.equals("c_bx")) {
     		int sw = 1;//x-size
@@ -101,7 +128,7 @@ public class VisualizeCommand extends CommandBase {
 			pktdata.setString("type", "box");
 			pktdata.setIntArray("box", box);
 			pktdata.setInteger("color", parseColor(color));
-			TaleCraft.network.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
+			TaleCraft.network.sendToAll(new StringNBTCommand("client.render.renderable.push", pktdata));
     	}
     	
 	}
@@ -119,7 +146,7 @@ public class VisualizeCommand extends CommandBase {
 		pktdata.setInteger("positionY", sender.getPosition().getY());
 		pktdata.setInteger("positionZ", sender.getPosition().getZ());
 		pktdata.setInteger("color", parseColor(color));
-		TaleCraft.network.sendToAll(new StringNBTCommand("pushRenderable", pktdata));
+		TaleCraft.network.sendToAll(new StringNBTCommand("client.render.renderable.push", pktdata));
 	}
     
 	public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
@@ -128,7 +155,7 @@ public class VisualizeCommand extends CommandBase {
     	}
     	
     	if(args[0].equals("sh") && args.length == 2) {
-    		return getListOfStringsMatchingLastWord(args, "c_bx");
+    		return getListOfStringsMatchingLastWord(args, "c_bx", "chunk");
     	}
     	
     	if(args[0].equals("sh") && args.length == 3) {
@@ -137,57 +164,5 @@ public class VisualizeCommand extends CommandBase {
     	
     	return null;
     }
-    
-    public int getRequiredPermissionLevel()
-    {
-        return 2;
-    }
-    
-    public static final int parseColor(String color) throws CommandException {
-    	if(color.equalsIgnoreCase("0")) return 0xFF000000;
-    	if(color.equalsIgnoreCase("1")) return 0xFFFFFFFF;
-    	
-    	if(color.startsWith("#")) {
-    		// Is a HEX color!
-    		color = color.substring(1);
-    		
-    		if(color.length() == 3) {
-    			int r = (hexcharToInt(color.charAt(0)) * 0xF) & 0xFF;
-    			int g = (hexcharToInt(color.charAt(1)) * 0xF) & 0xFF;
-    			int b = (hexcharToInt(color.charAt(2)) * 0xF) & 0xFF;
-    			return (r<<16) | (g<<8) | (b);
-    		} else if(color.length() == 6) {
-    			int r = hexcharToInt(color.charAt(0), color.charAt(1)) & 0xFF;
-    			int g = hexcharToInt(color.charAt(2), color.charAt(3)) & 0xFF;
-    			int b = hexcharToInt(color.charAt(4), color.charAt(5)) & 0xFF;
-    			return (r<<16) | (g<<8) | (b);
-    		} else if(color.length() == 8) {
-    			int a = hexcharToInt(color.charAt(0), color.charAt(1)) & 0xFF;
-    			int r = hexcharToInt(color.charAt(2), color.charAt(3)) & 0xFF;
-    			int g = hexcharToInt(color.charAt(4), color.charAt(5)) & 0xFF;
-    			int b = hexcharToInt(color.charAt(6), color.charAt(7)) & 0xFF;
-    			return (a<<24) | (r<<16) | (g<<8) | (b);
-    		}
-    	}
-    	
-    	if(color.equalsIgnoreCase("white")) return 0xFFFFFFFF;
-    	if(color.equalsIgnoreCase("black")) return 0xFF000000;
-    	if(color.equalsIgnoreCase("red")) return 0xFFFF0000;
-    	if(color.equalsIgnoreCase("green")) return 0xFF00FF00;
-    	if(color.equalsIgnoreCase("blue")) return 0xFF0000FF;
-    	if(color.equalsIgnoreCase("yellow")) return 0xFFFFFF00;
-    	if(color.equalsIgnoreCase("purple")) return 0xFFFF00FF;
-    	if(color.equalsIgnoreCase("orange")) return 0xFFFF7F00;
-    	
-    	throw new CommandException("Could not parse color: " + color);
-    }
-    
-	private static final int hexcharToInt(char charAt) {
-		return Integer.parseInt(String.valueOf(charAt).toLowerCase(), 16);
-	}
-	
-	private static final int hexcharToInt(char charA, char charB) {
-		return Integer.parseInt((charA+""+charB).toLowerCase(), 16);
-	}
 	
 }

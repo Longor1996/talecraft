@@ -21,8 +21,10 @@ import de.longor.talecraft.items.CutItem;
 import de.longor.talecraft.items.EraserItem;
 import de.longor.talecraft.items.FillerItem;
 import de.longor.talecraft.items.InstaKillItem;
+import de.longor.talecraft.items.MetaSwapperItem;
 import de.longor.talecraft.items.NudgeItem;
 import de.longor.talecraft.items.PasteItem;
+import de.longor.talecraft.items.SpawnPointItem;
 import de.longor.talecraft.items.TeleporterItem;
 import de.longor.talecraft.items.VoxelBrushItem;
 import de.longor.talecraft.items.WandItem;
@@ -40,6 +42,8 @@ public class TaleCraftItems {
 	public static CopyItem copy;
 	public static PasteItem paste;
 	public static CutItem cut;
+	public static MetaSwapperItem metaswapper;
+	public static SpawnPointItem spawnpoint;
 	
 	static void init() {
 		wand = register(new WandItem(), "wand");
@@ -52,6 +56,8 @@ public class TaleCraftItems {
 		copy = register(new CopyItem(), "copy");
 		paste = register(new PasteItem(), "paste");
 		cut = register(new CutItem(), "cut");
+		metaswapper = register(new MetaSwapperItem(), "metaswapper");
+		spawnpoint = register(new SpawnPointItem(), "spawnpoint");
 	}
 	
 	private static <T extends Item> T register(T item, String name) {

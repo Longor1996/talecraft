@@ -8,6 +8,15 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public class WorldHelper {
+	public static final void foreach(World world, int[] bounds, BlockRegionIterator function) {
+		int ix = bounds[0];
+		int iy = bounds[1];
+		int iz = bounds[2];
+		int ax = bounds[3];
+		int ay = bounds[4];
+		int az = bounds[5];
+		foreach(world, ix, iy, iz, ax, ay, az, function);
+	}
 	
 	/**
 	 * Iterates trough every block and executes a given action.
@@ -26,7 +35,7 @@ public class WorldHelper {
 				for(int x = ix; x <= ax; x++) {
 					pos.set(x, y, z);
 					IBlockState state = world.getBlockState(pos);
-					function.$(state, pos);
+					function.$(world, state, pos);
 				}
 			}
 		}
@@ -81,7 +90,7 @@ public class WorldHelper {
 	 * Dummy functional interface with only one method.
 	 **/
 	public static interface BlockRegionIterator {
-		void $(IBlockState state, BlockPos position);
+		void $(World world, IBlockState state, BlockPos position);
 	}
 	
 }

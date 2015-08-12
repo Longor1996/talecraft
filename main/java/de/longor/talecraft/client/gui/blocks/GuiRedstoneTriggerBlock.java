@@ -32,11 +32,11 @@ public class GuiRedstoneTriggerBlock extends QADGuiScreen {
 		this.tileEntity = tileEntity;
 	}
 	
-	public void buildGui(ArrayList<QADComponent> components) {
+	public void buildGui() {
 		final BlockPos position = tileEntity.getPos();
 		
-		components.add(new QADLabel("Redstone Trigger @ " + position.getX() + " " + position.getY() + " " + position.getZ(), 2, 2));
-		InvokePanelBuilder.build(this, components, 2, 16, tileEntity.getInvoke(), new BlockInvokeHolder(position, "triggerInvoke"), InvokePanelBuilder.INVOKE_TYPE_EDIT_ALLOWALL);
+		addComponent(new QADLabel("Redstone Trigger @ " + position.getX() + " " + position.getY() + " " + position.getZ(), 2, 2));
+		InvokePanelBuilder.build(this, this, 2, 16, tileEntity.getInvoke(), new BlockInvokeHolder(position, "triggerInvoke"), InvokePanelBuilder.INVOKE_TYPE_EDIT_ALLOWALL);
 	}
 	
 }

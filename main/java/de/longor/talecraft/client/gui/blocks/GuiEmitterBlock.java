@@ -23,13 +23,15 @@ import de.longor.talecraft.util.GObjectTypeHelper;
 public class GuiEmitterBlock extends QADGuiScreen {
 	EmitterBlockTileEntity tileEntity;
 	
+	QADTextField particleTypeTextField;
+	
 	public GuiEmitterBlock(EmitterBlockTileEntity tileEntity) {
 		this.tileEntity = tileEntity;
 	}
 	
-	public void buildGui(ArrayList<QADComponent> components) {
+	public void buildGui() {
 		final BlockPos position = tileEntity.getPos();
-		components.add(new QADLabel("Emitter Block @ " + position.getX() + " " + position.getY() + " " + position.getZ(), 2, 2));
+		addComponent(new QADLabel("Emitter Block @ " + position.getX() + " " + position.getY() + " " + position.getZ(), 2, 2));
 		
 		int[] colp = new int[4];
 		int[] colw = new int[4];
@@ -57,25 +59,25 @@ public class GuiEmitterBlock extends QADGuiScreen {
 		rowp[7] = rowp[6] + rowh + 0;
 		rowp[8] = rowp[7] + rowh + 0;
 		
-		components.add(QADFACTORY.createLabel("Particle Type"     , colp[0], rowp[0]+sro));
-		components.add(QADFACTORY.createLabel("Spawn Count"       , colp[0], rowp[1]+sro));
+		addComponent(QADFACTORY.createLabel("Particle Type"     , colp[0], rowp[0]+sro));
+		addComponent(QADFACTORY.createLabel("Spawn Count"       , colp[0], rowp[1]+sro));
 		
-		components.add(QADFACTORY.createLabel("X"       , colp[1] + colw[1]/2, rowp[2]+sro));
-		components.add(QADFACTORY.createLabel("Y"       , colp[2] + colw[2]/2, rowp[2]+sro));
-		components.add(QADFACTORY.createLabel("Z"       , colp[3] + colw[3]/2, rowp[2]+sro));
+		addComponent(QADFACTORY.createLabel("X"       , colp[1] + colw[1]/2, rowp[2]+sro));
+		addComponent(QADFACTORY.createLabel("Y"       , colp[2] + colw[2]/2, rowp[2]+sro));
+		addComponent(QADFACTORY.createLabel("Z"       , colp[3] + colw[3]/2, rowp[2]+sro));
 		
-		components.add(QADFACTORY.createLabel("Offset"            , colp[0], rowp[3]+sro));
-		components.add(QADFACTORY.createLabel("Offset Randomize"  , colp[0], rowp[4]+sro));
-		components.add(QADFACTORY.createLabel("Velocity"          , colp[0], rowp[5]+sro));
-		components.add(QADFACTORY.createLabel("Velocity Randomize", colp[0], rowp[6]+sro));
+		addComponent(QADFACTORY.createLabel("Offset"            , colp[0], rowp[3]+sro));
+		addComponent(QADFACTORY.createLabel("Offset Randomize"  , colp[0], rowp[4]+sro));
+		addComponent(QADFACTORY.createLabel("Velocity"          , colp[0], rowp[5]+sro));
+		addComponent(QADFACTORY.createLabel("Velocity Randomize", colp[0], rowp[6]+sro));
 		
-		components.add(QADFACTORY.createLabel("Actions", colp[0], rowp[8]+sro));
+		addComponent(QADFACTORY.createLabel("Actions", colp[0], rowp[8]+sro));
 		
-		final QADTextField particleTypeTextField = QADFACTORY.createTextField(tileEntity.getParticleType(), colp[1], rowp[0]+tfc, colw[1]);
+		particleTypeTextField = QADFACTORY.createTextField(tileEntity.getParticleType(), colp[1], rowp[0]+tfc, colw[1]);
 		particleTypeTextField.setTooltip("The particle type to emit.");
-		components.add(particleTypeTextField);
+		addComponent(particleTypeTextField);
 		
-		components.add(QADFACTORY.createButton("?", colp[2], rowp[0], 20, new Runnable() {
+		addComponent(QADFACTORY.createButton("?", colp[2], rowp[0], 20, new Runnable() {
 			@Override public void run() {
 				displayGuiScreen(new GuiEmitterBlockParticleTypes(GuiEmitterBlock.this));
 			}
@@ -83,7 +85,7 @@ public class GuiEmitterBlock extends QADGuiScreen {
 		
 		final QADTextField spawnCountTextField = QADFACTORY.createNumberTextField(tileEntity.getSpawnCount(), colp[1], rowp[1]+tfc, colw[1], 1000, 0);
 		spawnCountTextField.setTooltip("How many particles to spawn per tick.");
-		components.add(spawnCountTextField);
+		addComponent(spawnCountTextField);
 		
 		final QADTextField offsetXTextField = QADFACTORY.createTextField(tileEntity.getOffsetX(), colp[1], rowp[3]+tfc, colw[1]);
 		final QADTextField offsetYTextField = QADFACTORY.createTextField(tileEntity.getOffsetY(), colp[2], rowp[3]+tfc, colw[2]);
@@ -91,9 +93,9 @@ public class GuiEmitterBlock extends QADGuiScreen {
 		offsetXTextField.setTooltip("Offset from the emitter-block","on the X-Axis.");
 		offsetYTextField.setTooltip("Offset from the emitter-block","on the Y-Axis.");
 		offsetZTextField.setTooltip("Offset from the emitter-block","on the Z-Axis.");
-		components.add(offsetXTextField);
-		components.add(offsetYTextField);
-		components.add(offsetZTextField);
+		addComponent(offsetXTextField);
+		addComponent(offsetYTextField);
+		addComponent(offsetZTextField);
 		
 		final QADTextField offsetRandXTextField = QADFACTORY.createTextField(tileEntity.getOffsetRandX(), colp[1], rowp[4]+tfc, colw[1]);
 		final QADTextField offsetRandYTextField = QADFACTORY.createTextField(tileEntity.getOffsetRandY(), colp[2], rowp[4]+tfc, colw[2]);
@@ -101,9 +103,9 @@ public class GuiEmitterBlock extends QADGuiScreen {
 		offsetRandXTextField.setTooltip("Random offset multiplicator","on the X-Axis.");
 		offsetRandYTextField.setTooltip("Random offset multiplicator","on the Y-Axis.");
 		offsetRandZTextField.setTooltip("Random offset multiplicator","on the Z-Axis.");
-		components.add(offsetRandXTextField);
-		components.add(offsetRandYTextField);
-		components.add(offsetRandZTextField);
+		addComponent(offsetRandXTextField);
+		addComponent(offsetRandYTextField);
+		addComponent(offsetRandZTextField);
 		
 		final QADTextField velocityXTextField = QADFACTORY.createTextField(tileEntity.getVelocityX(), colp[1], rowp[5]+tfc, colw[1]);
 		final QADTextField velocityYTextField = QADFACTORY.createTextField(tileEntity.getVelocityY(), colp[2], rowp[5]+tfc, colw[2]);
@@ -111,9 +113,9 @@ public class GuiEmitterBlock extends QADGuiScreen {
 		velocityXTextField.setTooltip("Initial velocity on the X-Axis.");
 		velocityYTextField.setTooltip("Initial velocity on the Y-Axis.");
 		velocityZTextField.setTooltip("Initial velocity on the Z-Axis.");
-		components.add(velocityXTextField);
-		components.add(velocityYTextField);
-		components.add(velocityZTextField);
+		addComponent(velocityXTextField);
+		addComponent(velocityYTextField);
+		addComponent(velocityZTextField);
 		
 		final QADTextField velocityRandXTextField = QADFACTORY.createTextField(tileEntity.getVelocityRandX(), colp[1], rowp[6]+tfc, colw[1]);
 		final QADTextField velocityRandYTextField = QADFACTORY.createTextField(tileEntity.getVelocityRandY(), colp[2], rowp[6]+tfc, colw[2]);
@@ -121,9 +123,9 @@ public class GuiEmitterBlock extends QADGuiScreen {
 		velocityRandXTextField.setTooltip("Random velocity multiplicator on X-Axis.","0 to disable.");
 		velocityRandYTextField.setTooltip("Random velocity multiplicator on Y-Axis.","0 to disable.");
 		velocityRandZTextField.setTooltip("Random velocity multiplicator on Z-Axis.","0 to disable.");
-		components.add(velocityRandXTextField);
-		components.add(velocityRandYTextField);
-		components.add(velocityRandZTextField);
+		addComponent(velocityRandXTextField);
+		addComponent(velocityRandYTextField);
+		addComponent(velocityRandZTextField);
 		
 		QADButton applyButton = QADFACTORY.createButton("Apply", colp[1], rowp[8], colw[1], null);
 		applyButton.setEnabled(true);
@@ -157,15 +159,15 @@ public class GuiEmitterBlock extends QADGuiScreen {
 				GuiEmitterBlock.this.mc.displayGuiScreen(null);
 			}
 		});
-		components.add(applyButton);
+		addComponent(applyButton);
 		
 		QADButton toggleButton = QADFACTORY.createButton("Toggle", colp[2], rowp[8], colw[2], null);
 		toggleButton.setEnabled(false);
-		components.add(toggleButton);
+		addComponent(toggleButton);
 		
 		QADButton resetButton = QADFACTORY.createButton(EnumChatFormatting.RED+"Reset", colp[3], rowp[8], colw[3], null);
 		resetButton.setEnabled(false);
-		components.add(resetButton);
+		addComponent(resetButton);
 		
 		
 	}
@@ -180,13 +182,13 @@ public class GuiEmitterBlock extends QADGuiScreen {
 			this.returnScreen = guiEmitterBlock;
 		}
 		
-		public void buildGui(ArrayList<QADComponent> components) {
+		public void buildGui() {
 			panel = new QADScrollPanel();
 			panel.setPosition(0, 0);
 			panel.setSize(200, 200);
-			components.add(panel);
+			this.addComponent(panel);
 			
-			final int rowHeight = 14;
+			final int rowHeight = 20;
 			
 			List<String> names = GObjectTypeHelper.getParticleNameList();
 			names.sort(String.CASE_INSENSITIVE_ORDER);
@@ -194,19 +196,32 @@ public class GuiEmitterBlock extends QADGuiScreen {
 			panel.allowLeftMouseButtonScrolling = true;
 			
 			int yOff = 1;
-			for(String string : names) {
-				if(string.endsWith("_"))
-					panel.components.add(QADFACTORY.createLabel(EnumChatFormatting.RED+string, 2, yOff));
-				else
-					panel.components.add(QADFACTORY.createLabel(string, 2, yOff));
+			for(final String string : names) {
+				QADButton component = null;
 				
+				component = QADFACTORY.createButton(string, 2, yOff, 200 - 8, null);
+				component.simplified = true;
+				component.textAlignment = 0;
 				
+				if(string.endsWith("_")) {
+					component.setEnabled(false);
+				} else {
+					component.setAction( new Runnable() {
+						final String pt = string;
+						@Override public void run() {
+							particleTypeTextField.setText(pt);
+							displayGuiScreen(GuiEmitterBlockParticleTypes.this.getBehind());
+						}
+					});
+				}
+				
+				panel.addComponent(component);
 				yOff += rowHeight;
 			}
 		}
 		
 		public void layoutGui() {
-			panel.setSize(200, this.height);
+			panel.setSize(this.width, this.height);
 		}
 		
 	}

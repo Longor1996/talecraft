@@ -4,6 +4,8 @@ import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
 import de.longor.talecraft.blocks.TCTileEntity;
+import de.longor.talecraft.invoke.BlockTriggerInvoke;
+import de.longor.talecraft.invoke.EnumTriggerState;
 import de.longor.talecraft.invoke.IInvoke;
 import de.longor.talecraft.invoke.Invoke;
 import de.longor.talecraft.invoke.NullInvoke;
@@ -12,9 +14,9 @@ public class BlockUpdateDetectorTileEntity extends TCTileEntity {
 	IInvoke detectorInvoke;
 	
 	public BlockUpdateDetectorTileEntity() {
-		detectorInvoke = NullInvoke.instance;
+		detectorInvoke = BlockTriggerInvoke.ZEROINSTANCE;
 	}
-
+	
 	@Override
 	public void getInvokes(List<IInvoke> invokes) {
 		invokes.add(detectorInvoke);
@@ -47,20 +49,20 @@ public class BlockUpdateDetectorTileEntity extends TCTileEntity {
     	compound.setTag("detectorInvoke", IInvoke.Serializer.write(detectorInvoke));
     }
 
-	public void triggerUpdateInvoke() {
+	public void triggerUpdateInvoke(EnumTriggerState triggerState) {
 		if(this.worldObj.isRemote)
 			return;
 		
-		Invoke.invoke(detectorInvoke, this);
+		Invoke.invoke(detectorInvoke, this, null, triggerState);
 	}
     
 	@Override
 	public void commandReceived(String command, NBTTagCompound data) {
-		super.commandReceived(command, data);
-		
 		if(command.equals("trigger")) {
-			Invoke.invoke(detectorInvoke, this);
+			Invoke.invoke(detectorInvoke, this, null, EnumTriggerState.ON);
 		}
+		
+		super.commandReceived(command, data);
 	}
 
 	@Override

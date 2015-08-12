@@ -37,16 +37,14 @@ public class GuiRelayBlock extends QADGuiScreen {
 		this.tileEntity = tileEntity;
 	}
 	
-	public void buildGui(ArrayList<QADComponent> components) {
+	public void buildGui() {
 		final BlockPos position = tileEntity.getPos();
 		
-		components.add(new QADLabel("Relay Block @ " + position.getX() + " " + position.getY() + " " + position.getZ(), 2, 2));
+		addComponent(new QADLabel("Relay Block @ " + position.getX() + " " + position.getY() + " " + position.getZ(), 2, 2));
 		
-		components.add(new QADLabel("Invokes: " + tileEntity.getInvokes().size(), 2 + 24, 16 + 6));
+		addComponent(new QADLabel("Invokes: " + tileEntity.getInvokes().size(), 2 + 24, 16 + 6));
 		
-		// TODO: ! Implement the GUI for this IMMEDIATELY !
-		
-		components.add(QADFACTORY.createButton("+", 2, 16, 20, new Runnable() {
+		addComponent(QADFACTORY.createButton("+", 2, 16, 20, new Runnable() {
 			@Override public void run() {
 				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
 				
@@ -68,9 +66,9 @@ public class GuiRelayBlock extends QADGuiScreen {
 			
 			final String id = entry.getKey();
 			final IInvoke invoke = entry.getValue();
-			InvokePanelBuilder.build(this, components, 2 + 20 + 2, yOff, invoke, new BlockInvokeHolder(position, id), allow);
+			InvokePanelBuilder.build(this, this, 2 + 20 + 2, yOff, invoke, new BlockInvokeHolder(position, id), allow);
 			
-			components.add(QADFACTORY.createButton(new ResourceLocation("talecraft:textures/gui/delete.png"), 2, yOff, 20, new Runnable() {
+			addComponent(QADFACTORY.createButton(QADButton.ICON_DELETE, 2, yOff, 20, new Runnable() {
 				@Override public void run() {
 					String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
 					

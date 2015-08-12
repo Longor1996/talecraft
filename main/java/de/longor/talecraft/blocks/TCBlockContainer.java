@@ -34,6 +34,10 @@ public abstract class TCBlockContainer extends BlockContainer {
         translucent = true;
 	}
 	
+    public boolean isPassable(IBlockAccess worldIn, BlockPos pos) {
+        return true;
+    }
+	
     public void onBlockDestroyedByPlayer(World worldIn, BlockPos pos, IBlockState state) {
     	worldIn.removeTileEntity(pos);
     }

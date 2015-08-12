@@ -51,7 +51,7 @@ public class PointEntityRenderer extends Render {
 	    	GL11.glRotatef(entity.rotationYaw, 0, 1, 0);
 	    	GL11.glRotatef(entity.rotationPitch, 1, 0, 0);
 			
-	    	GL11.glPolygonMode(GL11.GL_FRONT, GL11.GL_POINTS);
+	    	GL11.glPolygonMode(GL11.GL_FRONT, GL11.GL_FILL);
 			GL11.glPolygonMode(GL11.GL_BACK, GL11.GL_LINE);
 			
 			for(int i = 0; i < 2; i++) {

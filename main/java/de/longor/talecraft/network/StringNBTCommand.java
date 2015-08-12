@@ -48,7 +48,7 @@ public class StringNBTCommand implements IMessage {
 		try {
 			ByteArrayInputStream inputStream = new ByteArrayInputStream(bindata);
 			DataInputStream inputDataStream = new DataInputStream(inputStream);
-			data = CompressedStreamTools.read(inputDataStream);
+			data = CompressedStreamTools.readCompressed(inputDataStream);
 			inputDataStream.close();
 			inputStream.close();
 		} catch (IOException e) {
@@ -66,7 +66,7 @@ public class StringNBTCommand implements IMessage {
 		try {
 			ByteArrayOutputStream oStream = new ByteArrayOutputStream(1024);
 			DataOutputStream o2 = new DataOutputStream(oStream);
-			CompressedStreamTools.write(data, o2);
+			CompressedStreamTools.writeCompressed(data, o2);
 			o2.close();
 			oStream.close();
 			bindata = oStream.toByteArray();

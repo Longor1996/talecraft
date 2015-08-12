@@ -30,6 +30,7 @@ import de.longor.talecraft.blocks.util.tileentity.RedstoneTriggerBlockTileEntity
 import de.longor.talecraft.client.gui.TCGuiScreen;
 import de.longor.talecraft.client.gui.blocks.GuiClockBlock;
 import de.longor.talecraft.client.gui.blocks.GuiRedstoneTriggerBlock;
+import de.longor.talecraft.invoke.EnumTriggerState;
 
 public class RedstoneTriggerBlock extends TCBlockContainer implements TCITriggerableBlock {
     public static final PropertyBool TRIGGERED = PropertyBool.create("triggered");
@@ -70,7 +71,7 @@ public class RedstoneTriggerBlock extends TCBlockContainer implements TCITrigger
         TileEntity tileentity = worldIn.getTileEntity(pos);
         
         if (tileentity instanceof RedstoneTriggerBlockTileEntity) {
-            ((RedstoneTriggerBlockTileEntity)tileentity).invokeFromUpdateTick(worldIn, pos, state, rand);
+            ((RedstoneTriggerBlockTileEntity)tileentity).invokeFromUpdateTick(EnumTriggerState.IGNORE);
         }
     }
 	
@@ -118,18 +119,15 @@ public class RedstoneTriggerBlock extends TCBlockContainer implements TCITrigger
     }
 
 	@Override
-	public void trigger(World world, BlockPos position, int data) {
+	public void trigger(World world, BlockPos position, EnumTriggerState triggerState) {
 		if (world.isRemote)
     		return;
     	
         TileEntity tileentity = world.getTileEntity(position);
         
         if (tileentity instanceof RedstoneTriggerBlockTileEntity) {
-            ((RedstoneTriggerBlockTileEntity)tileentity).invokeFromUpdateTick(
-            		world, position,
-            		world.getBlockState(position),
-            		TaleCraft.random
-            );
+            ((RedstoneTriggerBlockTileEntity)tileentity).invokeFromUpdateTick(triggerState);
         }
 	}
+	
 }

@@ -3,6 +3,7 @@ package de.longor.talecraft.commands;
 import java.util.List;
 
 import de.longor.talecraft.invoke.CommandSenderInvokeSource;
+import de.longor.talecraft.invoke.EnumTriggerState;
 import de.longor.talecraft.invoke.Invoke;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandBase;
@@ -11,7 +12,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class RegionTriggerCommand extends CommandBase {
+public class RegionTriggerCommand extends TCCommandBase {
 	
 	@Override
 	public String getName() {
@@ -45,16 +46,11 @@ public class RegionTriggerCommand extends CommandBase {
 		int ay = Math.max((int)minY.func_179628_a(), (int)maxY.func_179628_a());
 		int az = Math.max((int)minZ.func_179628_a(), (int)maxZ.func_179628_a());
 		
-		Invoke.trigger(new CommandSenderInvokeSource(sender), ix, iy, iz, ax, ay, az);
+		Invoke.trigger(new CommandSenderInvokeSource(sender), ix, iy, iz, ax, ay, az, EnumTriggerState.ON);
 	}
 	
     public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
     	return getListOfStringsMatchingLastWord(args, new String[]{"~","0"});
-    }
-    
-    public int getRequiredPermissionLevel()
-    {
-        return 2;
     }
     
 }

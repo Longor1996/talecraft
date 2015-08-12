@@ -34,8 +34,6 @@ public class ImageHologramBlockTileEntity extends TCTileEntity {
     
 	@Override
 	public void commandReceived(String command, NBTTagCompound data) {
-		super.commandReceived(command, data);
-		
 		if(command.equals("trigger")) {
 			state ^= true;
 			worldObj.markBlockForUpdate(pos);
@@ -49,6 +47,7 @@ public class ImageHologramBlockTileEntity extends TCTileEntity {
 			return;
 		}
 		
+		super.commandReceived(command, data);
 	}
 	
 	@Override
@@ -59,7 +58,7 @@ public class ImageHologramBlockTileEntity extends TCTileEntity {
 	
     @SideOnly(Side.CLIENT)
     public net.minecraft.util.AxisAlignedBB getRenderBoundingBox() {
-    	return INFINITE_EXTENT_AABB;
+    	return new net.minecraft.util.AxisAlignedBB(getPos().add(-512, -512, -512), getPos().add(512, 512, 512));
     }
     
     @Override
@@ -88,6 +87,16 @@ public class ImageHologramBlockTileEntity extends TCTileEntity {
 	public void writeToNBT_do(NBTTagCompound comp) {
 		comp.setTag("holodata", holodata);
 		comp.setBoolean("state", state);
+	}
+	
+	public void toggleActive() {
+		state ^= true;
+		this.worldObj.markBlockForUpdate(pos);
+	}
+	
+	public void setActive(boolean active) {
+		state = active;
+		this.worldObj.markBlockForUpdate(pos);
 	}
 	
 	public boolean isActive() {

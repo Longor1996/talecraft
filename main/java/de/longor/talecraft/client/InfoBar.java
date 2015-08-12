@@ -9,6 +9,7 @@ import de.longor.talecraft.proxy.ClientProxy;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -79,12 +80,6 @@ public class InfoBar {
         	
         	builder.setLength(0);
         	
-        	if(tcWand.hasKey("cursor")) {
-                builder.append(EnumChatFormatting.YELLOW);
-        		builder.append(Arrays.toString(tcWand.getIntArray("cursor")));
-                builder.append(EnumChatFormatting.RESET);
-        	}
-        	
         	if(tcWand.hasKey("boundsA") && tcWand.hasKey("boundsB")) {
                 builder.append(' ');
                 
@@ -94,15 +89,20 @@ public class InfoBar {
         		long volX = (Math.abs(b[0]-a[0])+1);
         		long volY = (Math.abs(b[1]-a[1])+1);
         		long volZ = (Math.abs(b[2]-a[2])+1);
+        		long[] vol = new long[]{volX,volY,volZ};
         		
         		long volume = volX * volY * volZ;
         		
                 builder.append(EnumChatFormatting.DARK_GRAY);
         		builder.append(Arrays.toString(a));
                 builder.append(EnumChatFormatting.GRAY);
-                builder.append(" -> ");
+                builder.append(" | ");
                 builder.append(EnumChatFormatting.WHITE);
         		builder.append(Arrays.toString(b));
+                builder.append(EnumChatFormatting.GRAY);
+                builder.append(" -> ");
+                builder.append(EnumChatFormatting.YELLOW);
+        		builder.append(Arrays.toString(vol));
                 builder.append(EnumChatFormatting.GRAY);
                 builder.append(" = ");
                 builder.append(EnumChatFormatting.BLUE);
@@ -272,6 +272,9 @@ public class InfoBar {
 		
 		if(mc.currentScreen instanceof GuiIngameMenu)
 			return true;
+		
+		if(mc.currentScreen instanceof GuiChat)
+			   return true;
 		
 		return false;
 	}

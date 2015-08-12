@@ -5,11 +5,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import de.longor.talecraft.commands.AttackCommand;
 import de.longor.talecraft.commands.ButcherCommand;
+import de.longor.talecraft.commands.EditEntityCommand;
 import de.longor.talecraft.commands.MountCommand;
 import de.longor.talecraft.commands.RegionTriggerCommand;
 import de.longor.talecraft.commands.ScriptCommand;
 import de.longor.talecraft.commands.SwitchShaderCommand;
+import de.longor.talecraft.commands.TargetedTeleportCommand;
 import de.longor.talecraft.commands.TriggerCommand;
 import de.longor.talecraft.commands.ValidateBlockCommand;
 import de.longor.talecraft.commands.VelocityCommand;
@@ -31,12 +34,16 @@ public class TaleCraftCommands {
 		commands.add(new TriggerCommand());
 		commands.add(new RegionTriggerCommand());
 		commands.add(new VelocityCommand());
+		// commands.add(new ExplosionCommand());
 		// commands.add(new SwitchShaderCommand());
 		commands.add(new VoxelBrushCommand());
 		commands.add(new ButcherCommand());
 		commands.add(new ScriptCommand());
 		commands.add(new VisualizeCommand());
 		commands.add(new ValidateBlockCommand());
+		commands.add(new EditEntityCommand());
+		commands.add(new AttackCommand());
+		commands.add(new TargetedTeleportCommand());
 	}
 	
 	public static void register(CommandHandler registry) {

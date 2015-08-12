@@ -11,7 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.BlockPos;
 
-public class MountCommand extends CommandBase {
+public class MountCommand extends TCCommandBase {
 	
 	@Override
 	public String getName() {
@@ -81,11 +81,6 @@ public class MountCommand extends CommandBase {
     	}
     	
     	return null;
-    }
-
-    public int getRequiredPermissionLevel()
-    {
-        return 2;
     }
 
 }
