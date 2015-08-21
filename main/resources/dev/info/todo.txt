@@ -10,11 +10,15 @@
 
 - Fix the bug that the URL is not shown in the 'Confirm Open Link' dialog
   when opened by the URL-Block.
+  Possible Fix: Write my own 'Open Link' GUI.
 
 - Show the wand selection of other players if possible.
-  THIS IS POSSIBLY A BAD IDEA.
+  THIS IS POSSIBLY A BAD IDEA. DONT DO IT.
 
 - Make the 'actions' of action blocks visible in the invoke tracker bar.
+  Note:
+    This requires the 'trigger' function in Invoke.java to
+    send a packet for every single triggered block. Bad idea!
 
 - Implement the ClipBlock as specified in scratch.txt
   CURRENTLY NOT POSSIBLE BECAUSE OF RENDERING PROBLEMS.
@@ -23,13 +27,13 @@
   CURRENTLY NOT POSSIBLE BECAUSE OF MISSING KNOWLEDGE.
 
 - Implement grass blocks.
-  WAIT: For textures from 'Daggard'.
+  WAIT: For textures from 'Daggard'. (only a few are missing)
 - Implement class to support directional models.
   WAIT: 1.9 will bring support for 'if X then Y' into the model format.
 - Take a look at Potofantom's block models. (Look into collecting folder './desktop/scrwat/')
   WAIT: Models like this will get simpler with the 1.9 'if X then Y' modelsystem feature.
 
-- Find a way to implement the custom mob spawner with all its functions.
+- ~~~Find a way to implement the custom mob spawner with all its functions.~~~
   Problem: The correct serialization/deserialization of the spawned entitites list.
 
 - The following blocks are currently missing:
@@ -74,6 +78,8 @@
 - Try to find a way to reduce the massive amount of lag when displaying the item-list.
   Note: This is caused by the Font-Renderer being the most horrible font-renderer in existance.
         Ergo: Can't fix this problem. :(
+        Note: Could fix if I build my own fontrenderer.
+              Would take too much time though...
 
 - Change the names of ALL server commands to fit better.
   e.g:
