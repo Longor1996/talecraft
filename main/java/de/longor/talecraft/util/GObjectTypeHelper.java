@@ -199,6 +199,48 @@ public class GObjectTypeHelper {
 		return null;
 	}
 	
+	public static final Block findBlock(String fully_qualified_name) {
+		String typeString = fully_qualified_name;
+		int indexOfSlash = typeString.indexOf('/');
+		
+		String typeMID = null;
+		int typeMeta = 0;
+		
+		if(indexOfSlash == -1) {
+			typeMID = typeString;
+		} else {
+			typeMID = typeString.substring(0, indexOfSlash);
+			typeMeta = Integer.valueOf(typeString.substring(indexOfSlash+1));
+		}
+		
+		int indexOfDot = typeMID.indexOf(':');
+		
+		String typeMod = null;
+		String typeID = null;
+		
+		if(indexOfDot == -1) {
+			typeMod = "minecraft";
+			typeID = typeMID;
+		} else {
+			typeMod = typeMID.substring(0, indexOfDot);
+			typeID = typeMID.substring(indexOfDot+1);
+		}
+		
+		ResourceLocation location = new ResourceLocation(typeMod+":"+typeID);
+		Block block = (Block) Block.blockRegistry.getObject(location);
+		
+		if(block != null) {
+			if(block.getUnlocalizedName().equals("tile.air") && !typeID.contains("air")){
+				System.out.println("Block " + block.getUnlocalizedName());
+				return null; // This is the wrong block! D: (Probably minecraft:air)
+			}
+			
+			return block;
+		}
+		
+		return null;
+	}
+	
 	public static final Potion findPotion(String name) {
 		return Potion.getPotionFromResourceLocation(name);
 	}

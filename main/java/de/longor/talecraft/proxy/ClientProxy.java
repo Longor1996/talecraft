@@ -33,6 +33,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderWorldEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -150,7 +151,6 @@ public class ClientProxy extends CommonProxy {
 		MinecraftForge.EVENT_BUS.register(this);
 		
 		init_logic_keybindings();
-		init_render_tilentity();
 		
     	TaleCraftClientCommands.init();
     	
@@ -167,6 +167,7 @@ public class ClientProxy extends CommonProxy {
 		init_render_item(mesher);
 
 		init_render_entity();
+		init_render_tilentity();
 
 		init_logic_network();
 
@@ -504,26 +505,41 @@ public class ClientProxy extends CommonProxy {
 		
 		// Enable textures again, since the GUI-prerender doesn't enable it again by itself.
 		GlStateManager.enableTexture2D();
+	}
+
+	@SubscribeEvent
+	public void worldPostRenderHand(RenderHandEvent event) {
 		
 		// XXX: UNUSED EXPERIMENTAL FEATURE
 		// If active, render a fade-effect (this makes the screen go dark).
 		// This overlays everything except the hand and the GUI, which is wrong.
-		double fade = 0f;
+		double fade = 0.0f;
 		int color = 0x000000;
 		if(fade > 0 && mc.ingameGUI != null) {
+			// Draw Overlay
 			GL11.glMatrixMode(GL11.GL_PROJECTION);
 			GL11.glLoadIdentity();
 			GLU.gluOrtho2D(0, 2, 2, 0);
 			GL11.glMatrixMode(GL11.GL_MODELVIEW);
 			GL11.glLoadIdentity();
+			
 			{
 				int alpha = MathHelper.clamp_int((int) (fade * 255), 0, 255);
 				int mixed = ((alpha & 0xFF) << 24) | (color);
 				mc.ingameGUI.drawRect(-1, -1, 4, 4, mixed);
 			}
+			
+			RenderHelper.disableStandardItemLighting();
+			
+			// Do NOT draw the hand!
+			event.setCanceled(true);
 		}
+		
+		// Enable for reasons stated in:
+		// ClientProxy..worldPass() -> Last line of code.
+		GlStateManager.enableTexture2D();
 	}
-
+	
 	private void worldPostRender(double partialTicks, Tessellator tessellator, WorldRenderer worldrenderer) {
 		this.partialTicks = (float) partialTicks;
 		

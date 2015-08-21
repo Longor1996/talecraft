@@ -2,10 +2,12 @@ package de.longor.talecraft.blocks.util.tileentity;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import com.google.gson.JsonParseException;
 
+import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.TCTileEntity;
 import de.longor.talecraft.invoke.IInvoke;
 import net.minecraft.command.PlayerSelector;
@@ -52,7 +54,7 @@ public class MessageBlockTileEntity extends TCTileEntity {
 		
 		// compose chat message depending on the TELLRAW flag
 		if(tellraw) {
-			
+			// chat message consists of a raw json message
             try {
             	chatComponent = new IChatComponent[]{IChatComponent.Serializer.jsonToComponent(message)};
             } catch (JsonParseException jsonparseexception) {
@@ -62,8 +64,10 @@ public class MessageBlockTileEntity extends TCTileEntity {
                 return;
             }
 		} else {
-			if(message.contains("\n")) {
-				String[] lines = message.split("\n");
+			// is there a line break in the message?
+			if(message.contains("\\")) {
+				// split the message into multiple lines
+				String[] lines = StringUtils.split(message, "\\");
 				chatComponent = new IChatComponent[lines.length];
 				
 				for(int i = 0; i < lines.length; i++) {

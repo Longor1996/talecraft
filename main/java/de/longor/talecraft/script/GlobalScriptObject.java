@@ -54,16 +54,16 @@ public class GlobalScriptObject implements IObjectWrapper {
 	}
 	
 	public BlockStateObjectWrapper getBlock(String id) {
-		Block block = GObjectTypeHelper.findBlockState(id).getBlock();
+		IBlockState block = GObjectTypeHelper.findBlockState(id);
 		
 		if(block == null)
 			return null;
 		
-		return new BlockStateObjectWrapper(block.getDefaultState());
+		return new BlockStateObjectWrapper(block);
 	}
 	
 	public BlockStateObjectWrapper getBlock(String id, int meta) {
-		Block block = GObjectTypeHelper.findBlockState(id).getBlock();
+		Block block = GObjectTypeHelper.findBlock(id);
 		
 		if(block == null)
 			return null;

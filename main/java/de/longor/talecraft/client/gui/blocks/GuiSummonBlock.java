@@ -191,6 +191,7 @@ public class GuiSummonBlock extends QADGuiScreen {
 					
 					tileEntity.setSummonOptions(newArray);
 					updateSummonBlockData(true);
+					displayGuiScreen(null);
 				}
 			});
 		}

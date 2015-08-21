@@ -47,6 +47,26 @@ public class MutableBlockPos extends BlockPos {
 	{
 		return super.crossProductBP(vec);
 	}
+	
+	public int x()
+	{
+		return this.x;
+	}
+
+	public int y()
+	{
+		return this.y;
+	}
+
+	public int z()
+	{
+		return this.z;
+	}
+
+	public Vec3i cross(Vec3i vec)
+	{
+		return super.crossProductBP(vec);
+	}
 
 	public void set(int x2, int y2, int z2) {
 		x = x2;

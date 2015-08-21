@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.lang.reflect.*;
 import java.text.MessageFormat;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.mozilla.javascript.ast.FunctionNode;
@@ -3631,15 +3632,31 @@ public class ScriptRuntime {
      */
     private static class DefaultMessageProvider implements MessageProvider {
         public String getMessage(String messageId, Object[] arguments) {
-            final String defaultResource
-                = "org.mozilla.javascript.resources.Messages";
+            final String defaultResource = "assets.rhino.text.Messages";
 
             Context cx = Context.getCurrentContext();
             Locale locale = cx != null ? cx.getLocale() : Locale.getDefault();
 
             // ResourceBundle does caching.
-            ResourceBundle rb = ResourceBundle.getBundle(defaultResource, locale);
-
+            ResourceBundle rb = null;
+            
+            try {
+            	// Try to load the bundle for this locale...
+            	rb = ResourceBundle.getBundle(defaultResource, locale);
+            } catch(MissingResourceException mex) {
+            	System.out.println("ERROR: Could not load resource bundle for the locale: " + locale);
+            	System.out.println("-----: Loading ENGLISH locale as fallback!");
+            	
+            	try {
+            	// NO BUNDLE: Fallback to english locale!
+            	rb = ResourceBundle.getBundle(defaultResource, Locale.ENGLISH);
+            	} catch(MissingResourceException mex2) {
+            		System.out.println("Failed to load fallback bundle for locale en_EN! Crashing...");
+            		mex2.printStackTrace();
+            		throw new RuntimeException("Failed to load fallback bundle for locale en_EN!");
+            	}
+            }
+            
             String formatString;
             try {
                 formatString = rb.getString(messageId);

@@ -6,6 +6,7 @@ import org.lwjgl.input.Keyboard;
 
 import de.longor.talecraft.Reference;
 import de.longor.talecraft.proxy.ClientProxy;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -182,7 +183,11 @@ public class InfoBar {
 		        	} else if(Item.getItemFromBlock(state.getBlock()) == null) {
 		        		builder.append("NULL-DATA ERROR");
 		        	} else {
-			        	builder.append(new ItemStack(state.getBlock()).getDisplayName());
+		        		Block block = state.getBlock();
+		        		int metadata = block.getMetaFromState(state);
+		        		ItemStack itemStack = new ItemStack(block, 1, metadata);
+		        		String displayName = itemStack.getDisplayName();
+		        		builder.append(displayName);
 		        	}
 		        }
             }

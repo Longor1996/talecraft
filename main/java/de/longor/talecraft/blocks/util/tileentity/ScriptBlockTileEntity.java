@@ -45,15 +45,18 @@ public class ScriptBlockTileEntity extends TCTileEntity {
 	public void commandReceived(String command, NBTTagCompound data) {
 		if(command.equals("reload")) {
 			scriptInvoke.reloadScript();
+			return;
 		}
 		
 		if(command.equals("execute")) {
 			triggerInvokeScript();
+			return;
 		}
 		
 		if(command.equals("reloadexecute")) {
 			scriptInvoke.reloadScript();
 			triggerInvokeScript();
+			return;
 		}
 		
 		super.commandReceived(command, data);
