@@ -6,6 +6,11 @@ It's all up to you.
 
 If you want to help, fork this repository and add a new feature or fix a bug, then make a pull-request. If your pull-request is good, it will be merged into the master branch.
 
+## Dependencies
+
+TaleCraft is mostly self-contained. It only needs 'Minecraft Forge', which you can get from here:
+[Minecraft Forge Website](http://files.minecraftforge.net/)
+
 ## Links
 
 - [Minecraft-Forum Thread](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/wip-mods/1444532 "Minecraft-Forum Thread")
