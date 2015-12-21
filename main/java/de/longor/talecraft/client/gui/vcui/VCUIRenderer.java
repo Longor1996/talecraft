@@ -5,6 +5,7 @@ import java.util.Stack;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
+import de.longor.talecraft.client.ClientResources;
 import de.longor.talecraft.client.render.renderers.EXTFontRenderer;
 import de.longor.talecraft.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
@@ -190,7 +191,7 @@ public class VCUIRenderer {
 	}
 
 	public void bindTexture(ResourceLocation resource) {
-		minecraft.getTextureManager().bindTexture(resource == null ? ClientProxy.colorReslocWhite : resource);
+		minecraft.getTextureManager().bindTexture(resource == null ? ClientResources.texColorWhite : resource);
 	}
 
 	public void drawTexturedModalRectangle(int x, int y, int textureX, int textureY, int width, int height, int color) {

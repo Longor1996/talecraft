@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import de.longor.talecraft.TaleCraft;
+import de.longor.talecraft.client.ClientResources;
 import de.longor.talecraft.client.render.IRenderable;
 import de.longor.talecraft.client.render.renderers.BoxRenderer;
 import de.longor.talecraft.proxy.ClientProxy;
@@ -39,7 +40,7 @@ public class SelectionBoxRenderer implements IRenderable {
 				GL11.glPolygonMode(GL11.GL_FRONT, GL11.GL_POINT);
 				GL11.glPolygonMode(GL11.GL_BACK, GL11.GL_FILL);
 				GlStateManager.enableTexture2D();
-				mc.getTextureManager().bindTexture(ClientProxy.colorReslocWhite);
+				mc.getTextureManager().bindTexture(ClientResources.texColorWhite);
 				BoxRenderer.renderBox(tessellator, worldrenderer, cursor[0]-E, cursor[1]-E, cursor[2]-E, cursor[0]+1+E, cursor[1]+1+E, cursor[2]+1+E, 1f,1f,1f,1f);
 				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 			}
@@ -70,9 +71,9 @@ public class SelectionBoxRenderer implements IRenderable {
 				ResourceLocation texture = null;
 				
 				if(!TaleCraft.proxy.asClient().settings.getBoolean("client.render.useAlternateSelectionTexture")) {
-					texture = ClientProxy.textureReslocSelectionBox;
+					texture = ClientResources.textureSelectionBoxWS;
 				} else {
-					texture = ClientProxy.textureReslocSelectionBox2;
+					texture = ClientResources.textureSelectionBoxFF;
 				}
 				
 				mc.getTextureManager().bindTexture(texture);
@@ -83,12 +84,12 @@ public class SelectionBoxRenderer implements IRenderable {
 				// Render secondary (no-depth) box
 				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 				GlStateManager.disableDepth();
-				mc.getTextureManager().bindTexture(ClientProxy.colorReslocWhite);
+				mc.getTextureManager().bindTexture(ClientResources.texColorWhite);
 				BoxRenderer.renderSelectionBox(tessellator, worldrenderer, ix-E, iy-E, iz-E, ax+1+E, ay+1+E, az+1+E, -1);
 				GlStateManager.enableDepth();
 				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 				
-				mc.getTextureManager().bindTexture(ClientProxy.colorReslocWhite);
+				mc.getTextureManager().bindTexture(ClientResources.texColorWhite);
 				GL11.glBegin(GL11.GL_LINES);
 				GL11.glColor4f(1, 0, 0, 1);
 				GL11.glVertex3f(ix-E, iy-E, iz-E);

@@ -5,12 +5,14 @@ import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 
 import de.longor.talecraft.TaleCraft;
+import de.longor.talecraft.client.render.temporables.BlockHighlight;
 import de.longor.talecraft.client.render.temporables.BlockPosTemporable;
 import de.longor.talecraft.client.render.temporables.BoxTemporable;
 import de.longor.talecraft.client.render.temporables.LineToBoxTemporable;
 import de.longor.talecraft.util.NBTHelper;
 import net.minecraft.command.PlayerSelector;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 
 public class PushRenderableFactory {
 	
@@ -111,6 +113,16 @@ public class PushRenderableFactory {
 			TaleCraft.logger.info("Parsed: " + Arrays.toString(arguments));
 		}
 		
+		if(type.equals("highlight.block")) {
+			double duration = data.getDouble("duration");
+			int posX = data.getInteger("pos.x");
+			int posY = data.getInteger("pos.y");
+			int posZ = data.getInteger("pos.z");
+			BlockPos pos = new BlockPos(posX, posY, posZ);
+			return new BlockHighlight(pos, duration);
+		}
+		
+		TaleCraft.logger.error("Unknown push renderable: " + type);
 		return null;
 	}
 	

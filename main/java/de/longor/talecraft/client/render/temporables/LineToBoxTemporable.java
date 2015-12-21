@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import de.longor.talecraft.TaleCraft;
+import de.longor.talecraft.client.ClientResources;
 import de.longor.talecraft.client.render.ITemporaryRenderable;
 import de.longor.talecraft.client.render.renderers.BoxRenderer;
 import de.longor.talecraft.proxy.ClientProxy;
@@ -58,7 +59,7 @@ public class LineToBoxTemporable implements ITemporaryRenderable {
 		GlStateManager.color(1f, 1f, 1f, 1f);
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
-		Minecraft.getMinecraft().renderEngine.bindTexture(ClientProxy.colorReslocOrange);
+		Minecraft.getMinecraft().renderEngine.bindTexture(ClientResources.texColorOrange);
 //		BoxRenderer.renderBox(tessellator, worldrenderer, minX, minY, minZ, maxX, maxY, maxZ, r, g, b, a);
 		
 		BoxRenderer.renderBoxLine(tessellator, worldrenderer, x0, y0, z0, x1, y1, z1, r, g, b, a);

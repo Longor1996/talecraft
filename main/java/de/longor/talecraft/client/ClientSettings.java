@@ -55,9 +55,11 @@ public class ClientSettings {
 	public void getSettingsForServer(NBTTagCompound settingsForServer) {
 		for(Object keyObj : settings.getKeySet()) {
 			String key = (String)keyObj;
-			if(!key.startsWith("client.")) {
-				settingsForServer.setTag(key, settings.getTag(key));
-			}
+			
+			if(key.startsWith("client.")) continue;
+			if(key.startsWith("render.")) continue;
+			
+			settingsForServer.setTag(key, settings.getTag(key));
 		}
 	}
 
@@ -95,7 +97,7 @@ public class ClientSettings {
 	public void send() {
 		if(mc.thePlayer == null) return;
 		
-		String tccommand = "update settings";
+		String tccommand = "server.client.settings.update";
 		NBTTagCompound settingsForServer = new NBTTagCompound();
 		getSettingsForServer(settingsForServer);
 		TaleCraft.network.sendToServer(new StringNBTCommand(tccommand, settingsForServer));

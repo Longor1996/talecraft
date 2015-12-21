@@ -110,6 +110,9 @@ public class QADPanel extends QADRectangularComponent implements QADComponentCon
 			boolean inside = localMouseX >= 0 && localMouseY >= 0 && localMouseX < this.width && localMouseY < this.height;
 			renderer.bindTexture(null);
 			renderer.drawRectangle(x, y, x+width, y+height, inside ? 0x307F7F7F : 0x1F7F7F7F);
+		} else if (backgroundColor == 3) {
+			renderer.bindTexture(null);
+			renderer.drawRectangle(x, y, x+width, y+height, 0x7F000000);
 		} else if(backgroundColor != 0) {
 			renderer.bindTexture(null);
 			renderer.drawRectangle(x, y, x+width, y+height, backgroundColor);

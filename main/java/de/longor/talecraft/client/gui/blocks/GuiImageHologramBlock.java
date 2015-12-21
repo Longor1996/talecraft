@@ -6,6 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.util.tileentity.ImageHologramBlockTileEntity;
+import de.longor.talecraft.client.ClientNetworkHandler;
 import de.longor.talecraft.client.gui.qad.QADButton;
 import de.longor.talecraft.client.gui.qad.QADComponent;
 import de.longor.talecraft.client.gui.qad.QADFACTORY;
@@ -107,8 +108,8 @@ public class GuiImageHologramBlock extends QADGuiScreen {
 				
 				// Final
 				commandComp.setString("command", "set_vars");
-				
-				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
+
+				String commandString = ClientNetworkHandler.makeBlockCommand(position);
 				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandComp));
 				GuiImageHologramBlock.this.mc.displayGuiScreen(null);
 			}

@@ -3,6 +3,7 @@ package de.longor.talecraft.client.render.entity;
 import org.lwjgl.opengl.GL11;
 
 import de.longor.talecraft.TaleCraft;
+import de.longor.talecraft.client.ClientResources;
 import de.longor.talecraft.client.render.renderers.BoxRenderer;
 import de.longor.talecraft.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
@@ -26,7 +27,7 @@ public class PointEntityRenderer extends Render {
 	
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) {
-		return ClientProxy.colorReslocOrange;
+		return ClientResources.texColorOrange;
 	}
 	
     public void doRender(Entity entity, double x, double y, double z, float p_76986_8_, float partialTicks) {
@@ -39,7 +40,7 @@ public class PointEntityRenderer extends Render {
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         float r=1,g=1,b=1,a=1,yeoffset=entity.getEyeHeight();
 		
-        bindTexture(ClientProxy.colorReslocWhite);
+        bindTexture(ClientResources.texColorWhite);
 		
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableLighting();
@@ -101,7 +102,7 @@ public class PointEntityRenderer extends Render {
         GlStateManager.enableLighting();
         GlStateManager.enableCull();
         RenderHelper.enableStandardItemLighting();
-        bindTexture(ClientProxy.colorReslocWhite);
+        bindTexture(ClientResources.texColorWhite); // this shouldn't be necessary?
     }
 	
 }

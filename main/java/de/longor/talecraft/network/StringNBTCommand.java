@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.logging.log4j.core.net.DatagramOutputStream;
 
+import de.longor.talecraft.TaleCraft;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,9 +25,9 @@ public class StringNBTCommand implements IMessage {
 		command = "";
 	}
 	
-	public StringNBTCommand(String cmd, NBTTagCompound in) {
-		data = in;
-		command = cmd;
+	public StringNBTCommand(String cmdIN, NBTTagCompound dataIN) {
+		this.data = dataIN != null ? dataIN : new NBTTagCompound();
+		this.command = cmdIN;
 	}
 	
 	public StringNBTCommand(String cmd) {
@@ -66,7 +67,14 @@ public class StringNBTCommand implements IMessage {
 		try {
 			ByteArrayOutputStream oStream = new ByteArrayOutputStream(1024);
 			DataOutputStream o2 = new DataOutputStream(oStream);
-			CompressedStreamTools.writeCompressed(data, o2);
+			
+			if(data != null) {
+				CompressedStreamTools.writeCompressed(data, o2);
+			} else {
+				CompressedStreamTools.writeCompressed(new NBTTagCompound(), o2);
+				TaleCraft.logger.error("StringNBTCommand was sent without payload: " + command + " #"+this.hashCode());
+			}
+			
 			o2.close();
 			oStream.close();
 			bindata = oStream.toByteArray();

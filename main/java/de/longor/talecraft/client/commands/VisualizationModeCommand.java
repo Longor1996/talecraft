@@ -24,7 +24,7 @@ public final class VisualizationModeCommand extends CommandBase {
 		
 		ClientProxy.shedule(new Runnable() {
 			@Override public void run() {
-				ClientProxy.proxy.setVisualizationMode(mode);
+				ClientProxy.proxy.getRenderer().setVisualizationMode(mode);
 			}
 		});
 	}

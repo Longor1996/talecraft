@@ -17,6 +17,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 
 import org.apache.commons.io.FileUtils;
+import org.mozilla.javascript.ClassShutter;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextAction;
 import org.mozilla.javascript.ContextFactory;
@@ -37,24 +38,45 @@ import de.longor.talecraft.util.MutableBlockPos;
 
 public class GlobalScriptManager {
 	private NativeObject globalScope;
+	private ClassShutter globalClassShutter;
+	private ContextFactory globalContextFactory;
+	private GlobalScriptObject globalScriptObject;
+	private ConsoleOutput consoleOutput;
 	
 	public void init(TaleCraft taleCraft, CommonProxy proxy) {
 		taleCraft.logger.info("Initializing Rhino Script Engine...");
 		globalScope = new NativeObject();
+		globalClassShutter = new GlobalClassShutter();
+		
+		globalContextFactory = new GlobalContextFactory();
+		ContextFactory.initGlobal(globalContextFactory);
 		
 		Context cx = Context.enter();
 		try {
 			ScriptRuntime.initStandardObjects(cx, globalScope, true);
+			
+			globalScriptObject = new GlobalScriptObject(this);
+			ScriptableObject.putProperty(globalScope, "system", Context.javaToJS(globalScriptObject, globalScope));
+			
+			consoleOutput = new ConsoleOutput();
+			ScriptableObject.putProperty(globalScope, "out", Context.javaToJS(new ConsoleOutput(), globalScope));
+			
 			// String loadMe = "RegExp; getClass; java; Packages; JavaAdapter;";
 			// cx.evaluateString(globalScope , loadMe, "lazyLoad", 0, null);
-			ScriptableObject.putProperty(globalScope, "out", Context.javaToJS(new ConsoleOutput(), globalScope));
-			ScriptableObject.putProperty(globalScope, "system", Context.javaToJS(new GlobalScriptObject(this), globalScope));
-			TaleCraft.logger.info("Script Test: " + cx.evaluateString(globalScope, "msg = \"Rhino Time!\"; msg;", "<cmd>", 0, null));
+			
+			// Startup Script Test
+			String startupTestScript = "msg = \"Rhino Time!\"; msg;";
+			Object startupTestScriptResult = cx.evaluateString(globalScope, startupTestScript, "<cmd>", 0, null);
+			TaleCraft.logger.info("Startup Script Test: " + startupTestScriptResult);
 		} finally {
 			cx.exit();
 		}
 		
 		taleCraft.logger.info("Script Engine initialized!");
+	}
+	
+	public void contextCreation(Context cx) {
+		cx.setClassShutter(globalClassShutter);
 	}
 	
 	public Scriptable createNewScope() {

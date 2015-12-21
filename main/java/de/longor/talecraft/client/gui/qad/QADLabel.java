@@ -10,13 +10,14 @@ public class QADLabel extends QADRectangularComponent {
 	public static interface LabelModel {
 		public String getText();
 		public int getTextLength();
+		public int getColor();
 	}
 	
 	LabelModel model = null;
+	Runnable onClick = null;
 	int x = 0;
 	int y = 0;
 	int fontHeight = -1;
-	int color = 0xFFFFFFFF;
 	int lastKnownWidth = 0;
 	int lastKnownHeight = 0;
 	boolean shadow = true;
@@ -34,10 +35,9 @@ public class QADLabel extends QADRectangularComponent {
 	}
 	
 	public QADLabel(String text, int x, int y, int color) {
-		this.model = new DefaultLabelModel(text);
+		this.model = new DefaultLabelModel(text, color);
 		this.x = x;
 		this.y = y;
-		this.color = color;
 	}
 	
 	public QADLabel(String text, int x, int y, boolean shadow) {
@@ -48,10 +48,9 @@ public class QADLabel extends QADRectangularComponent {
 	}
 	
 	public QADLabel(String text, int x, int y, int color, boolean shadow) {
-		this.model = new DefaultLabelModel(text);
+		this.model = new DefaultLabelModel(text, color);
 		this.x = x;
 		this.y = y;
-		this.color = color;
 		this.shadow = shadow;
 	}
 
@@ -100,7 +99,7 @@ public class QADLabel extends QADRectangularComponent {
 		
 		lastKnownWidth = renderer.getFontRenderer().stringWidth(model.getText());
 		lastKnownHeight = renderer.getFontRenderer().fr.FONT_HEIGHT;
-		renderer.drawString(model.getText(), x, y, color, shadow);
+		renderer.drawString(model.getText(), x, y, model.getColor(), shadow);
 		
 		renderer.getFontRenderer().fr.FONT_HEIGHT = normFontHeight;
 	}
@@ -109,7 +108,14 @@ public class QADLabel extends QADRectangularComponent {
 	public void onMouseClicked(int i, int j, int mouseButton) {}
 
 	@Override
-	public void onMouseReleased(int i, int j, int state) {}
+	public void onMouseReleased(int mouseX, int mouseY, int state) {
+		if(isPointInside(mouseX+x, mouseY+y)) {
+			if(onClick != null) {
+				playPressSound(1f);
+				onClick.run();
+			}
+		}
+	}
 
 	@Override
 	public void onMouseClickMove(int i, int j, int clickedMouseButton, long timeSinceLastClick) {}
@@ -165,6 +171,10 @@ public class QADLabel extends QADRectangularComponent {
 
 	public void setFontHeight(int height) {
 		this.fontHeight = height;
+	}
+	
+	public void setOnClickHandler(Runnable runnable) {
+		this.onClick = runnable;
 	}
 
 	@Override

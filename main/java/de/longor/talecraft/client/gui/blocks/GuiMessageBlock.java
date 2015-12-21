@@ -5,6 +5,7 @@ import net.minecraft.util.BlockPos;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.util.tileentity.ClockBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.MessageBlockTileEntity;
+import de.longor.talecraft.client.ClientNetworkHandler;
 import de.longor.talecraft.client.gui.qad.QADButton;
 import de.longor.talecraft.client.gui.qad.QADFACTORY;
 import de.longor.talecraft.client.gui.qad.QADGuiScreen;
@@ -46,7 +47,7 @@ public class GuiMessageBlock extends QADGuiScreen {
 		QADButton setDataButton = QADFACTORY.createButton("Apply", 2, 14, 60, null);
 		setDataButton.setAction(new Runnable() {
 			@Override public void run() {
-				String commandString = "blockdatamerge:"+position.getX() + " " + position.getY() + " " + position.getZ();
+				String commandString = ClientNetworkHandler.makeBlockDataMergeCommand(position);
 				NBTTagCompound commandData = new NBTTagCompound();
 				
 				// data?

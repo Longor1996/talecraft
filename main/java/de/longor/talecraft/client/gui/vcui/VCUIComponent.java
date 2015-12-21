@@ -3,7 +3,7 @@ package de.longor.talecraft.client.gui.vcui;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
-import de.longor.util.Vec2i;
+import de.longor.talecraft.util.Vec2i;
 import net.minecraft.util.Vec3i;
 
 public class VCUIComponent {

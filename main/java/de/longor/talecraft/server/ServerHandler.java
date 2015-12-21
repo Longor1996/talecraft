@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.TCIBlockCommandReceiver;
+import de.longor.talecraft.client.ClientNetworkHandler;
 import de.longor.talecraft.network.PlayerNBTDataMerge;
 import de.longor.talecraft.network.StringNBTCommand;
 import de.longor.talecraft.util.PlayerHelper;
@@ -43,21 +44,21 @@ public class ServerHandler {
 			return;
 		}
 		
-		if(commandPacket.command.equals("join acknowledged")) {
+		if(commandPacket.command.equals("server.client.connection.state.change:join_acknowledged")) {
 			TaleCraft.logger.info("join acknowledged : " + commandPacket.data);
 			getServerMirror(null).playerList().getPlayer(player).construct(commandPacket.data);
 			return;
 		}
 		
-		if(commandPacket.command.equals("update settings")) {
+		if(commandPacket.command.equals("server.client.settings.update")) {
 			TaleCraft.logger.info("updating settings " + commandPacket.data);
 			getServerMirror(null).playerList().getPlayer(player).updateSettings(commandPacket.data);
 			return;
 		}
 		
-		if(commandPacket.command.equals("data.entity.merge")) {
+		if(commandPacket.command.equals("server.data.entity.merge")) {
 			if(!PlayerHelper.isOp(player)) {
-				player.addChatMessage(new ChatComponentText("Error: 'data.entity.merge' is a operator only command."));
+				player.addChatMessage(new ChatComponentText("Error: 'server.data.entity.merge' is a operator only command."));
 				return;
 			}
 			
@@ -102,13 +103,13 @@ public class ServerHandler {
 			return;
 		}
 		
-		if(commandPacket.command.startsWith("blockdatamerge:")) {
+		if(commandPacket.command.startsWith("server.data.block.merge:")) {
 			if(!PlayerHelper.isOp(player)) {
 				player.addChatMessage(new ChatComponentText("Error: 'blockdatamerge' is a operator only command."));
 				return;
 			}
 			
-			String positionString = commandPacket.command.substring(15);
+			String positionString = commandPacket.command.substring(24);
 			String[] posStrings = positionString.split(" ");
 			BlockPos position = new BlockPos(Integer.valueOf(posStrings[0]), Integer.valueOf(posStrings[1]), Integer.valueOf(posStrings[2]));
 			
@@ -124,13 +125,13 @@ public class ServerHandler {
 			}
 		}
 		
-		if(commandPacket.command.startsWith("blockcommand:")) {
+		if(commandPacket.command.startsWith("server.data.block.command:")) {
 			if(!PlayerHelper.isOp(player)) {
 				player.addChatMessage(new ChatComponentText("Error: 'blockcommand' is a operator only command."));
 				return;
 			}
 			
-			String positionString = commandPacket.command.substring(13);
+			String positionString = commandPacket.command.substring(26);
 			String[] posStrings = positionString.split(" ");
 			BlockPos position = new BlockPos(Integer.valueOf(posStrings[0]), Integer.valueOf(posStrings[1]), Integer.valueOf(posStrings[2]));
 			

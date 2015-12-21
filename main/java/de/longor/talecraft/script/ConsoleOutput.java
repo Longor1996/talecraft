@@ -22,7 +22,7 @@ public class ConsoleOutput implements IObjectWrapper {
 	}
 	
 	public void println(IObjectWrapper object) {
-		TaleCraft.logger.info(object.getOwnPropertyNames());
+		TaleCraft.logger.info(object.getClass().getSimpleName() + "@" + object.hashCode() + " : " + object.getOwnPropertyNames());
 	}
 	
 	@Override

@@ -8,6 +8,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.util.tileentity.LightBlockTileEntity;
+import de.longor.talecraft.client.ClientNetworkHandler;
 import de.longor.talecraft.client.gui.qad.QADButton;
 import de.longor.talecraft.client.gui.qad.QADComponent;
 import de.longor.talecraft.client.gui.qad.QADFACTORY;
@@ -35,7 +36,7 @@ public class GuiLightBlock extends QADGuiScreen {
 		slider.setSliderAction(new Runnable() {
 			@Override public void run() {
 				int newValue = (int) (slider.getSliderValue() * 16);
-				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
+				String commandString = ClientNetworkHandler.makeBlockCommand(position);
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "set");
 				commandData.setInteger("lightValue", MathHelper.clamp_int(newValue, 0, 15));
@@ -45,7 +46,7 @@ public class GuiLightBlock extends QADGuiScreen {
 		
 		QADButton buttonToggle = QADFACTORY.createButton("Toggle", 2, 40, 100, new Runnable() {
 			@Override public void run() {
-				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
+				String commandString = ClientNetworkHandler.makeBlockCommand(position);
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "toggle");
 				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));
@@ -55,7 +56,7 @@ public class GuiLightBlock extends QADGuiScreen {
 		
 		QADButton buttonEnable = QADFACTORY.createButton("Enable", 2 + 100 + 2, 40, 50, new Runnable() {
 			@Override public void run() {
-				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
+				String commandString = ClientNetworkHandler.makeBlockCommand(position);
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "on");
 				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));
@@ -65,7 +66,7 @@ public class GuiLightBlock extends QADGuiScreen {
 		
 		QADButton buttonDisable = QADFACTORY.createButton("Disable", 2 + 100 + 2 + 50 + 2, 40, 50, new Runnable() {
 			@Override public void run() {
-				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
+				String commandString = ClientNetworkHandler.makeBlockCommand(position);
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "off");
 				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));

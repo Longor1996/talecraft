@@ -10,6 +10,7 @@ import net.minecraft.util.EnumChatFormatting;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.util.tileentity.ClockBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.EmitterBlockTileEntity;
+import de.longor.talecraft.client.ClientNetworkHandler;
 import de.longor.talecraft.client.gui.qad.QADButton;
 import de.longor.talecraft.client.gui.qad.QADComponent;
 import de.longor.talecraft.client.gui.qad.QADFACTORY;
@@ -153,8 +154,8 @@ public class GuiEmitterBlock extends QADGuiScreen {
 				
 				// Final
 				commandComp.setString("command", "set_vars");
-				
-				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
+
+				String commandString = ClientNetworkHandler.makeBlockCommand(position);
 				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandComp));
 				GuiEmitterBlock.this.mc.displayGuiScreen(null);
 			}

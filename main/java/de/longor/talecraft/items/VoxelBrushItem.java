@@ -3,7 +3,7 @@ package de.longor.talecraft.items;
 import java.util.List;
 
 import de.longor.talecraft.TaleCraft;
-import de.longor.talecraft.voxelbrush.VoxelBrush;
+import de.longor.talecraft.voxelbrush_old.VoxelBrush;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

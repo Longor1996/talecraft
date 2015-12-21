@@ -20,6 +20,7 @@ import de.longor.talecraft.blocks.util.tileentity.InverterBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.MemoryBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.RedstoneTriggerBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.TriggerFilterBlockTileEntity;
+import de.longor.talecraft.client.ClientNetworkHandler;
 import de.longor.talecraft.client.gui.invoke.BlockInvokeHolder;
 import de.longor.talecraft.client.gui.invoke.InvokePanelBuilder;
 import de.longor.talecraft.client.gui.qad.QADButton;
@@ -66,7 +67,7 @@ public class GuiTriggerFilterBlock extends QADGuiScreen {
 		public void setState(boolean newState) {
 			lastKnownState = newState;
 			
-			String commandString = "blockdatamerge:"+tileEntity.getPos().getX() + " " + tileEntity.getPos().getY() + " " + tileEntity.getPos().getZ();
+			String commandString = ClientNetworkHandler.makeBlockDataMergeCommand(tileEntity.getPos());
 			NBTTagCompound commandData = new NBTTagCompound();
 			commandData.setBoolean(tagName, lastKnownState);
 			TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));

@@ -2,6 +2,8 @@ package de.longor.talecraft.items;
 
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.clipboard.ClipboardItem;
+import de.longor.talecraft.clipboard.ClipboardItemStructure;
+import de.longor.talecraft.clipboard.ClipboardTagNames;
 import de.longor.talecraft.proxy.ClientProxy;
 import de.longor.talecraft.server.ServerHandler;
 import de.longor.talecraft.server.ServerMirror;
@@ -52,8 +54,8 @@ public class PasteItem extends TCItem {
     	
     	if(item != null) {
     		
-    		if(item.getData().hasKey("offset", item.getData().getId())) {
-    			NBTTagCompound offset = item.getData().getCompoundTag("offset");
+    		if(item.getData().hasKey(ClipboardTagNames.$OFFSET, item.getData().getId())) {
+    			NBTTagCompound offset = item.getData().getCompoundTag(ClipboardTagNames.$OFFSET);
     			plantPos = new Vec3(
     					plantPos.xCoord + offset.getFloat("x"),
     					plantPos.yCoord + offset.getFloat("y"),
@@ -70,11 +72,11 @@ public class PasteItem extends TCItem {
     			);
     		}
     		
-    		if(item.getData().hasKey("blocks")) {
+    		if(item.getData().hasKey(ClipboardTagNames.$REGION)) {
     			ClipboardItem.pasteRegion(item, new BlockPos(plantPos), worldIn, playerIn);
     		}
     		
-    		if(item.getData().hasKey("entity")) {
+    		if(item.getData().hasKey(ClipboardTagNames.$ENTITY)) {
     			ClipboardItem.pasteEntity(item, plantPos, worldIn, playerIn);
     		}
     	}

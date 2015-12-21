@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
 import de.longor.talecraft.blocks.util.tileentity.EmitterBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.ImageHologramBlockTileEntity;
+import de.longor.talecraft.client.ClientResources;
 import de.longor.talecraft.client.render.renderers.BoxRenderer;
 import de.longor.talecraft.proxy.ClientProxy;
 
@@ -36,7 +37,7 @@ public class ImageHologramBlockTileEntityEXTRenderer implements
 		        GlStateManager.bindTexture(texture.getGlTextureId());
 			else {
 				ClientProxy.mc.renderEngine.bindTexture(location);
-				ClientProxy.mc.renderEngine.bindTexture(ClientProxy.textureReslocSelectionBox2);
+				ClientProxy.mc.renderEngine.bindTexture(ClientResources.textureSelectionBoxFF);
 			}
 		}
 		

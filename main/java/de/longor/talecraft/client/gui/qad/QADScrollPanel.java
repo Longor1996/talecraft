@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 import scala.languageFeature.higherKinds;
 
 import com.google.common.collect.Lists;
@@ -26,6 +27,8 @@ public class QADScrollPanel extends QADRectangularComponent implements QADCompon
 	public boolean visible;
 	public boolean focused;
 	public boolean allowLeftMouseButtonScrolling;
+	
+	private int backgroundColor = 3;
 	
 	public QADScrollPanel() {
 		components = Lists.newArrayList();
@@ -117,7 +120,24 @@ public class QADScrollPanel extends QADRectangularComponent implements QADCompon
 		
 		boolean viewport = height < viewportHeight;
 		
-		renderer.drawRectangle(x, y, x+width, y+height, 0x80000000);
+		if(backgroundColor == 2) {
+			;// no background
+		} else if (backgroundColor == 1) {
+			boolean inside = localMouseX >= 0 && localMouseY >= 0 && localMouseX < this.width && localMouseY < this.height;
+			renderer.bindTexture(null);
+			renderer.drawRectangle(x, y, x+width, y+height, inside ? 0x307F7F7F : 0x1F7F7F7F);
+		} else if (backgroundColor == 3) {
+			renderer.bindTexture(null);
+			renderer.drawRectangle(x, y, x+width, y+height, 0x80000000);
+		} else if(backgroundColor != 0) {
+			renderer.bindTexture(null);
+			renderer.drawRectangle(x, y, x+width, y+height, backgroundColor);
+		} else {
+			ResourceLocation optionsBackground = new ResourceLocation("textures/gui/options_background.png");
+			renderer.bindTexture(optionsBackground);
+			renderer.drawTexturedModalRectangle(x, y, 0, 0, -width, -height, 0xFF888888);
+			renderer.bindTexture(null);
+		}
 		
 		localMouseY += viewportPosition;
 		
@@ -355,6 +375,10 @@ public class QADScrollPanel extends QADRectangularComponent implements QADCompon
 		for(QADComponent component : components) {
 			component.removeFocus();
 		}
+	}
+	
+	public void setBackground(int background) {
+		this.backgroundColor = background;
 	}
 	
 }

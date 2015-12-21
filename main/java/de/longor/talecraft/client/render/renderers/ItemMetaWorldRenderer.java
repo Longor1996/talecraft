@@ -3,16 +3,18 @@ package de.longor.talecraft.client.render.renderers;
 import org.lwjgl.opengl.GL11;
 
 import de.longor.talecraft.TaleCraft;
+import de.longor.talecraft.client.ClientResources;
 import de.longor.talecraft.clipboard.ClipboardItem;
+import de.longor.talecraft.clipboard.ClipboardTagNames;
 import de.longor.talecraft.items.PasteItem;
 import de.longor.talecraft.items.TeleporterItem;
 import de.longor.talecraft.items.VoxelBrushItem;
 import de.longor.talecraft.proxy.ClientProxy;
 import de.longor.talecraft.server.ServerMirror;
 import de.longor.talecraft.util.NBTHelper;
-import de.longor.talecraft.voxelbrush.IShape;
-import de.longor.talecraft.voxelbrush.ShapeFactory;
-import de.longor.talecraft.voxelbrush.shapes.CylinderShape;
+import de.longor.talecraft.voxelbrush_old.IShape;
+import de.longor.talecraft.voxelbrush_old.ShapeFactory;
+import de.longor.talecraft.voxelbrush_old.shapes.CylinderShape;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -78,11 +80,11 @@ public class ItemMetaWorldRenderer {
     	float dimY = 0;
     	float dimZ = 0;
     	
-    	NBTTagCompound blocks = NBTHelper.getOrNull(clip.getData(), "blocks");
-    	NBTTagCompound entity = NBTHelper.getOrNull(clip.getData(), "entity");
+    	NBTTagCompound blocks = NBTHelper.getOrNull(clip.getData(), ClipboardTagNames.$REGION);
+    	NBTTagCompound entity = NBTHelper.getOrNull(clip.getData(), ClipboardTagNames.$ENTITY);
 		
-		if(clip.getData().hasKey("offset", clip.getData().getId())) {
-			NBTTagCompound offset = clip.getData().getCompoundTag("offset");
+		if(clip.getData().hasKey(ClipboardTagNames.$OFFSET, clip.getData().getId())) {
+			NBTTagCompound offset = clip.getData().getCompoundTag(ClipboardTagNames.$OFFSET);
 			plantPos = new Vec3(
 					plantPos.xCoord + offset.getFloat("x"),
 					plantPos.yCoord + offset.getFloat("y"),
@@ -104,9 +106,9 @@ public class ItemMetaWorldRenderer {
     	if(blocks != null) {
     		color = -2;
     		
-    		dimX = blocks.getInteger("regionWidth");
-    		dimY = blocks.getInteger("regionHeight");
-    		dimZ = blocks.getInteger("regionLength");
+    		dimX = blocks.getInteger(ClipboardTagNames.$REGION_WIDTH);
+    		dimY = blocks.getInteger(ClipboardTagNames.$REGION_HEIGHT);
+    		dimZ = blocks.getInteger(ClipboardTagNames.$REGION_LENGTH);
     		
     		plantPos = new Vec3(
     				Math.floor(plantPos.xCoord),
@@ -144,7 +146,7 @@ public class ItemMetaWorldRenderer {
     	maxY += error;
     	maxZ += error;
     	
-    	clientProxy.mc.renderEngine.bindTexture(ClientProxy.textureReslocSelectionBox2);
+    	clientProxy.mc.renderEngine.bindTexture(ClientResources.textureSelectionBoxFF);
 		// BoxRenderer.renderBox(tessellator, worldrenderer, minX, minY, minZ, maxX, maxY, maxZ, 0, 1, 0, 1);
 		BoxRenderer.renderSelectionBox(tessellator, worldrenderer, minX, minY, minZ, maxX, maxY, maxZ, color);
 		
@@ -166,7 +168,7 @@ public class ItemMetaWorldRenderer {
 			int endY = midY + r + 1;
 			int endZ = midZ + r + 1;
 			
-	    	clientProxy.mc.renderEngine.bindTexture(ClientProxy.colorReslocWhite);
+	    	clientProxy.mc.renderEngine.bindTexture(ClientResources.texColorWhite);
 			
 	    	worldrenderer.startDrawingQuads();
 	        worldrenderer.setColorRGBA_F(1, 1, 1, 1);
@@ -240,7 +242,7 @@ public class ItemMetaWorldRenderer {
         // XXX: Find out why the brush box is rendered incorrectly when the shape is offset.
         
         Minecraft.getMinecraft().getTextureManager().bindTexture(
-        		intersectsWorldBoundaries ? ClientProxy.colorReslocYellow : ClientProxy.colorReslocWhite
+        		intersectsWorldBoundaries ? ClientResources.texColorYellow : ClientResources.texColorWhite
         );
         BoxRenderer.renderBox(
         		tessellator, worldrenderer,
@@ -248,7 +250,7 @@ public class ItemMetaWorldRenderer {
         		1, 1, 1, 1
         );
         
-        Minecraft.getMinecraft().getTextureManager().bindTexture(ClientProxy.colorReslocBlack);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(ClientResources.texColorBlack);
         BoxRenderer.renderBox(
         		tessellator, worldrenderer,
         		position.getX(), position.getY(), position.getZ(),

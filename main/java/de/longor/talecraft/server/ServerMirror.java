@@ -1,5 +1,6 @@
 package de.longor.talecraft.server;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ public class ServerMirror {
 	private MinecraftServer server;
 	private PlayerList players;
 	private ServerClipboard clipboard;
+	private ServerFileSystem fileSystem;
 	private boolean trackInvokes;
 	
 	public MinecraftServer getServer() {
@@ -25,6 +27,7 @@ public class ServerMirror {
 		this.server = server;
 		this.players = new PlayerList();
 		this.clipboard = new ServerClipboard();
+		this.fileSystem = new ServerFileSystem();
 		this.trackInvokes = true;
 	}
 	
@@ -39,6 +42,10 @@ public class ServerMirror {
 	
 	public ServerClipboard getClipboard() {
 		return clipboard;
+	}
+
+	public ServerFileSystem getFileSystem() {
+		return fileSystem;
 	}
 	
 	public static ServerMirror instance() {

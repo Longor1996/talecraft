@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.util.tileentity.ClockBlockTileEntity;
+import de.longor.talecraft.client.ClientResources;
 import de.longor.talecraft.client.render.RenderHelper;
 import de.longor.talecraft.client.render.renderers.BoxRenderer;
 import de.longor.talecraft.invoke.BlockTriggerInvoke;
@@ -175,7 +176,7 @@ public class GenericTileEntityRenderer<T extends TileEntity> extends TileEntityS
         	
         	if(!invokes.isEmpty()) {
         		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-                this.bindTexture(ClientProxy.colorReslocWhite);
+                this.bindTexture(ClientResources.texColorWhite);
                 GlStateManager.disableCull();
                 GlStateManager.resetColor();
                 GL11.glShadeModel(GL11.GL_SMOOTH);

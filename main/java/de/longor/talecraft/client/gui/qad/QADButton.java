@@ -35,7 +35,14 @@ public class QADButton extends QADRectangularComponent {
 	public static final ResourceLocation ICON_PAUSE = new ResourceLocation("talecraft:textures/gui/pause.png");
 	public static final ResourceLocation ICON_PLAY = new ResourceLocation("talecraft:textures/gui/play.png");
 	public static final ResourceLocation ICON_STOP = new ResourceLocation("talecraft:textures/gui/stop.png");
-
+	public static final ResourceLocation ICON_SAVE = new ResourceLocation("talecraft:textures/gui/save.png");
+	public static final ResourceLocation ICON_NEW = new ResourceLocation("talecraft:textures/gui/new.png");
+	
+	public static final ResourceLocation ICON_EDITOR_TXT = new ResourceLocation("talecraft:textures/gui/file/editors/txt.png");
+	public static final ResourceLocation ICON_EDITOR_NBT = new ResourceLocation("talecraft:textures/gui/file/editors/nbt.png");
+	public static final ResourceLocation ICON_EDITOR_BIN = new ResourceLocation("talecraft:textures/gui/file/editors/bin.png");
+	public static final ResourceLocation ICON_EDITOR_NIL = new ResourceLocation("talecraft:textures/gui/file/editors/none.png");
+	
 	Runnable clickRunnable = null;
 	ButtonModel model;
 	int x;
@@ -68,6 +75,17 @@ public class QADButton extends QADRectangularComponent {
 		
 		this.x = 0;
 		this.y = 0;
+		this.width = 20;
+		this.height = 20;
+		
+		this.enabled = true;
+	}
+
+	public QADButton(int x, int y, ResourceLocation resourceLocation) {
+		this.model = new DefaultButtonModel(resourceLocation);
+		
+		this.x = x;
+		this.y = y;
 		this.width = 20;
 		this.height = 20;
 		

@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.util.tileentity.SummonBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.SummonBlockTileEntity.SummonOption;
+import de.longor.talecraft.client.ClientNetworkHandler;
 import de.longor.talecraft.client.gui.misc.GuiEntityEditor;
 import de.longor.talecraft.client.gui.misc.GuiEntityEditor.RemoteEntityDataLink;
 import de.longor.talecraft.client.gui.misc.GuiEntityTypeSelection;
@@ -100,7 +101,7 @@ public class GuiSummonBlock extends QADGuiScreen {
 				// ONLY update the changed value
 				private void send(int value) {
 					BlockPos position = tileEntity.getPos();
-					String commandString = "blockdatamerge:"+position.getX() + " " + position.getY() + " " + position.getZ();
+					String commandString = ClientNetworkHandler.makeBlockDataMergeCommand(position);
 					
 					NBTTagCompound data = new NBTTagCompound();
 					data.setInteger("summonCount", value);
@@ -128,7 +129,7 @@ public class GuiSummonBlock extends QADGuiScreen {
 					
 					if(bounds != null) {
 						BlockPos position = tileEntity.getPos();
-						String commandString = "blockdatamerge:"+position.getX() + " " + position.getY() + " " + position.getZ();
+						String commandString = ClientNetworkHandler.makeBlockDataMergeCommand(position);
 						
 						NBTTagCompound data = new NBTTagCompound();
 						data.setIntArray("summonRegionBounds", bounds);
@@ -150,7 +151,7 @@ public class GuiSummonBlock extends QADGuiScreen {
 						state = newState;
 						
 						BlockPos position = tileEntity.getPos();
-						String commandString = "blockdatamerge:"+position.getX() + " " + position.getY() + " " + position.getZ();
+						String commandString = ClientNetworkHandler.makeBlockDataMergeCommand(position);
 						
 						NBTTagCompound data = new NBTTagCompound();
 						data.setBoolean("useWeightAsCount", newState);
@@ -366,7 +367,7 @@ public class GuiSummonBlock extends QADGuiScreen {
 	
 	private void updateSummonBlockData(boolean resetScreen) {
 		BlockPos position = tileEntity.getPos();
-		String commandString = "blockdatamerge:"+position.getX() + " " + position.getY() + " " + position.getZ();
+		String commandString = ClientNetworkHandler.makeBlockDataMergeCommand(position);
 		
 		NBTTagCompound data = new NBTTagCompound();
 		tileEntity.writeToNBT_do(data);

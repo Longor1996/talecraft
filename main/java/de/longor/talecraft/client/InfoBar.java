@@ -52,8 +52,10 @@ public class InfoBar {
         	writeMovingObjectPositionInfo(mc, theWorld, mc.objectMouseOver);
         }
         
-        if(clientProxy.getVisualizationmode() != 0 && clientProxy.settings.getBoolean("client.infobar.visualizationMode")) {
-        	writeVisualizationModeInfo(clientProxy.getVisualizationmode());
+        if(clientProxy.settings.getBoolean("client.infobar.visualizationMode")) {
+        	if(clientProxy.getRenderer().getVisualizationMode() != 0) {
+        		writeVisualizationModeInfo(clientProxy.getRenderer().getVisualizationMode());
+        	}
         }
         
         if(clientProxy.settings.getBoolean("client.infobar.showFPS")) {
@@ -64,9 +66,9 @@ public class InfoBar {
         
         if(clientProxy.settings.getBoolean("client.infobar.showRenderables")) {
             builder.append(" [");
-            builder.append(clientProxy.getStaticCount());
+            builder.append(clientProxy.getRenderer().getStaticCount());
         	builder.append(", ");
-        	builder.append(clientProxy.getTemporablesCount());
+        	builder.append(clientProxy.getRenderer().getTemporablesCount());
         	builder.append("]");
         }
         

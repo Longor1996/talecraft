@@ -6,6 +6,7 @@ import net.minecraft.util.MathHelper;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.util.tileentity.DelayBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.RedstoneTriggerBlockTileEntity;
+import de.longor.talecraft.client.ClientNetworkHandler;
 import de.longor.talecraft.client.gui.invoke.BlockInvokeHolder;
 import de.longor.talecraft.client.gui.invoke.InvokePanelBuilder;
 import de.longor.talecraft.client.gui.qad.QADGuiScreen;
@@ -37,7 +38,7 @@ public class GuiDelayBlock extends QADGuiScreen {
 		slider.setSliderAction(new Runnable() {
 			@Override public void run() {
 				int newValue = (int) (slider.getSliderValue() * maximum);
-				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
+				String commandString = ClientNetworkHandler.makeBlockCommand(position);
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "set");
 				commandData.setInteger("delay", MathHelper.clamp_int(newValue, 1, maximum));

@@ -150,5 +150,5 @@ system -> CLIPBOARD (!!!)
     - A prop can store these things: Blocks, Entitties, Metadata.
     - Props can be saved from the clipboard to a harddrive.
     - Props can be loaded from a hardrive into the clipboard.
-    
+  
 ^^

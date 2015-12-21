@@ -6,6 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.util.tileentity.StorageBlockTileEntity;
+import de.longor.talecraft.client.ClientNetworkHandler;
 import de.longor.talecraft.client.gui.invoke.BlockInvokeHolder;
 import de.longor.talecraft.client.gui.invoke.InvokePanelBuilder;
 import de.longor.talecraft.client.gui.qad.QADComponent;
@@ -33,8 +34,8 @@ public class GuiStorageBlock extends QADGuiScreen {
 				
 				if(bounds == null)
 					return;
-				
-				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
+
+				String commandString = ClientNetworkHandler.makeBlockCommand(position);
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "set");
 				commandData.setIntArray("bounds", bounds);
@@ -46,7 +47,7 @@ public class GuiStorageBlock extends QADGuiScreen {
 		addComponent(QADFACTORY.createButton("Store", 2, 16+(22*1), 100, new Runnable() {
 			@Override
 			public void run() {
-				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
+				String commandString = ClientNetworkHandler.makeBlockCommand(position);
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "store");
 				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));
@@ -57,7 +58,7 @@ public class GuiStorageBlock extends QADGuiScreen {
 		addComponent(QADFACTORY.createButton("Trigger (Paste)", 2, 16+(22*2), 100, new Runnable() {
 			@Override
 			public void run() {
-				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
+				String commandString = ClientNetworkHandler.makeBlockCommand(position);
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "trigger");
 				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));

@@ -13,7 +13,7 @@ public class StringNBTCommandMessageHandler implements IMessageHandler {
 	public IMessage onMessage(IMessage message, MessageContext ctx) {
 		if(message instanceof StringNBTCommand) {
 			StringNBTCommand cmd = (StringNBTCommand) message;
-			TaleCraft.proxy.asClient().handleClientCommand(cmd.command,cmd.data);
+			TaleCraft.proxy.asClient().getNetworkHandler().handleClientCommand(cmd.command, cmd.data);
 		}
 		return null;
 	}

@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import de.longor.talecraft.blocks.util.tileentity.SummonBlockTileEntity;
+import de.longor.talecraft.client.ClientResources;
 import de.longor.talecraft.client.render.renderers.BoxRenderer;
 import de.longor.talecraft.proxy.ClientProxy;
 
@@ -20,7 +21,7 @@ public class SummonBlockTileEntityEXTRenderer implements
 			Tessellator tessellator = Tessellator.getInstance();
 			WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 			
-	        ClientProxy.mc.renderEngine.bindTexture(ClientProxy.colorReslocWhite);
+	        ClientProxy.mc.renderEngine.bindTexture(ClientResources.texColorWhite);
 	        GlStateManager.disableCull();
 			
 			float minX = bounds[0];

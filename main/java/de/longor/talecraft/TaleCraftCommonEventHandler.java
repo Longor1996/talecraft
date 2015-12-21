@@ -37,7 +37,7 @@ public class TaleCraftCommonEventHandler
 	public void keyEvent(KeyInputEvent event) {
 		if(FMLCommonHandler.instance().getSide().isClient()) {
 			if(taleCraft.proxy instanceof de.longor.talecraft.proxy.ClientProxy) {
-				taleCraft.proxy.asClient().keyEvent(event);
+				taleCraft.proxy.asClient().getKeyboardHandler().on_key(event);
 			}
 		}
 	}

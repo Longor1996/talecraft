@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import de.longor.talecraft.TaleCraft;
+import de.longor.talecraft.client.ClientResources;
 import de.longor.talecraft.client.render.ITemporaryRenderable;
 import de.longor.talecraft.client.render.renderers.BoxRenderer;
 import de.longor.talecraft.proxy.ClientProxy;
@@ -44,16 +45,12 @@ public class BoxTemporable implements ITemporaryRenderable {
 		float b = (float) (color & 0xFF) / 256f;
 		float a = .25f;
 		
-		float midX = (minX + maxX) / 2f;
-		float midY = (minY + maxY) / 2f;
-		float midZ = (minZ + maxZ) / 2f;
-		
 		GlStateManager.enableBlend();
 		GlStateManager.enableCull();
 		GlStateManager.color(1f, 1f, 1f, 0.5f);
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
-		Minecraft.getMinecraft().renderEngine.bindTexture(ClientProxy.colorReslocWhite);
+		Minecraft.getMinecraft().renderEngine.bindTexture(ClientResources.texColorWhite);
 		BoxRenderer.renderBox(tessellator, worldrenderer, minX, minY, minZ, maxX, maxY, maxZ, r, g, b, a);
 	}
 

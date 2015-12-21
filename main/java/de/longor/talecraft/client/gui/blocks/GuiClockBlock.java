@@ -12,6 +12,7 @@ import net.minecraft.util.EnumChatFormatting;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.util.tileentity.ClockBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.RedstoneTriggerBlockTileEntity;
+import de.longor.talecraft.client.ClientNetworkHandler;
 import de.longor.talecraft.client.gui.TCGuiScreen;
 import de.longor.talecraft.client.gui.invoke.BlockInvokeHolder;
 import de.longor.talecraft.client.gui.invoke.InvokePanelBuilder;
@@ -23,6 +24,7 @@ import de.longor.talecraft.client.gui.qad.QADLabel;
 import de.longor.talecraft.client.gui.qad.QADTextField;
 import de.longor.talecraft.items.WandItem;
 import de.longor.talecraft.network.StringNBTCommand;
+import de.longor.talecraft.proxy.ClientProxy;
 
 public class GuiClockBlock extends QADGuiScreen {
 	ClockBlockTileEntity tileEntity;
@@ -87,7 +89,7 @@ public class GuiClockBlock extends QADGuiScreen {
 		QADButton setDataButton = QADFACTORY.createButton("Apply", column1x, row6y, column1w, null);
 		setDataButton.setAction(new Runnable() {
 			@Override public void run() {
-				String commandString = "blockdatamerge:"+position.getX() + " " + position.getY() + " " + position.getZ();
+				String commandString = ClientNetworkHandler.makeBlockDataMergeCommand(position);
 				NBTTagCompound commandData = new NBTTagCompound();
 				NBTTagCompound invokeData = new NBTTagCompound();
 				commandData.setTag("clockInvoke", invokeData);
@@ -105,7 +107,7 @@ public class GuiClockBlock extends QADGuiScreen {
 		QADButton buttonStart = QADFACTORY.createButton("Start", column0x, row8y, column0w, null);
 		buttonStart.setAction(new Runnable() {
 			@Override public void run() {
-				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
+				String commandString = ClientNetworkHandler.makeBlockDataMergeCommand(position);
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "start");
 				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));
@@ -118,7 +120,7 @@ public class GuiClockBlock extends QADGuiScreen {
 		QADButton buttonPause = QADFACTORY.createButton("Pause", column1x, row8y, column1w, null);
 		buttonPause.setAction(new Runnable() {
 			@Override public void run() {
-				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
+				String commandString = ClientNetworkHandler.makeBlockDataMergeCommand(position);
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "pause");
 				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));
@@ -131,7 +133,7 @@ public class GuiClockBlock extends QADGuiScreen {
 		QADButton buttonStop = QADFACTORY.createButton("Stop", column2x, row8y, column2w, null);
 		buttonStop.setAction(new Runnable() {
 			@Override public void run() {
-				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
+				String commandString = ClientNetworkHandler.makeBlockDataMergeCommand(position);
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "stop");
 				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));

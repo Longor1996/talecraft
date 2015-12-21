@@ -19,17 +19,18 @@ public class CustomSkyRenderer extends IRenderHandler {
 	
 	@Override
 	public void render(float partialTicks, WorldClient world, Minecraft mc) {
+		int visualizationMode = ((ClientProxy)TaleCraft.instance.proxy).getRenderer().getVisualizationMode();
 		
 		if(useDebugSky) {
 			renderDebugSky(partialTicks, world, mc);
-			if(((ClientProxy)TaleCraft.instance.proxy).getVisualizationmode() != 0) {
-				RenderModeHelper.ENABLE(((ClientProxy)TaleCraft.instance.proxy).getVisualizationmode());
+			if(visualizationMode != 0) {
+				RenderModeHelper.ENABLE(visualizationMode);
 			}
 			return;
 		}
 		
-		if(((ClientProxy)TaleCraft.instance.proxy).getVisualizationmode() != 0) {
-			RenderModeHelper.ENABLE(((ClientProxy)TaleCraft.instance.proxy).getVisualizationmode());
+		if(visualizationMode != 0) {
+			RenderModeHelper.ENABLE(visualizationMode);
 		}
 	}
 	

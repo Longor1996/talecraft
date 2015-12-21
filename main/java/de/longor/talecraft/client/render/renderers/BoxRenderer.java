@@ -131,7 +131,7 @@ public class BoxRenderer {
         worldrenderer.setColorRGBA_F(r, g, b, a);
         worldrenderer.setBrightness(0xFF);
         float minX,minY,minZ,maxX,maxY,maxZ,tx,ty,tz, size = 0.05f;
-		for(float t = TaleCraft.asClient().getLastPartialTicks() / 3f, step = 1f / 3f; t < length; t += step) {
+		for(float t = TaleCraft.asClient().getRenderer().getLastPartialTicks() / 3f, step = 1f / 3f; t < length; t += step) {
 			tx = x0 + nx*t;
 			ty = y0 + ny*t;
 			tz = z0 + nz*t;

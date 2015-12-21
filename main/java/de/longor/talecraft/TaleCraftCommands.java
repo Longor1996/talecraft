@@ -8,6 +8,8 @@ import java.util.List;
 import de.longor.talecraft.commands.AttackCommand;
 import de.longor.talecraft.commands.ButcherCommand;
 import de.longor.talecraft.commands.EditEntityCommand;
+import de.longor.talecraft.commands.FileCommand;
+import de.longor.talecraft.commands.HighlightCommand;
 import de.longor.talecraft.commands.MountCommand;
 import de.longor.talecraft.commands.RegionTriggerCommand;
 import de.longor.talecraft.commands.ScriptCommand;
@@ -44,6 +46,8 @@ public class TaleCraftCommands {
 		commands.add(new EditEntityCommand());
 		commands.add(new AttackCommand());
 		commands.add(new TargetedTeleportCommand());
+		commands.add(new HighlightCommand());
+		commands.add(new FileCommand());
 	}
 	
 	public static void register(CommandHandler registry) {

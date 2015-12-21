@@ -73,5 +73,23 @@ public class MutableBlockPos extends BlockPos {
 		y = y2;
 		z = z2;
 	}
+
+	public void set(BlockPos pos) {
+		x = pos.getX();
+		y = pos.getY();
+		z = pos.getZ();
+	}
+
+	public void __add(BlockPos pos) {
+		x += pos.getX();
+		y += pos.getY();
+		z += pos.getZ();
+	}
+
+	public void __sub(BlockPos pos) {
+		x -= pos.getX();
+		y -= pos.getY();
+		z -= pos.getZ();
+	}
 	
 }

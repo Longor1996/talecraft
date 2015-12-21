@@ -15,7 +15,7 @@ import de.longor.talecraft.proxy.CommonProxy;
 import de.longor.talecraft.script.GlobalScriptManager;
 import de.longor.talecraft.server.ServerHandler;
 import de.longor.talecraft.server.ServerMirror;
-import de.longor.util.TimedExecutor;
+import de.longor.talecraft.util.TimedExecutor;
 import net.minecraft.block.Block;
 import net.minecraft.client.main.GameConfiguration;
 import net.minecraft.command.CommandHandler;

@@ -19,6 +19,7 @@ import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.blocks.util.tileentity.InverterBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.MemoryBlockTileEntity;
 import de.longor.talecraft.blocks.util.tileentity.RedstoneTriggerBlockTileEntity;
+import de.longor.talecraft.client.ClientNetworkHandler;
 import de.longor.talecraft.client.gui.invoke.BlockInvokeHolder;
 import de.longor.talecraft.client.gui.invoke.InvokePanelBuilder;
 import de.longor.talecraft.client.gui.qad.QADButton;
@@ -47,7 +48,7 @@ public class GuiMemoryBlock extends QADGuiScreen {
 		
 		addComponent(new QADButton(2, 16+2+20+2, 60, new AbstractButtonModel("Reset") {
 			@Override public void onClick() {
-				String commandString = "blockcommand:"+position.getX() + " " + position.getY() + " " + position.getZ();
+				String commandString = ClientNetworkHandler.makeBlockCommand(position);
 				NBTTagCompound commandData = new NBTTagCompound();
 				commandData.setString("command", "reset");
 				TaleCraft.instance.network.sendToServer(new StringNBTCommand(commandString, commandData));

@@ -6,6 +6,8 @@ import java.util.List;
 import de.longor.talecraft.TaleCraft;
 import de.longor.talecraft.script.wrappers.IObjectWrapper;
 import de.longor.talecraft.script.wrappers.nbt.CompoundTagWrapper;
+import de.longor.talecraft.util.Vec3f;
+import de.longor.talecraft.util.Vec3i;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -33,8 +35,12 @@ public class EntityObjectWrapper implements IObjectWrapper {
 		return entity.getName();
 	}
 	
-	public BlockPos getPosition() {
-		return entity.getPosition();
+	public Vec3f getPosition() {
+		return new Vec3f(entity.getPositionVector());
+	}
+	
+	public Vec3i getBlockPosition() {
+		return new Vec3i(entity.getPosition());
 	}
 	
 	public void setPosition(BlockPos blockPos) {
